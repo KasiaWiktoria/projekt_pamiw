@@ -214,13 +214,10 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     function isLoginAvailable() {
         return Promise.resolve(checkLoginAvailability().then(function (statusCode) {
-            console.log(statusCode);
             if (statusCode === HTTP_STATUS.OK) {
                 return false;
-
             } else if (statusCode === HTTP_STATUS.NOT_FOUND) {
                 return true
-
             } else {
                 throw "Unknown login availability status: " + statusCode;
             }
