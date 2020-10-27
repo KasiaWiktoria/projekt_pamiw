@@ -75,6 +75,7 @@ form .input-block input{
 form .btn-block{
     width: 100%;
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     margin-top: 30px;
     margin-bottom: 20px;
@@ -88,6 +89,7 @@ form .btn-block input{
     font-size: 20px;
     outline-style: none;
     border: none;
+    margin-bottom: 10px;
 }
 
 form .btn-block input:hover{
