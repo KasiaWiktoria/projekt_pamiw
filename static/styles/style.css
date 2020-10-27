@@ -15,8 +15,13 @@ table tbody:hover tr:nth-child(even) {background:#E6CBF6;}
 
 table tbody tr td:hover {background:#760c80; color: white;}
 
-table tbody th{background:#45a000;}
-table tbody:hover .top-tr th {background:#760c80; color: white;}
+table tbody:hover .top-tr th {background:#760c80;}
+
+table tbody th{
+    background:#317000;
+    color: white;
+    padding: 10px 20px;
+}
 
 table caption{
     padding-bottom: 20px;
@@ -30,6 +35,7 @@ table tbody .top-tr{
 
 table tbody td{
     padding: 10px 20px;
+    text-align: center;
 }
 
 .img-block {
