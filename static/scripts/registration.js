@@ -37,11 +37,17 @@ document.addEventListener('DOMContentLoaded', function (event) {
             formData.set("second_password", repeatePassword);
             
             submitRegisterForm(formData);
+            if (uncorrectElem !== null) {
+                uncorrectElem.remove();
+            }
             id = "button-reg-form"
             let correctElem = prepareWarningElem("correct", " Zarejestrowano pomyślnie.");
             correctElem.className = "correct-field"
             appendAfterElem(id, correctElem);
         } else {
+            if (correctElem !== null) {
+                correctElem.remove();
+            }
             id = "button-reg-form"
             let uncorrectElem = prepareWarningElem("uncorrect", "Rejestracja nie powiodła się");
             uncorrectElem.className = "uncorrect-field"
