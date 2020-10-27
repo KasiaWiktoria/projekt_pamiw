@@ -28,6 +28,9 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
         var canSend = (isLoginAvailable() && isLoginCorrect() == "" && isPeselCorrect() && isPasswdCorrect() == "" && isRepeatPasswdCorrect());
 
+        let correctElem = null
+        let uncorrectElem = null
+
         console.log(canSend)
         if(canSend) {
             var formData = new FormData();
@@ -37,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
             formData.set("second_password", repeatePassword);
             
             submitRegisterForm(formData);
-            if (uncorrectElem !== undefined) {
+            if (uncorrectElem !== null) {
                 uncorrectElem.remove();
             }
             id = "button-reg-form"
@@ -45,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
             correctElem.className = "correct-field"
             appendAfterElem(id, correctElem);
         } else {
-            if (correctElem !== undefined) {
+            if (correctElem !== null) {
                 correctElem.remove();
             }
             id = "button-reg-form"
