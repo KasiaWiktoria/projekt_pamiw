@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pl">
+    <head>
+        <title>PAX</title>
+        <meta charset="utf-8">
+        <link href="/styles/registration.css" rel="stylesheet" type="text/css">
+        <link href="/styles/main_style.css" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="/images/favicon.ico"/>
+        <script src="/scripts/registration.js"></script>    
+    </head>
+    <body>
+        <header>
+            <div class="content top">
+                <img src="images/logo.svg" alt="logo">
+                <h1><span>PAX</span> System obsługi paczek</h1>
+            </div>
+        </header>
+        <nav>
+            <div class="content top">
+                <ul>
+                    <li><a href="/">Strona główna</a></li>
+                    <li><a href="registration">Rejestracja</a></li>
+                    <li><a href="#">Kontakt</a></li>
+                </ul>
+            </div>
+        </nav>
+        <section class="content">
+            <div class="right">
+                <div class="form-block">
+                    <h2>Zarejestruj się</h2>
+    
+                    <form id="registration-form" class="registration-form">
+                        
+                        <div class="input-block">
+                            <label for="login" class="required">Login</label>
+                            <input id="login" type="text" name="login"/>
+                        </div>
+    
+                        <div class="input-block">
+                        <label for="pesel" class="required">PESEL</label>
+                        <input id="pesel" type="text" name="pesel"/>
+                        </div>
+    
+                        <div class="input-block">
+                        <label for="password" class="required">Hasło</label>
+                        <input id="password" type="password" name="password"/>
+                        </div>
+    
+                        <div class="input-block">
+                            <label for="second_password" class="required">Powtórz hasło</label>
+                            <input id="second_password" type="password" name="second_password"/>
+                        </div>
+                        <div class="btn-block">
+                            <input id="button-reg-form" type="submit" value="Rejestruj"/>               
+                        </div>    
+                    </form>
+                </div>
+            </div>
+            <div class="left">
+                <img src="images/pack.png" alt="pack">
+            </div>
+        </section>
+
+
+        <footer>
+            <p class="footer-inline left">&copy; 2020 Katarzyna Stankiewicz</p>
+            <p class="footer-inline right">Projekt realizowany w ramach laboratorium Programowanie Aplikacji Mobilnych i Webowych</p>
+        </footer>
+    </body>
+</html>

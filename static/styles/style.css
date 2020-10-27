@@ -1,0 +1,43 @@
+article h3{
+    color: #5dd401;
+}
+
+table{
+    margin: auto;
+    margin-bottom: 50px;
+}
+
+table tbody tr:nth-child(odd) {background:#5dd401;}
+table tbody tr:nth-child(even) {background: #d8f5cc;}
+
+table tbody:hover tr:nth-child(odd) {background:#BA2AC7; color: white;}
+table tbody:hover tr:nth-child(even) {background:#E6CBF6;}
+
+table tbody tr td:hover {background:#760c80; color: white;}
+
+table tbody th{background:#45a000;}
+table tbody:hover .top-tr th {background:#760c80; color: white;}
+
+table caption{
+    padding-bottom: 20px;
+    padding-top: 10px;
+    font-size: 24px;
+}
+
+table tbody .top-tr{
+    text-align: center;
+}
+
+table tbody td{
+    padding: 10px 20px;
+}
+
+.img-block {
+    display: flex;
+    justify-content: center;
+    width: 1024px;
+}
+
+.img-block img{
+    width: 1024px;
+}
