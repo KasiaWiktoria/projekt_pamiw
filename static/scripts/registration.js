@@ -26,23 +26,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
         var password = document.getElementById(PASSWD_FIELD_ID).value;
         var repeatePassword = document.getElementById(REPEAT_PASSWD_FIELD_ID).value;
 
-        var availableLogin = false;
-
-
-        isLoginAvailable().then(function (isAvailable) {
-            if (isAvailable) {
-                console.log("Available login!");
-                availableLogin = true;
-            } else {
-                console.log("NOT available login");
-                availableLogin = false;
-            }
-        }).catch(function (error) {
-            console.error("Something went wrong while checking login.");
-            console.error(error);
-        });
-
-        var canSend = (availableLogin && isLoginCorrect() == "" && isPeselCorrect() && isPasswdCorrect() == "" && arePasswdsTheSame());
+        var canSend = (boolLoginAviability() && isLoginCorrect() == "" && isPeselCorrect() && isPasswdCorrect() == "" && arePasswdsTheSame());
 
         console.log("Czy login jest dostępny: " + availableLogin)
         console.log("Czy wszystkie elementy formularza są poprawne : " + canSend);
@@ -254,6 +238,22 @@ document.addEventListener('DOMContentLoaded', function (event) {
                 throw "Unknown login availability status: " + statusCode;
             }
         }));
+    }
+
+    function boolLoginAviability(){
+        isLoginAvailable().then(function (isAvailable) {
+            if (isAvailable) {
+                console.log("Available login!");
+                return true;
+            } else {
+                console.log("NOT available login");
+                return false;
+            }
+        }).catch(function (error) {
+            console.error("Something went wrong while checking login.");
+            console.error(error);
+            return false;
+        });
     }
 
     function checkLoginAvailability() {
