@@ -30,8 +30,6 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
         var canSend = (AVAILABLE_LOGIN && isLoginCorrect() == "" && isPeselCorrect() && isPasswdCorrect() == "" && arePasswdsTheSame());
 
-        console.log("Czy login jest dostępny: " + AVAILABLE_LOGIN);
-        console.log("Czy wszystkie elementy formularza są poprawne : " + canSend);
         if(canSend) {
             var formData = new FormData();
             formData.set("login", login);
