@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
         var password = document.getElementById(PASSWD_FIELD_ID).value;
         var repeatePassword = document.getElementById(REPEAT_PASSWD_FIELD_ID).value;
 
-        var canSend = (isLoginAvailable() && isLoginCorrect() == "" && isPeselCorrect() && isPasswdCorrect() == "" && isRepeatPasswdCorrect());
+        var canSend = (isLoginAvailable() && isLoginCorrect() == "" && isPeselCorrect() && isPasswdCorrect() == "" && arePasswdsTheSame());
 
         let correctElem = null
         let uncorrectElem = null
@@ -154,15 +154,17 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     function updatePasswdCorrectnessMessage() {
         let warningElemId = "passwdWarning";
-        let repeatPasswd = "repeatPasswdWarning";
         let warningMessage = isPasswdCorrect();
 
         if (warningMessage == "") {
-            console.log("Correct password!");
-            removeWarningMessage(warningElemId);
-        } else if (warningMessage == "Hasła podane w obu polach muszą być identyczne.") {
-            showWarningMessage(repeatPasswd, warningMessage, REPEAT_PASSWD_FIELD_ID)
-            showWarningMessage(warningElemId, warningMessage, PASSWD_FIELD_ID);
+            if (arePasswdsTheSame) {
+                console.log("Correct password!");
+                removeWarningMessage(warningElemId);
+                removeWarningMessage("repeatPasswdWarning");
+            } else {
+                warningMessage = "Podany ciąg znaków nie zgadza się z hasłem podanym poniżej.";
+                showWarningMessage(warningElemId, warningMessage, PASSWD_FIELD_ID);
+            }
         } else {
             console.log("Uncorrect password");
             showWarningMessage(warningElemId, warningMessage, PASSWD_FIELD_ID);
@@ -174,9 +176,12 @@ document.addEventListener('DOMContentLoaded', function (event) {
         let warningElemId = "repeatPasswdWarning";
         let warningMessage = "Podany ciąg znaków nie zgadza się z hasłem podanym wyżej.";
 
-        if (isRepeatPasswdCorrect()) {
+        if (arePasswdsTheSame()) {
             console.log("Correct repeat password!");
             removeWarningMessage(warningElemId);
+            if (isPasswdCorrect() == "") {
+                removeWarningMessage("passwdWarning");
+            }
         } else {
             console.log("Uncorrect repeat password");
             showWarningMessage(warningElemId, warningMessage, REPEAT_PASSWD_FIELD_ID);
@@ -301,7 +306,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
         }
     }
 
-    function isRepeatPasswdCorrect() {
+    function arePasswdsTheSame() {
         let passwdInput = document.getElementById(PASSWD_FIELD_ID).value;
         let repeatPasswdInput = document.getElementById(REPEAT_PASSWD_FIELD_ID).value;
 
