@@ -162,6 +162,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
             removeWarningMessage(warningElemId);
         } else if (warningMessage == "Hasła podane w obu polach muszą być identyczne.") {
             showWarningMessage(repeatPasswd, warningMessage, REPEAT_PASSWD_FIELD_ID)
+            showWarningMessage(warningElemId, warningMessage, PASSWD_FIELD_ID);
         } else {
             console.log("Uncorrect password");
             showWarningMessage(warningElemId, warningMessage, PASSWD_FIELD_ID);
