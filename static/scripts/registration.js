@@ -26,11 +26,23 @@ document.addEventListener('DOMContentLoaded', function (event) {
         var password = document.getElementById(PASSWD_FIELD_ID).value;
         var repeatePassword = document.getElementById(REPEAT_PASSWD_FIELD_ID).value;
 
-        var canSend = (isLoginAvailable() && isLoginCorrect() == "" && isPeselCorrect() && isPasswdCorrect() == "" && arePasswdsTheSame());
+        var availableLogin = false;
 
-        console.log("Login jest dostępny: " + isLoginAvailable());
+        isLoginAvailable().then(function (isAvailable) {
+            if (isAvailable) {
+                availableLogin = true;
+            } else {
+                availableLogin = false;
+            }
+        }).catch(function (error) {
+            console.error("Something went wrong while checking login.");
+            console.error(error);
+        });
 
-        console.log("Czy wszystkie elementy formularza są poprawne : " + canSend)
+
+        var canSend = (availableLogin && isLoginCorrect() == "" && isPeselCorrect() && isPasswdCorrect() == "" && arePasswdsTheSame());
+
+        console.log("Czy wszystkie elementy formularza są poprawne : " + canSend);
         if(canSend) {
             var formData = new FormData();
             formData.set("login", login);
@@ -39,15 +51,10 @@ document.addEventListener('DOMContentLoaded', function (event) {
             formData.set("second_password", repeatePassword);
             
             submitRegisterForm(formData);
-            removeWarningMessage("uncorrect");
-            id = "button-reg-form";
-            let correctElem = prepareWarningElem("correct", " Zarejestrowano pomyślnie.");
-            correctElem.className = "correct-field"
-            appendAfterElem(id, correctElem);
         } else {
             removeWarningMessage("correct");
             id = "button-reg-form";
-            let uncorrectElem = prepareWarningElem("uncorrect", "Rejestracja nie powiodła się");
+            let uncorrectElem = prepareWarningElem("uncorrect", "Rejestracja nie powiodła się.");
             uncorrectElem.className = "uncorrect-field"
             appendAfterElem(id, uncorrectElem);
         }
@@ -67,6 +74,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
                 .then(response => displayInConsoleCorrectResponse(response))
                 .catch(err => {
                     console.log("Caught error: " + err);
+
                 });
     }
 
@@ -86,8 +94,21 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
         console.log("Status: " + status);
 
-        if (status !== "OK") {
+        if (status == "OK") {
+            removeWarningMessage("uncorrect");
+            id = "button-reg-form";
+            let correctElem = prepareWarningElem("correct", " Zarejestrowano pomyślnie.");
+            correctElem.className = "correct-field"
+            appendAfterElem(id, correctElem);
+            
+        } else {
             console.log("Errors: " + correctResponse.errors);
+
+            removeWarningMessage("correct");
+            id = "button-reg-form";
+            let uncorrectElem = prepareWarningElem("uncorrect", "Rejestracja nie powiodła się. " + correctResponse.errors);
+            uncorrectElem.className = "uncorrect-field"
+            appendAfterElem(id, uncorrectElem);
         }
     }
 
