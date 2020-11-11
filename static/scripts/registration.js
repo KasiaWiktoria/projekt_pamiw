@@ -11,6 +11,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     var HTTP_STATUS = {OK: 200, CREATED: 201, NOT_FOUND: 404};
 
+    var AVAILABLE_LOGIN = false;
+
     prepareEventOnLoginChange();
     prepareEventOnPeselChange();
     prepareEventOnPasswdChange();
@@ -26,9 +28,9 @@ document.addEventListener('DOMContentLoaded', function (event) {
         var password = document.getElementById(PASSWD_FIELD_ID).value;
         var repeatePassword = document.getElementById(REPEAT_PASSWD_FIELD_ID).value;
 
-        var canSend = (boolLoginAviability() && isLoginCorrect() == "" && isPeselCorrect() && isPasswdCorrect() == "" && arePasswdsTheSame());
+        var canSend = (AVAILABLE_LOGIN && isLoginCorrect() == "" && isPeselCorrect() && isPasswdCorrect() == "" && arePasswdsTheSame());
 
-        console.log("Czy login jest dostępny: " + boolLoginAviability());
+        console.log("Czy login jest dostępny: " + AVAILABLE_LOGIN);
         console.log("Czy wszystkie elementy formularza są poprawne : " + canSend);
         if(canSend) {
             var formData = new FormData();
@@ -132,6 +134,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
                 if (isAvailable) {
                     console.log("Available login!");
                     removeWarningMessage(warningElemId);
+                    AVAILABLE_LOGIN = true;
                 } else {
                     console.log("NOT available login");
                     showWarningMessage(warningElemId, warningMessage, LOGIN_FIELD_ID);
@@ -238,22 +241,6 @@ document.addEventListener('DOMContentLoaded', function (event) {
                 throw "Unknown login availability status: " + statusCode;
             }
         }));
-    }
-
-    function boolLoginAviability(){
-        isLoginAvailable().then(function (isAvailable) {
-            if (isAvailable) {
-                console.log("Available login!");
-                return true;
-            } else {
-                console.log("NOT available login");
-                return false;
-            }
-        }).catch(function (error) {
-            console.error("Something went wrong while checking login.");
-            console.error(error);
-            return false;
-        });
     }
 
     function checkLoginAvailability() {
