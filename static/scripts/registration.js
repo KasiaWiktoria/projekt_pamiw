@@ -154,11 +154,14 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     function updatePasswdCorrectnessMessage() {
         let warningElemId = "passwdWarning";
+        let repeatPasswd = "repeatPasswdWarning";
         let warningMessage = isPasswdCorrect();
 
         if (warningMessage == "") {
             console.log("Correct password!");
             removeWarningMessage(warningElemId);
+        } else if (warningMessage == "Hasła podane w obu polach muszą być identyczne.") {
+            showWarningMessage(repeatPasswd, warningMessage, REPEAT_PASSWD_FIELD_ID)
         } else {
             console.log("Uncorrect password");
             showWarningMessage(warningElemId, warningMessage, PASSWD_FIELD_ID);
@@ -281,6 +284,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     function isPasswdCorrect() {
         let passwdInput = document.getElementById(PASSWD_FIELD_ID).value;
+        let repeatPasswdInput = document.getElementById(REPEAT_PASSWD_FIELD_ID).value;
         if (passwdInput.length < 8) {
             return "Hasło musi mieć powyżej 8 znaków";
         } else if (!(/\d/.test(passwdInput))){
@@ -289,6 +293,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
             return "Hasło musi zawierać przynajmniej jedną wielką literę.";
         }  else if (!(/[a-z]+/.test(passwdInput))){
             return "Hasło musi zawierać przynajmniej jedną małą literę.";
+        }  else if (passwdInput != repeatPasswdInput){
+            return "Hasła podane w obu polach muszą być identyczne.";
         }else {
             return "";
         }
