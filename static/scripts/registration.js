@@ -28,17 +28,19 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
         var availableLogin = false;
 
+
         isLoginAvailable().then(function (isAvailable) {
             if (isAvailable) {
+                console.log("Available login!");
                 availableLogin = true;
             } else {
+                console.log("NOT available login");
                 availableLogin = false;
             }
         }).catch(function (error) {
             console.error("Something went wrong while checking login.");
             console.error(error);
         });
-
 
         var canSend = (availableLogin && isLoginCorrect() == "" && isPeselCorrect() && isPasswdCorrect() == "" && arePasswdsTheSame());
 
