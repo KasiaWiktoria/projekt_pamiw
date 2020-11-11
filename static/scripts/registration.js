@@ -290,18 +290,15 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     function isPasswdCorrect() {
         let passwdInput = document.getElementById(PASSWD_FIELD_ID).value;
-        let repeatPasswdInput = document.getElementById(REPEAT_PASSWD_FIELD_ID).value;
         if (passwdInput.length < 8) {
             return "Hasło musi mieć powyżej 8 znaków";
         } else if (!(/\d/.test(passwdInput))){
             return "Hasło musi zawierać przynajmniej jedną cyfrę.";
         } else if (!(/[A-Z]+/.test(passwdInput))){
             return "Hasło musi zawierać przynajmniej jedną wielką literę.";
-        }  else if (!(/[a-z]+/.test(passwdInput))){
+        } else if (!(/[a-z]+/.test(passwdInput))){
             return "Hasło musi zawierać przynajmniej jedną małą literę.";
-        }  else if (passwdInput != repeatPasswdInput){
-            return "Hasła podane w obu polach muszą być identyczne.";
-        }else {
+        } else {
             return "";
         }
     }
