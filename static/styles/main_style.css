@@ -95,6 +95,11 @@ nav ul li a {
 nav ul li a:hover {
     background-color: #BA2AC7; 
     color: #ffffff;   
+    border-radius: 25px;
+}
+
+a img {
+    width: 30px;
 }
 
 
