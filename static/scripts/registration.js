@@ -312,6 +312,14 @@ document.addEventListener('DOMContentLoaded', function (event) {
         }   
     }
 
+    function validateCountry(){
+        return alphabetOnly(COUNTRY_FIELD_ID);
+    }
+
+    function validateCity(){
+        return alphabetOnly(CITY_FIELD_ID);
+    }
+
     function validateHouseNr() {
         let houseNrInput = document.getElementById(HOUSE_NR_FIELD_ID).value;
 
