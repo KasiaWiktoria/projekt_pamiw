@@ -1,19 +1,7 @@
 .content{
     display: flex;
     justify-content: center;
-}
-
-.content .left{
-    width: 60%;
-}
-
-.content .left img{
-    max-width: 100%;
-}
-
-.content .right{
-    width: 40%;
-    align-items: center;
+    background-image: url(../images/pack.png);
 }
 
 
@@ -22,6 +10,7 @@
     margin-right: 10px;
     justify-content: center;
     padding: 20px;
+    background-color: #5cd4015e;
 }
 
 h2{
