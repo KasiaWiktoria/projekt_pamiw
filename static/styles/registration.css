@@ -2,10 +2,12 @@
     display: flex;
     justify-content: center;
 }
-
+/*
 .site-content{
-    background-image: url(../images/pack.png);
+    background-image: url(../images/paczki-tlo.jpg);
+    
 }
+*/
 
 .content .form-block{
     display: flex;

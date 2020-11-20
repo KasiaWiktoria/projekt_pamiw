@@ -100,13 +100,15 @@ nav ul li a:hover {
 footer {
     display: flex;
     justify-content: space-between;
-    /* position: fixed; */
     bottom: 0;
-    background-color: #5dd401;
     max-width: inherit;
     width: 100%;
     height: 46px;
     font-size: 15px;
+    border-top-style: double;
+    border-top-width: thick;
+    border-color: #5dd401;
+    margin-top: 40px;
 }
 
 .footer-inline {
