@@ -283,6 +283,24 @@ document.addEventListener('DOMContentLoaded', function (event) {
         }
     }
 
+    function validateSurname() {
+        let surnameInput = document.getElementById(SURNAME_FIELD_ID).value;
+
+        if (!(/^[A-Z].*$/.test(surnameInput))){
+            return "Nazwisko musi zaczynać się wielką literą."
+        }else if(/^.+\s+.+$/.test(surnameInput)){
+            return "Nazwisko nie może zawierać spacji. W przypadku dwuczłonowego nazwiska wpisz '-' pomiędzy";
+        }else if (!(/^[a-zA-Z\-]+$/.test(surnameInput))){
+            return "Nazwisko może zawierać tylko litery i opcjonalnie jeden znak '-'.";
+        }else if ((/^([A-Z][a-z]+)-.*)*$/.test(surnameInput)) && !(/^([A-Z][a-z]+)-[A-Z].*)*$/.test(surnameInput))){
+            return "Drugi człon nazwiska musi zaczynać się wielką literą.";
+        }else if(/^([A-Z][a-z]+)-[A-Z])*$/.test(surnameInput)){
+            return "Drugie nazwisko musi mieć więcej niż jedną literę.";
+        }else{
+            return "";
+        }
+    }
+
     function validatePesel() {
         let peselInput = document.getElementById(PESEL_FIELD_ID).value;
         
@@ -323,7 +341,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     function validateHouseNr() {
         let houseNrInput = document.getElementById(HOUSE_NR_FIELD_ID).value;
 
-        if (!(/^\d+[a-zA-Z]{0,1}$/.test(houseNrInput))){
+        if (!(/^\d+[a-zA-Z]?$/.test(houseNrInput))){
             return "Numer domu może zawierać tylko cyfry i opcjonalnie jedną literę.";
         }else{
             return "";
