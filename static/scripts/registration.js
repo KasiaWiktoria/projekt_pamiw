@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
             return "Nazwisko może zawierać tylko litery i opcjonalnie jeden znak '-'.";
         }else if ((/^([A-Z][a-z]+)-.*$/.test(surnameInput)) && !(/^([A-Z][a-z]+)-[A-Z].*$/.test(surnameInput))){
             return "Drugi człon nazwiska musi zaczynać się wielką literą.";
-        }else if(/^([A-Z][a-z]+)-[A-Z])*$/.test(surnameInput)){
+        }else if(/^([A-Z][a-z]+)-[A-Z]*$/.test(surnameInput)){
             return "Drugie nazwisko musi mieć więcej niż jedną literę.";
         }else{
             return "";
