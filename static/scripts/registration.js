@@ -4,8 +4,16 @@ document.addEventListener('DOMContentLoaded', function (event) {
     const POST = "POST";
     const URL = "https://pamiw2020registration.herokuapp.com/";
 
-    const LOGIN_FIELD_ID = "login";
+    const NAME_FIELD_ID = "name";
+    const SURNAME_FIELD_ID = "surname";
+    const BDATE_FIELD_ID = "bdate";
     const PESEL_FIELD_ID = "pesel";
+    const COUNTRY_FIELD_ID = "country";
+    const POSTAL_CODE_FIELD_ID = "postal_code";
+    const CITY_FIELD_ID = "city";
+    const STREET_FIELD_ID = "street";
+    const HOUSE_NR_FIELD_ID = "house_nr";
+    const LOGIN_FIELD_ID = "login";
     const PASSWD_FIELD_ID = "password";
     const REPEAT_PASSWD_FIELD_ID = "second_password";
 
@@ -104,26 +112,6 @@ document.addEventListener('DOMContentLoaded', function (event) {
         loginInput.addEventListener("change", updateMessageFunction);
     }
 
-    function prepareEventOnLoginChange() {
-        let loginInput = document.getElementById(LOGIN_FIELD_ID);
-        loginInput.addEventListener("change", updateLoginAvailabilityMessage);
-    }
-
-    function prepareEventOnPeselChange() {
-        let peselInput = document.getElementById(PESEL_FIELD_ID);
-        peselInput.addEventListener("change", updatePeselCorrectnessMessage);
-    }
-
-    function prepareEventOnPasswdChange() {
-        let passwdInput = document.getElementById(PASSWD_FIELD_ID);
-        passwdInput.addEventListener("change", updatePasswdCorrectnessMessage);
-    }
-
-    function prepareEventOnRepeatPasswdChange() {
-        let repeatPasswdInput = document.getElementById(REPEAT_PASSWD_FIELD_ID);
-        repeatPasswdInput.addEventListener("change", updateRepeatPasswdCorrectnessMessage);
-    }
-
     function updateLoginAvailabilityMessage() {
         let warningElemId = "loginWarning";
 
@@ -149,19 +137,6 @@ document.addEventListener('DOMContentLoaded', function (event) {
         } else {
             console.log("Unorrect login.");
             showWarningMessage(warningElemId, warningMessage, LOGIN_FIELD_ID);
-        }
-    }
-
-    function updatePeselCorrectnessMessage() {
-        let warningElemId = "peselWarning";
-        let warningMessage = "Podany pesel jest nieprawidłowy.";
-
-        if (isPeselCorrect()) {
-            console.log("Correct pesel!");
-            removeWarningMessage(warningElemId);
-        } else {
-            console.log("Uncorrect pesel");
-            showWarningMessage(warningElemId, warningMessage, PESEL_FIELD_ID);
         }
     }
 
@@ -200,6 +175,32 @@ document.addEventListener('DOMContentLoaded', function (event) {
             showWarningMessage(warningElemId, warningMessage, REPEAT_PASSWD_FIELD_ID);
         }
     }
+    
+    function updateNameCorrectnessMessage() {
+        let warningElemId = "nameWarning";
+        let warningMessage = "Imię może zawierać tylko litery.";
+
+        if (isNameCorrect()) {
+            console.log("Correct pesel!");
+            removeWarningMessage(warningElemId);
+        } else {
+            console.log("Uncorrect pesel.");
+            showWarningMessage(warningElemId, warningMessage, NAME_FIELD_ID);
+        }
+    }
+    
+    function updatePeselCorrectnessMessage() {
+        let warningElemId = "peselWarning";
+        let warningMessage = "Podany pesel jest nieprawidłowy.";
+
+        if (isPeselCorrect()) {
+            console.log("Correct pesel!");
+            removeWarningMessage(warningElemId);
+        } else {
+            console.log("Uncorrect pesel.");
+            showWarningMessage(warningElemId, warningMessage, PESEL_FIELD_ID);
+        }
+    }
 
 
     function showWarningMessage(newElemId, message, field_id) {
@@ -234,41 +235,24 @@ document.addEventListener('DOMContentLoaded', function (event) {
         currentElem.insertAdjacentElement('afterend', newElem);
     }
 
-    function isLoginAvailable() {
-        return Promise.resolve(checkLoginAvailability().then(function (statusCode) {
-            if (statusCode === HTTP_STATUS.OK) {
-                return false;
-            } else if (statusCode === HTTP_STATUS.NOT_FOUND) {
-                return true
-            } else {
-                throw "Unknown login availability status: " + statusCode;
-            }
-        }));
-    }
+    //------------------------- checking correctness ----------------------------
 
-    function checkLoginAvailability() {
-        let loginInput = document.getElementById(LOGIN_FIELD_ID);
-        let baseUrl = URL + "user/";
-        let userUrl = baseUrl + loginInput.value;
+    function isNameCorrect(FIELD_ID) {
+        let input = document.getElementById(FIELD_ID).value;
+        let input_name = document.getElementById(FIELD_ID).getAttribute('name');
 
-        return Promise.resolve(fetch(userUrl, {method: GET}).then(function (resp) {
-            return resp.status;
-        }).catch(function (err) {
-            
-            return err.status;
-        }));
-    }
-
-    
-    function isLoginCorrect(){
-        let loginInput = document.getElementById(LOGIN_FIELD_ID).value;
-        if (!(/^[a-zA-Z]+$/.test(loginInput))){
-            return "Login może składać się tylko z liter.";
+        if (!(/^[a-zA-Z]+$/.test(input))){
+            return " może zawierać tylko litery.";
         } else if(loginInput.length < 4 ){
             return "Login musi mieć powyżej 4 znaków."
         }else{
             return "";
         }
+    }
+
+    function isSurnameCorrect() {
+        let Input = document.getElementById(_FIELD_ID).value;
+
     }
 
     function isPeselCorrect() {
@@ -300,6 +284,66 @@ document.addEventListener('DOMContentLoaded', function (event) {
         }   
     }
 
+    function isCountryCorrect() {
+        let Input = document.getElementById(_FIELD_ID).value;
+
+    }
+
+    function isPostalCodeCorrect() {
+        let Input = document.getElementById(_FIELD_ID).value;
+
+    }
+
+    function Correct() {
+        let Input = document.getElementById(_FIELD_ID).value;
+
+    }
+
+    function Correct() {
+        let Input = document.getElementById(_FIELD_ID).value;
+
+    }
+
+    function Correct() {
+        let Input = document.getElementById(_FIELD_ID).value;
+
+    }
+
+    function isLoginAvailable() {
+        return Promise.resolve(checkLoginAvailability().then(function (statusCode) {
+            if (statusCode === HTTP_STATUS.OK) {
+                return false;
+            } else if (statusCode === HTTP_STATUS.NOT_FOUND) {
+                return true
+            } else {
+                throw "Unknown login availability status: " + statusCode;
+            }
+        }));
+    }
+
+    function checkLoginAvailability() {
+        let loginInput = document.getElementById(LOGIN_FIELD_ID);
+        let baseUrl = URL + "user/";
+        let userUrl = baseUrl + loginInput.value;
+
+        return Promise.resolve(fetch(userUrl, {method: GET}).then(function (resp) {
+            return resp.status;
+        }).catch(function (err) {
+            
+            return err.status;
+        }));
+    }
+    
+    function isLoginCorrect(){
+        let loginInput = document.getElementById(LOGIN_FIELD_ID).value;
+        if (!(/^[a-zA-Z]+$/.test(loginInput))){
+            return "Login może składać się tylko z liter.";
+        } else if(loginInput.length < 4 ){
+            return "Login musi mieć powyżej 4 znaków."
+        }else{
+            return "";
+        }
+    }
 
     function isPasswdCorrect() {
         let passwdInput = document.getElementById(PASSWD_FIELD_ID).value;
