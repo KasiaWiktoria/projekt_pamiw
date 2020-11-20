@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     const GET = "GET";
     const POST = "POST";
-    const URL = "https://pamiw2020registration.herokuapp.com/";
+    const URL = "https://localhost:8080/";
 
     const LOGIN_FIELD_ID = "login";
     const PESEL_FIELD_ID = "pesel";
@@ -13,10 +13,10 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     var AVAILABLE_LOGIN = false;
 
-    prepareEventOnLoginChange();
-    prepareEventOnPeselChange();
-    prepareEventOnPasswdChange();
-    prepareEventOnRepeatPasswdChange();
+    prepareEventOnChange(LOGIN_FIELD_ID,updateLoginAvailabilityMessage);
+    prepareEventOnChange(PESEL_FIELD_ID, updatePeselCorrectnessMessage);
+    prepareEventOnChange(PASSWD_FIELD_ID, updatePasswdCorrectnessMessage);
+    prepareEventOnChange(REPEAT_PASSWD_FIELD_ID, updateRepeatPasswdCorrectnessMessage);
 
     let registrationForm = document.getElementById("registration-form");
 
@@ -97,6 +97,11 @@ document.addEventListener('DOMContentLoaded', function (event) {
             uncorrectElem.className = "uncorrect-field"
             appendAfterElem(id, uncorrectElem);
         }
+    }
+
+    function prepareEventOnChange(FIELD_ID, updateMessageFunction) {
+        let loginInput = document.getElementById(FIELD_ID);
+        loginInput.addEventListener("change", updateMessageFunction);
     }
 
     function prepareEventOnLoginChange() {
