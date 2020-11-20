@@ -21,8 +21,14 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     var AVAILABLE_LOGIN = false;
 
+    prepareEventOnChange(NAME_FIELD_ID, updateCorrectnessMessage(NAME_FIELD_ID,validateName()));
+    prepareEventOnChange(SURNAME_FIELD_ID, updateCorrectnessMessage(SURNAME_FIELD_ID,validateSurname()));
+    prepareEventOnChange(PESEL_FIELD_ID, updateCorrectnessMessage(PESEL_FIELD_ID, validatePesel));
+    prepareEventOnChange(COUNTRY_FIELD_ID, updateCorrectnessMessage(COUNTRY_FIELD_ID,alphabetOnly(CITY_FIELD_ID)));
+    
+    prepareEventOnChange(CITY_FIELD_ID, updateCorrectnessMessage(CITY_FIELD_ID,alphabetOnly(CITY_FIELD_ID)));
+    prepareEventOnChange(HOUSE_NR_FIELD_ID, updateCorrectnessMessage(HOUSE_NR_FIELD_ID,validateHouseNr()));
     prepareEventOnChange(LOGIN_FIELD_ID,updateLoginAvailabilityMessage);
-    prepareEventOnChange(PESEL_FIELD_ID, updatePeselCorrectnessMessage);
     prepareEventOnChange(PASSWD_FIELD_ID, updatePasswdCorrectnessMessage);
     prepareEventOnChange(REPEAT_PASSWD_FIELD_ID, updateRepeatPasswdCorrectnessMessage);
 
@@ -36,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
         var password = document.getElementById(PASSWD_FIELD_ID).value;
         var repeatePassword = document.getElementById(REPEAT_PASSWD_FIELD_ID).value;
 
-        var canSend = (AVAILABLE_LOGIN && isLoginCorrect() == "" && isPeselCorrect() && isPasswdCorrect() == "" && arePasswdsTheSame());
+        var canSend = (AVAILABLE_LOGIN && validateLogin() == "" && validatePesel() == "" && validatePasswd() == "" && arePasswdsTheSame());
 
         if(canSend) {
             var formData = new FormData();
@@ -115,7 +121,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     function updateLoginAvailabilityMessage() {
         let warningElemId = "loginWarning";
 
-        warningMessage = isLoginCorrect();
+        warningMessage = validateLogin();
         if (warningMessage == "") {
             console.log("Correct login!");
             removeWarningMessage(warningElemId);
@@ -142,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     function updatePasswdCorrectnessMessage() {
         let warningElemId = "passwdWarning";
-        let warningMessage = isPasswdCorrect();
+        let warningMessage = validatePasswd();
 
         if (warningMessage == "") {
             removeWarningMessage(warningElemId);
@@ -167,7 +173,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
         if (arePasswdsTheSame()) {
             console.log("Correct repeat password!");
             removeWarningMessage(warningElemId);
-            if (isPasswdCorrect() == "") {
+            if (validatePasswd() == "") {
                 removeWarningMessage("passwdWarning");
             }
         } else {
@@ -175,17 +181,16 @@ document.addEventListener('DOMContentLoaded', function (event) {
             showWarningMessage(warningElemId, warningMessage, REPEAT_PASSWD_FIELD_ID);
         }
     }
-    
-    function updateNameCorrectnessMessage() {
-        let warningElemId = "nameWarning";
-        let warningMessage = "Imię może zawierać tylko litery.";
 
-        if (isNameCorrect()) {
-            console.log("Correct pesel!");
+    function updateCorrectnessMessage(FIELD_ID, warningMessage) {
+        let warningElemId = FIELD_ID + "Warning";
+
+        if (warningMessage == "") {
+            console.log("Correct " + FIELD_ID + "!");
             removeWarningMessage(warningElemId);
         } else {
-            console.log("Uncorrect pesel.");
-            showWarningMessage(warningElemId, warningMessage, NAME_FIELD_ID);
+            console.log("Uncorrect " + FIELD_ID + ".");
+            showWarningMessage(warningElemId, warningMessage, FIELD_ID);
         }
     }
     
@@ -193,7 +198,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
         let warningElemId = "peselWarning";
         let warningMessage = "Podany pesel jest nieprawidłowy.";
 
-        if (isPeselCorrect()) {
+        if (validatePesel() == "") {
             console.log("Correct pesel!");
             removeWarningMessage(warningElemId);
         } else {
@@ -202,6 +207,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
         }
     }
 
+    // ----------------------------------------------------------------
 
     function showWarningMessage(newElemId, message, field_id) {
         let warningElem = prepareWarningElem(newElemId, message);
@@ -237,25 +243,42 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     //------------------------- checking correctness ----------------------------
 
-    function isNameCorrect(FIELD_ID) {
+    function alphabetOnly(FIELD_ID) {
         let input = document.getElementById(FIELD_ID).value;
         let input_name = document.getElementById(FIELD_ID).getAttribute('name');
 
         if (!(/^[a-zA-Z]+$/.test(input))){
-            return " może zawierać tylko litery.";
-        } else if(loginInput.length < 4 ){
-            return "Login musi mieć powyżej 4 znaków."
+            return "Pole " + input_name + " może zawierać tylko litery.";
         }else{
             return "";
         }
     }
 
-    function isSurnameCorrect() {
-        let Input = document.getElementById(_FIELD_ID).value;
+    function validateName() {
+        let nameInput = document.getElementById(NAME_FIELD_ID).value;
 
+        if (!(/^[a-zA-Z]+$/.test(nameInput))){
+            return "Imię może zawierać tylko litery.";
+        }else if(/^\s+$/.test(nameInput)){
+            return "Wpisz tylko jedno imię";
+        }else{
+            return "";
+        }
     }
 
-    function isPeselCorrect() {
+    function validateSurname() {
+        let surnameInput = document.getElementById(SURNAME_FIELD_ID).value;
+
+        if(/^\s+$/.test(surnameInput)){
+            return "Nazwisko nie może zawierać spacji. W przypadku dwuczłonowego nazwiska wpisz '-' pomiędzy";
+        }else if (!(/^([A-Z][a-z]+)(-[A-Z][a-z]+)*+$/.test(surnameInput))){
+            return "Nazwisko może zawierać tylko litery.";
+        }else{
+            return "";
+        }
+    }
+
+    function validatePesel() {
         let peselInput = document.getElementById(PESEL_FIELD_ID).value;
         
         if (peselInput.length == 11 && !isNaN(peselInput)) {
@@ -274,39 +297,24 @@ document.addEventListener('DOMContentLoaded', function (event) {
             let sum = 1*a + 3*b + 7*c + 9*d + 1*e + 3*f + 7*g + 9*h + 1*i + 3*j;
         
             if (10 - sum%10 == k){
-                return true;
+                return "";
             } else{
-                return false;
+                return "Podany pesel jest nieprawidłowy.";
             }
         
             } else {
-            return false;
+            return "Podany pesel jest nieprawidłowy.";
         }   
     }
 
-    function isCountryCorrect() {
-        let Input = document.getElementById(_FIELD_ID).value;
+    function validateHouseNr() {
+        let houseNrInput = document.getElementById(HOUSE_NR_FIELD_ID).value;
 
-    }
-
-    function isPostalCodeCorrect() {
-        let Input = document.getElementById(_FIELD_ID).value;
-
-    }
-
-    function Correct() {
-        let Input = document.getElementById(_FIELD_ID).value;
-
-    }
-
-    function Correct() {
-        let Input = document.getElementById(_FIELD_ID).value;
-
-    }
-
-    function Correct() {
-        let Input = document.getElementById(_FIELD_ID).value;
-
+        if (!(/^\d+[a-zA-Z]{0,1}$/.test(input))){
+            return "Numer domu może zawierać tylko cyfry i opcjonalnie jedną literę.";
+        }else{
+            return "";
+        }
     }
 
     function isLoginAvailable() {
@@ -334,7 +342,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
         }));
     }
     
-    function isLoginCorrect(){
+    function validateLogin(){
         let loginInput = document.getElementById(LOGIN_FIELD_ID).value;
         if (!(/^[a-zA-Z]+$/.test(loginInput))){
             return "Login może składać się tylko z liter.";
@@ -345,7 +353,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
         }
     }
 
-    function isPasswdCorrect() {
+    function validatePasswd() {
         let passwdInput = document.getElementById(PASSWD_FIELD_ID).value;
         if (passwdInput.length < 8) {
             return "Hasło musi mieć powyżej 8 znaków";
