@@ -20,14 +20,21 @@
 }
 .registration-form{
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
 }
+
+.registration-form .form-col{
+    display: flex;
+    width: 70%;
+    margin: auto;
+}
+
 a{
     text-align: center;
     width: 50%;
 }
 
-form .input-block{
+form .form-row{
     display: flex;
     flex-wrap: wrap;   
     justify-content: space-between;
@@ -37,12 +44,12 @@ form .input-block{
 }
 
 
-form .input-block label{
+form .form-row label{
     width: 90px;
     min-width: 90px;
 }
 
-form .input-block input{
+form .form-row input{
     width: 170px;
     padding: 10px 5px;
     margin-left: 10px;
