@@ -8,6 +8,8 @@
 }
 
 .content .form-block{
+    display: flex;
+    flex-wrap: wrap;
     margin-left: 40px;
     margin-right: 10px;
     justify-content: center;
@@ -18,8 +20,9 @@
     display: flex;
     justify-content: space-around;
 }
-h2{
+a{
     text-align: center;
+    width: 50%;
 }
 
 form .input-block{
