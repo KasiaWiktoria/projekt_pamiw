@@ -21,13 +21,13 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     var AVAILABLE_LOGIN = false;
 
-    prepareEventOnChange(NAME_FIELD_ID, validateName(), updateCorrectnessMessage);
-    prepareEventOnChange(SURNAME_FIELD_ID, validateSurname(), updateCorrectnessMessage);
-    prepareEventOnChange(PESEL_FIELD_ID, validatePesel(), updateCorrectnessMessage);
-    prepareEventOnChange(COUNTRY_FIELD_ID, alphabetOnly(COUNTRY_FIELD_ID), updateCorrectnessMessage);
+    prepareEventOnChange(NAME_FIELD_ID, validateName, updateCorrectnessMessage);
+    prepareEventOnChange(SURNAME_FIELD_ID, validateSurname, updateCorrectnessMessage);
+    prepareEventOnChange(PESEL_FIELD_ID, validatePesel, updateCorrectnessMessage);
+    prepareEventOnChange(COUNTRY_FIELD_ID, validateCountry, updateCorrectnessMessage);
     
-    prepareEventOnChange(CITY_FIELD_ID, alphabetOnly(CITY_FIELD_ID), updateCorrectnessMessage);
-    prepareEventOnChange(HOUSE_NR_FIELD_ID, validateHouseNr(), updateCorrectnessMessage);
+    prepareEventOnChange(CITY_FIELD_ID, validateCity, updateCorrectnessMessage);
+    prepareEventOnChange(HOUSE_NR_FIELD_ID, validateHouseNr, updateCorrectnessMessage);
     prepareLoginEventOnChange(LOGIN_FIELD_ID, updateLoginAvailabilityMessage);
     prepareLoginEventOnChange(PASSWD_FIELD_ID, updatePasswdCorrectnessMessage);
     prepareLoginEventOnChange(REPEAT_PASSWD_FIELD_ID, updateRepeatPasswdCorrectnessMessage);
@@ -113,9 +113,9 @@ document.addEventListener('DOMContentLoaded', function (event) {
         }
     }
 
-    function prepareEventOnChange(FIELD_ID, warningMessage, updateMessageFunction) {
+    function prepareEventOnChange(FIELD_ID, validationFunction, updateMessageFunction) {
         let loginInput = document.getElementById(FIELD_ID);
-        loginInput.addEventListener("change", updateMessageFunction.bind(event, FIELD_ID, warningMessage));
+        loginInput.addEventListener("change", updateMessageFunction.bind(event, FIELD_ID, validationFunction));
     }
 
     function prepareLoginEventOnChange(FIELD_ID, updateMessageFunction) {
@@ -187,15 +187,15 @@ document.addEventListener('DOMContentLoaded', function (event) {
         }
     }
 
-    function updateCorrectnessMessage(FIELD_ID, warningMessage) {
+    function updateCorrectnessMessage(FIELD_ID, validationFunction) {
         let warningElemId = FIELD_ID + "Warning";
 
-        if (warningMessage == "") {
+        if (validationFunction() == "") {
             console.log("Correct " + FIELD_ID + "!");
             removeWarningMessage(warningElemId);
         } else {
             console.log("Uncorrect " + FIELD_ID + ".");
-            showWarningMessage(warningElemId, warningMessage, FIELD_ID);
+            showWarningMessage(warningElemId, validationFunction(), FIELD_ID);
         }
     }
     
