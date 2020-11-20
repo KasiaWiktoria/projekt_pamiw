@@ -271,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
         if(/^\s+$/.test(surnameInput)){
             return "Nazwisko nie może zawierać spacji. W przypadku dwuczłonowego nazwiska wpisz '-' pomiędzy";
-        }else if (!(/^([A-Z][a-z]+)(-[A-Z][a-z]+)*+$/.test(surnameInput))){
+        }else if (!(/^([A-Z][a-z]+)(-[A-Z][a-z]+)*$/.test(surnameInput))){
             return "Nazwisko może zawierać tylko litery.";
         }else{
             return "";
