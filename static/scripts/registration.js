@@ -115,12 +115,12 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     function prepareEventOnChange(FIELD_ID, validationFunction, updateMessageFunction) {
         let loginInput = document.getElementById(FIELD_ID);
-        loginInput.addEventListener("change", updateMessageFunction(FIELD_ID, validationFunction));
+        loginInput.addEventListener("change", updateMessageFunction.bind(FIELD_ID, validationFunction));
     }
 
     function prepareEventOnChange(FIELD_ID, updateMessageFunction) {
         let loginInput = document.getElementById(FIELD_ID);
-        loginInput.addEventListener("change", updateMessageFunction());
+        loginInput.addEventListener("change", updateMessageFunction);
     }
 
     function updateLoginAvailabilityMessage() {
@@ -310,14 +310,6 @@ document.addEventListener('DOMContentLoaded', function (event) {
             } else {
             return "Podany pesel jest nieprawidłowy.";
         }   
-    }
-
-    function validateCountry(){
-        return alphabetOnly(COUNTRY_FIELD_ID)
-    }
-
-    function validateCity(){
-        return alphabetOnly(CITY_FIELD_ID)
     }
 
     function validateHouseNr() {
