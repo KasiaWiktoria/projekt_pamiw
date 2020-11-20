@@ -21,13 +21,13 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     var AVAILABLE_LOGIN = false;
 
-    prepareEventOnChange(NAME_FIELD_ID, updateCorrectnessMessage(NAME_FIELD_ID,validateName()));
-    prepareEventOnChange(SURNAME_FIELD_ID, updateCorrectnessMessage(SURNAME_FIELD_ID,validateSurname()));
+    prepareEventOnChange(NAME_FIELD_ID, updateCorrectnessMessage(NAME_FIELD_ID,validateName));
+    prepareEventOnChange(SURNAME_FIELD_ID, updateCorrectnessMessage(SURNAME_FIELD_ID,validateSurname));
     prepareEventOnChange(PESEL_FIELD_ID, updateCorrectnessMessage(PESEL_FIELD_ID, validatePesel));
-    prepareEventOnChange(COUNTRY_FIELD_ID, updateCorrectnessMessage(COUNTRY_FIELD_ID,alphabetOnly(CITY_FIELD_ID)));
+    prepareEventOnChange(COUNTRY_FIELD_ID, updateCorrectnessMessage(COUNTRY_FIELD_ID,validateCountry));
     
-    prepareEventOnChange(CITY_FIELD_ID, updateCorrectnessMessage(CITY_FIELD_ID,alphabetOnly(CITY_FIELD_ID)));
-    prepareEventOnChange(HOUSE_NR_FIELD_ID, updateCorrectnessMessage(HOUSE_NR_FIELD_ID,validateHouseNr()));
+    prepareEventOnChange(CITY_FIELD_ID, updateCorrectnessMessage(CITY_FIELD_ID,validateCity));
+    prepareEventOnChange(HOUSE_NR_FIELD_ID, updateCorrectnessMessage(HOUSE_NR_FIELD_ID,validateHouseNr));
     prepareEventOnChange(LOGIN_FIELD_ID,updateLoginAvailabilityMessage);
     prepareEventOnChange(PASSWD_FIELD_ID, updatePasswdCorrectnessMessage);
     prepareEventOnChange(REPEAT_PASSWD_FIELD_ID, updateRepeatPasswdCorrectnessMessage);
@@ -305,6 +305,14 @@ document.addEventListener('DOMContentLoaded', function (event) {
             } else {
             return "Podany pesel jest nieprawidłowy.";
         }   
+    }
+
+    function validateCountry(){
+        return alphabetOnly(COUNTRY_FIELD_ID)
+    }
+
+    function validateCity(){
+        return alphabetOnly(CITY_FIELD_ID)
     }
 
     function validateHouseNr() {
