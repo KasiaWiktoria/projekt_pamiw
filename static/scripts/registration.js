@@ -310,7 +310,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     function validateHouseNr() {
         let houseNrInput = document.getElementById(HOUSE_NR_FIELD_ID).value;
 
-        if (!(/^\d+[a-zA-Z]{0,1}$/.test(input))){
+        if (!(/^\d+[a-zA-Z]{0,1}$/.test(houseNrInput))){
             return "Numer domu może zawierać tylko cyfry i opcjonalnie jedną literę.";
         }else{
             return "";
