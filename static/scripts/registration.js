@@ -170,9 +170,9 @@ document.addEventListener('DOMContentLoaded', function (event) {
         let warningMessage = isPasswdCorrect();
 
         if (warningMessage == "") {
+            removeWarningMessage(warningElemId);
             if ((arePasswdsTheSame())) {
                 console.log("Correct password!");
-                removeWarningMessage(warningElemId);
                 removeWarningMessage("repeatPasswdWarning");
             } else {
                 warningMessage = "Podany ciąg znaków nie zgadza się z hasłem podanym poniżej.";
