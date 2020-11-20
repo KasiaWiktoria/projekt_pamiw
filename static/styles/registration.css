@@ -2,12 +2,6 @@
     display: flex;
     justify-content: center;
 }
-/*
-.site-content{
-    background-image: url(../images/paczki-tlo.jpg);
-    
-}
-*/
 
 .content .form-block{
     display: flex;
@@ -16,15 +10,18 @@
     margin-right: 10px;
     justify-content: center;
     padding: 20px;
-    background-color: #5cd4015e;
 }
+
 .registration-form{
     display: flex;
     justify-content: space-between;
 }
 
+.column{
+    width: 50%;
+}
+
 .registration-form .form-col{
-    display: flex;
     width: 70%;
     margin: auto;
 }
