@@ -182,15 +182,15 @@ document.addEventListener('DOMContentLoaded', function (event) {
         }
     }
 
-    function updateCorrectnessMessage(FIELD_ID, warningMessage) {
+    function updateCorrectnessMessage(FIELD_ID, validationFunction) {
         let warningElemId = FIELD_ID + "Warning";
 
-        if (warningMessage == "") {
+        if (validationFunction() == "") {
             console.log("Correct " + FIELD_ID + "!");
             removeWarningMessage(warningElemId);
         } else {
             console.log("Uncorrect " + FIELD_ID + ".");
-            showWarningMessage(warningElemId, warningMessage, FIELD_ID);
+            showWarningMessage(warningElemId, validationFunction(), FIELD_ID);
         }
     }
     
