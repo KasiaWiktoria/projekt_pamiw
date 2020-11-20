@@ -23,10 +23,12 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     prepareEventOnChange(NAME_FIELD_ID, validateName, updateCorrectnessMessage);
     prepareEventOnChange(SURNAME_FIELD_ID, validateSurname, updateCorrectnessMessage);
+    prepareEventOnChange(BDATE_FIELD_ID, validateBDate, updateCorrectnessMessage);
     prepareEventOnChange(PESEL_FIELD_ID, validatePesel, updateCorrectnessMessage);
     prepareEventOnChange(COUNTRY_FIELD_ID, validateCountry, updateCorrectnessMessage);
-    
+    prepareEventOnChange(POSTAL_CODE_FIELD_ID, validatePostalCode ,updateCorrectnessMessage);
     prepareEventOnChange(CITY_FIELD_ID, validateCity, updateCorrectnessMessage);
+    prepareEventOnChange(STREET_FIELD_ID, validateStreet, updateCorrectnessMessage);
     prepareEventOnChange(HOUSE_NR_FIELD_ID, validateHouseNr, updateCorrectnessMessage);
     prepareLoginEventOnChange(LOGIN_FIELD_ID, updateLoginAvailabilityMessage);
     prepareLoginEventOnChange(PASSWD_FIELD_ID, updatePasswdCorrectnessMessage);
@@ -198,19 +200,6 @@ document.addEventListener('DOMContentLoaded', function (event) {
             showWarningMessage(warningElemId, validationFunction(), FIELD_ID);
         }
     }
-    
-    function updatePeselCorrectnessMessage() {
-        let warningElemId = "peselWarning";
-        let warningMessage = "Podany pesel jest nieprawidłowy.";
-
-        if (validatePesel() == "") {
-            console.log("Correct pesel!");
-            removeWarningMessage(warningElemId);
-        } else {
-            console.log("Uncorrect pesel.");
-            showWarningMessage(warningElemId, validatePesel(), PESEL_FIELD_ID);
-        }
-    }
 
     // ----------------------------------------------------------------
 
@@ -259,25 +248,24 @@ document.addEventListener('DOMContentLoaded', function (event) {
         }
     }
 
-    function validateName() {
-        let nameInput = document.getElementById(NAME_FIELD_ID).value;
+    function noSpecialCharacters(FIELD_ID) {
+        let input = document.getElementById(FIELD_ID).value;
+        let input_name = document.getElementById(FIELD_ID).getAttribute('name');
 
-        if (!(/^[a-zA-Z]+$/.test(nameInput))){
-            return "Imię może zawierać tylko litery.";
-        }else if(/^\s+$/.test(nameInput)){
-            return "Wpisz tylko jedno imię";
+        if (!(/^[a-zA-Z-\d ]+$/.test(input))){
+            return "Pole " + input_name + " może zawierać tylko litery, cyfry, znak spacji lub znak '-'.";
         }else{
             return "";
         }
     }
 
-    function validateSurname() {
-        let surnameInput = document.getElementById(SURNAME_FIELD_ID).value;
+    function validateName() {
+        let nameInput = document.getElementById(NAME_FIELD_ID).value;
 
-        if(/^\s+$/.test(surnameInput)){
-            return "Nazwisko nie może zawierać spacji. W przypadku dwuczłonowego nazwiska wpisz '-' pomiędzy";
-        }else if (!(/^([A-Z][a-z]+)(-[A-Z][a-z]+)*$/.test(surnameInput))){
-            return "Nazwisko może zawierać tylko litery.";
+        if(/^\s$/.test(nameInput)){
+            return "Wpisz tylko jedno imię";
+        }else if (!(/^[a-zA-Z]+$/.test(nameInput))){
+            return "Imię może zawierać tylko litery.";
         }else{
             return "";
         }
@@ -296,6 +284,16 @@ document.addEventListener('DOMContentLoaded', function (event) {
             return "Drugi człon nazwiska musi zaczynać się wielką literą.";
         }else if(/^([A-Z][a-z]+)-[A-Z])*$/.test(surnameInput)){
             return "Drugie nazwisko musi mieć więcej niż jedną literę.";
+        }else{
+            return "";
+        }
+    }
+
+    function validateBDate(){
+        let bdateInput = document.getElementById(BDATE_FIELD_ID).value;
+
+        if(!(/^\d{2}\.\d{2}.\d{4}$/.test(bdateInput))){
+            return "Data powinna mieć format dd.mm.rrrr";
         }else{
             return "";
         }
@@ -334,8 +332,16 @@ document.addEventListener('DOMContentLoaded', function (event) {
         return alphabetOnly(COUNTRY_FIELD_ID);
     }
 
+    function validatePostalCode(){
+        return noSpecialCharacters(POSTAL_CODE_FIELD_ID);
+    }
+
     function validateCity(){
         return alphabetOnly(CITY_FIELD_ID);
+    }
+
+    function validateStreet(){
+        return noSpecialCharacters(STREET_FIELD_ID);
     }
 
     function validateHouseNr() {
