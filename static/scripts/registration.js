@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     function prepareEventOnChange(FIELD_ID, validationFunction, updateMessageFunction) {
         let loginInput = document.getElementById(FIELD_ID);
-        loginInput.addEventListener("change", updateMessageFunction.bind(FIELD_ID, validationFunction));
+        loginInput.addEventListener("change", updateMessageFunction.bind(validationFunction, FIELD_ID));
     }
 
     function prepareLoginEventOnChange(FIELD_ID, updateMessageFunction) {
