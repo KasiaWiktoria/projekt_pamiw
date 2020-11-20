@@ -1,9 +1,11 @@
 .content{
     display: flex;
     justify-content: center;
-    background-image: url(../images/pack.png);
 }
 
+.site-content{
+    background-image: url(../images/pack.png);
+}
 
 .content .form-block{
     margin-left: 40px;
@@ -12,7 +14,10 @@
     padding: 20px;
     background-color: #5cd4015e;
 }
-
+.registration-form{
+    display: flex;
+    justify-content: space-around;
+}
 h2{
     text-align: center;
 }
