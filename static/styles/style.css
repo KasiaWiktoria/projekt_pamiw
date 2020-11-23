@@ -36,7 +36,7 @@ table tbody td{
 
 section.image {
     background-image: url('../images/paczki-tlo.jpg');
-    height: 800px;
+    height: 400px;
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
@@ -44,6 +44,7 @@ section.image {
 }
 
 section.text {
+    margin: auto;
     max-width: 1170px;
     padding: 20px;
     padding: 20px 0;
