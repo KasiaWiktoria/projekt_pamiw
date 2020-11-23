@@ -64,6 +64,7 @@ header p{
     font-family: 'Comfortaa';
     width: 250px;
     margin: 0;
+    text-align: left;
 }
 
 header p span{
@@ -130,6 +131,7 @@ nav ul li a:hover {
 a{
     text-align: center;
     text-decoration: none;
+    display: flex;
 }
 
 footer {
