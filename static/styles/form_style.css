@@ -2,6 +2,7 @@
 form{
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
 }
 
 form .column{
@@ -17,7 +18,6 @@ form .form-col{
     width: 70%;
     margin: auto;
     min-width: 250px;
-    flex-wrap: wrap;
 }
 
 form .form-row{
