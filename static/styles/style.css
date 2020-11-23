@@ -34,6 +34,22 @@ table tbody td{
     text-align: center;
 }
 
+section.image {
+    background-image: url('../images/paczki-tlo.jpg');
+    height: 800px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+section.text {
+    max-width: 1170px;
+    padding: 20px;
+    padding: 20px 0;
+    position: relative;
+}
+
 .img-block {
     display: flex;
     justify-content: center;
