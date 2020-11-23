@@ -1,5 +1,3 @@
-import uuid
-
 class Shipping:
 
     def __init__(self, product_name, sender, recipient):
