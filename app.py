@@ -2,10 +2,18 @@ from flask import Flask, render_template, url_for, redirect
 from flask import request, jsonify
 import logging
 from static.model.shipping import *
-
+from flask_jwt_extended import JWTManager, jwt_required
+import redis
+import os
 
 app = Flask(__name__, static_url_path="")
 log = app.logger
+db = redis.Redis(host="redis_db", port=6379, decode_responses=True)
+
+#app.config["JWT_SECRET_KEY"] = os.environ.get(SECRET_KEY)
+#app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
+
+jwt = JWTManager(app)
 
 GET = "GET"
 POST = "POST"
@@ -16,16 +24,16 @@ shipments = []
 #def setup():
 #    log.setLevel(logging.DEBUG)
 
-@app.route("/", methods=["GET"])
+@app.route("/", methods=[GET])
 def index():
     return render_template("index.html")
-'''
+
 @app.route("/login/shipments-list", methods=[GET])
+#@jwt_required
 def list(name):
     return render_template('shipments-list.html', my_shipments = shipments)
-'''
 
-@app.route("/<name>", methods=["GET"])
+@app.route("/<name>/", methods=[GET])
 def set(name):
     return render_template(name + '.html', my_shipments = shipments)
 
@@ -71,6 +79,31 @@ def to_recipient(request):
 
     return Person(recipient_name, recipient_surname, recipient_phone, recipient_postcode, recipient_city, recipient_street, recipient_house_nr)
 
+@app.route("/download-files/", methods=[GET])
+@jwt_required
+def download_file():
+    try:
+        full_filename = os.path.join(FILES_PATH, "sdm.pdf")
+        return send_file(full_filename)
+    except Exception as e:
+        log.error("File not found :(")
+        log.error(str(e))
+        return {"message": "File not found... :("}, 404
+
+
+@app.route("/upload-file", methods=[POST])
+def upload_file():
+    maybe_file = request.files["shipment_img"]
+    save_file(maybe_file)
+    return {"message": "Maybe saved the file."}
+
+
+def save_file(file_to_save):
+    if len(file_to_save.filename) > 0:
+        path_to_file = os.path.join(FILES_PATH, file_to_save.filename)
+        file_to_save.save(path_to_file)
+    else:
+        log.warn("Empty content of file!")
 
 
 if __name__ == "__main__":
