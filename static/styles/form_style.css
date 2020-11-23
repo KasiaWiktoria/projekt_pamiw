@@ -8,10 +8,16 @@ form .column{
     width: 50%;
     text-align: end;
 }
+form .max-width-elem{
+    width: 100%;
+    margin: auto;
+}
 
 form .form-col{
     width: 70%;
     margin: auto;
+    min-width: 250px;
+    flex-wrap: wrap;
 }
 
 form .form-row{
@@ -24,7 +30,7 @@ form .form-row{
 }
 
 form .form-row label{
-    width: 90px;
+    width: 160px;
     min-width: 90px;
 }
 
