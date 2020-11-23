@@ -13,31 +13,31 @@ shipments = []
 
 #@app.before_first_request
 #def setup():
-    #log.setLevel(logging.DEBUG)
+#    log.setLevel(logging.DEBUG)
 
-@app.route("/", methods=[GET])
+@app.route("/", methods=["GET"])
 def index():
     return render_template("index.html")
 
-@app.route("/<name>", methods=[GET])
+@app.route("/<name>", methods=["GET"])
 def set(name):
     return render_template(name + '.html')
 
-@app.route("/send", methods=[GET])
+@app.route("/send", methods=["GET"])
 def send(name):
     return render_template('send.html', my_shipments = shipments)
 
 
-@app.route("/shipment", methods=[POST])
-def add_shipment():
-    log.debug("Receive request for shipment.")
-    form = request.form
-    log.debug("Request form: {}".format(form))
+#@app.route("/shipment", methods=[POST])
+#def add_shipment():
+#    log.debug("Receive request for shipment.")
+#    form = request.form
+#    log.debug("Request form: {}".format(form))
+#
+#    shipment = to_shipment(form)
+#    shipments.append(shipment)
 
-    shipment = to_shipment(form)
-    shipments.append(shipment)
-
-    return redirect(url_for("/"))
+ #   return redirect(url_for("/"))
 
 def to_shipment(request):
     product_name = request.get("product_name")
