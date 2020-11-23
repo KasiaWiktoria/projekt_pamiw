@@ -26,7 +26,7 @@ def set(name):
 
 @app.route("/send", methods=["GET"])
 def send(name):
-    return render_template('send.html', my_shipments = shipments)
+    return render_template('send.html')
 
 
 @app.route("/shipment", methods=[POST])
