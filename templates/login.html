@@ -11,56 +11,51 @@
     </head>
     <body>
         <header>
-            <img src="images/logo.svg" alt="logo">
+            <img src="/images/logo.svg" alt="logo">
             <p><span>PAX</span> System obsługi paczek</p>
             <nav>
                 <div class="menu">
                     <ul>
                         <li><a href="/">Strona główna</a></li>
-                        <li><a href="registration">Rejestracja</a></li>
-                        <li><a href="send">Nadaj paczkę</a></li>
+                        <li><a href="/registration">Rejestracja</a></li>
+                        <li><a href="/send">Nadaj paczkę</a></li>
                         <li><a href="#">Kontakt</a></li>
                     </ul>
                 </div>
             </nav>
-            <a href="registration">
-                <img src="images/konto.svg" alt="moje konto"> 
+            <a href="/registration">
+                <img src="/images/konto.svg" alt="moje konto"> 
             </a>
         </header>
 
-        <section class="site-content">
-            <div class="form-block">
-                <div class="nav-block">
-                    <a href="login">Zaloguj się</a>
-                    <a href="registration">Zarejestruj się</a>
-                </div>
-
-                <form action=""  method="POST" id="login-form" class="login-form">
-
-                    <div class="column">
-                        <div class="form-col">
-
-                        <div class="form-row">
-                            <label for="login" class="required">Login</label>
-                            <input id="login" type="text" name="login"/>
-                        </div>
-    
-                        <div class="form-row">
-                            <label for="password" class="required">Hasło</label>
-                            <input id="password" type="password" name="hasło"/>
-                        </div>
-
-                        <div class="btn-block">
-                            <input id="button-reg-form" type="submit" value="Rejestruj"/>               
-                        </div>    
-
-                        </div>
-                        <img src="images/paczka.jpg" alt="paczka">
-                    </div>
-                </form>
-            </div>
+        <section class="nav-block">
+                <a href="login">Zaloguj się</a>
+                <a href="registration">Zarejestruj się</a>
         </section>
 
+        <form action="/login"  method="POST" id="login-form" class="login-form">
+
+            <div class="column">
+                <div class="form-col">
+
+                <div class="form-row">
+                    <label for="login" class="required">Login</label>
+                    <input id="login" type="text" name="login"/>
+                </div>
+
+                <div class="form-row">
+                    <label for="password" class="required">Hasło</label>
+                    <input id="password" type="password" name="hasło"/>
+                </div>
+
+                <div class="btn-block">
+                    <input id="button-reg-form" type="submit" value="Rejestruj"/>               
+                </div>    
+
+                </div>
+                <img src="images/paczka.jpg" alt="paczka">
+            </div>
+        </form>
 
         <footer>
             <p class="footer-inline left">&copy; 2020 Katarzyna Stankiewicz</p>
