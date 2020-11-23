@@ -20,7 +20,7 @@ shipments = []
 def index():
     return render_template("index.html")
 '''
-@app.route("/shipments-list", methods=[GET])
+@app.route("/login/shipments-list", methods=[GET])
 def list(name):
     return render_template('shipments-list.html', my_shipments = shipments)
 '''
@@ -29,7 +29,7 @@ def list(name):
 def set(name):
     return render_template(name + '.html', my_shipments = shipments)
 
-@app.route("/shipment", methods=[POST])
+@app.route("/login/shipment", methods=[POST])
 def add_shipment():
     #log.debug("Receive request for shipment.")
     form = request.form
@@ -38,7 +38,7 @@ def add_shipment():
     shipment = to_shipment(form)
     shipments.append(shipment)
 
-    return redirect(url_for("/"))
+    return redirect(url_for("/shipments-list"))
 
 def to_shipment(request):
     product_name = request.get("product_name")
