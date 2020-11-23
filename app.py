@@ -11,10 +11,9 @@ POST = "POST"
 
 shipments = []
 
-@app.before_first_request
-def setup():
-    log.setLevel(logging.DEBUG)
-
+#@app.before_first_request
+#def setup():
+    #log.setLevel(logging.DEBUG)
 
 @app.route("/", methods=[GET])
 def index():
@@ -23,6 +22,11 @@ def index():
 @app.route("/<name>", methods=[GET])
 def set(name):
     return render_template(name + '.html')
+
+@app.route("/send", methods=[GET])
+def send(name):
+    return render_template('send.html', my_shipments = shipments)
+
 
 @app.route("/shipment", methods=[POST])
 def add_shipment():
