@@ -11,8 +11,8 @@ app = Flask(__name__, static_url_path="")
 log = logging.create_logger(app)
 db = redis.Redis(host="redis_db", port=6379, decode_responses=True)
 
-#app.config["JWT_SECRET_KEY"] = os.environ.get(SECRET_KEY)
-#app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
+app.config["JWT_SECRET_KEY"] = os.environ.get(SECRET_KEY)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
 
 jwt = JWTManager(app)
 
