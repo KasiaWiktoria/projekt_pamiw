@@ -17,7 +17,7 @@ def setup():
 
 
 @app.route("/", methods=[GET])
-def home():
+def index():
     return render_template("index.html")
 
 @app.route("/<name>", methods=[GET])
@@ -33,7 +33,7 @@ def add_shipment():
     shipment = to_shipment(form)
     shipments.append(shipment)
 
-    return redirect(url_for("home"))
+    return redirect(url_for("/"))
 
 def to_shipment(request):
     product_name = request.get("product_name")
