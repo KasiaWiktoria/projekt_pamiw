@@ -1,23 +1,8 @@
-/*
-.content{
-    display: flex;
-    justify-content: center;
-}
-
-.content .form-block{
-    display: flex;
-    flex-wrap: wrap;
-    margin-left: 40px;
-    margin-right: 10px;
-    justify-content: center;
-    padding: 20px;
-}
-*/
 .nav-block{
     text-align: end;
 }
 
-.registration-form{
+.form-block{
     display: flex;
     justify-content: space-between;
 }
@@ -27,7 +12,7 @@
     text-align: end;
 }
 
-.registration-form .form-col{
+form .form-col{
     width: 70%;
     margin: auto;
 }
