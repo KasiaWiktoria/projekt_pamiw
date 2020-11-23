@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pl">
+    <head>
+        <title>PAX</title>
+        <meta charset="utf-8">
+        <link href="/styles/registration.css" rel="stylesheet" type="text/css">
+        <link href="/styles/main_style.css" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="/images/favicon.ico"/>
+        <script src="/scripts/registration.js"></script>    
+    </head>
+    <body>
+        <header>
+            <img src="images/logo.svg" alt="logo">
+            <p><span>PAX</span> System obsługi paczek</p>
+            <nav>
+                <div class="content top">
+                    <ul>
+                        <li><a href="/">Strona główna</a></li>
+                        <li><a href="registration">Rejestracja</a></li>
+                        <li><a href="send">Nadaj paczkę</a></li>
+                        <li><a href="#">Kontakt</a></li>
+                    </ul>
+                </div>
+            </nav>
+            <a href="registration">
+                <img src="images/konto.svg" alt="moje konto"> 
+            </a>
+        </header>
+
+        <section>
+            <h4>Lista nadanych paczek</h4>
+            <ul>
+                {% for shipment in my_shipments %}
+                <li>{{shipment.get_title()}}</li>
+                {% endfor %}
+            </ul>
+
+
+            <table>
+                <caption>Lista nadanych paczek</caption>
+                <tbody>
+                    <tr>
+                        <th>nazwa zamówienia</th>
+                        <th>imię i nazwisko nadawcy</th>
+                        <th>adres nadawcy</th>
+                        <th>imię i nazwisko odbiorcy</th>
+                        <th>adres odbiorcy</th>
+                    </tr>
+                    {% for shipment in my_shipments %}
+                    <tr>
+                        <td>{{shipment.get_title()}}</td>
+                        <td>{{shipment.get_sender_name()}}</td>
+                        <td>{{shipment.get_sender_addr()}}</td>
+                        <td>{{shipment.get_recipient_name()}}</td>
+                        <td>{{shipment.get_recipient_addr()}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+
+        <footer>
+            <p class="footer-inline left">&copy; 2020 Katarzyna Stankiewicz</p>
+            <p class="footer-inline right">Projekt realizowany w ramach laboratorium Programowanie Aplikacji Mobilnych i Webowych</p>
+        </footer>
+    </body>
+</html>
