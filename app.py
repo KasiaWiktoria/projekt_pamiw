@@ -19,15 +19,15 @@ shipments = []
 @app.route("/", methods=["GET"])
 def index():
     return render_template("index.html")
-
+'''
 @app.route("/shipments-list", methods=[GET])
 def list(name):
     return render_template('shipments-list.html', my_shipments = shipments)
-
+'''
 
 @app.route("/<name>", methods=["GET"])
 def set(name):
-    return render_template(name + '.html')
+    return render_template(name + '.html', my_shipments = shipments)
 
 @app.route("/shipment", methods=[POST])
 def add_shipment():
