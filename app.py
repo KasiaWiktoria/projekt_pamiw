@@ -1,5 +1,5 @@
-from flask import Flask, render_template, url_for
-from flask import render_template, jsonify
+from flask import Flask, render_template, url_for, redirect
+from flask import request, jsonify
 import logging
 from static.model.shipping import *
 
@@ -29,16 +29,16 @@ def send(name):
     return render_template('send.html', my_shipments = shipments)
 
 
-#@app.route("/shipment", methods=[POST])
-#def add_shipment():
-#    log.debug("Receive request for shipment.")
-#    form = request.form
-#    log.debug("Request form: {}".format(form))
-#
-#    shipment = to_shipment(form)
-#    shipments.append(shipment)
+@app.route("/shipment", methods=[POST])
+def add_shipment():
+    #log.debug("Receive request for shipment.")
+    form = request.form
+    #log.debug("Request form: {}".format(form))
 
- #   return redirect(url_for("/"))
+    shipment = to_shipment(form)
+    shipments.append(shipment)
+
+    return redirect(url_for("/"))
 
 def to_shipment(request):
     product_name = request.get("product_name")
