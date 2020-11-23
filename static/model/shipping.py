@@ -1,7 +1,9 @@
+from uuid import uuid1
+
 class Shipping:
 
     def __init__(self, product_name, sender, recipient):
-        self.__id = uuid.uuid1()
+        self.__id = uuid1()
         self.__product_name = product_name
         self.__sender = sender
         self.__recipient = recipient
