@@ -1,13 +1,14 @@
-from flask import Flask, render_template, url_for, redirect
+from flask import Flask, render_template, url_for, redirect, send_file
 from flask import request, jsonify
-import logging
+from flask import logging
+from const import *
 from static.model.shipping import *
-from flask_jwt_extended import JWTManager, jwt_required
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required
 import redis
 import os
 
 app = Flask(__name__, static_url_path="")
-log = app.logger
+log = logging.create_logger(app)
 db = redis.Redis(host="redis_db", port=6379, decode_responses=True)
 
 #app.config["JWT_SECRET_KEY"] = os.environ.get(SECRET_KEY)
@@ -19,14 +20,23 @@ GET = "GET"
 POST = "POST"
 
 shipments = []
-
-#@app.before_first_request
-#def setup():
-#    log.setLevel(logging.DEBUG)
-
+'''
+@app.before_first_request
+def setup():
+    log.setLevel(logging.DEBUG)
+'''
 @app.route("/", methods=[GET])
 def index():
     return render_template("index.html")
+
+
+@app.route("/login", methods=[POST])
+def login():
+    username = request.form["username"]
+    access_token = create_access_token(identity=username)
+    return {"access_token": access_token}
+
+
 
 @app.route("/login/shipments-list", methods=[GET])
 #@jwt_required
@@ -39,9 +49,9 @@ def set(name):
 
 @app.route("/login/shipment", methods=[POST])
 def add_shipment():
-    #log.debug("Receive request for shipment.")
+    log.debug("Receive request for shipment.")
     form = request.form
-    #log.debug("Request form: {}".format(form))
+    log.debug("Request form: {}".format(form))
 
     shipment = to_shipment(form)
     shipments.append(shipment)
