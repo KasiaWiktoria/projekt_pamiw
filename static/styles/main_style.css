@@ -5,7 +5,7 @@ body{
     margin: 0;
 }
 
-.top{
+.menu{
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -94,6 +94,37 @@ nav ul li a:hover {
     background-color: #BA2AC7; 
     color: #ffffff;   
     border-radius: 25px;
+}
+
+
+.btn-block{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 30px;
+    margin-bottom: 40px;
+}
+
+.btn-block input{
+    padding: 10px 50px;
+    background-color: #5dd401;
+    color: #fff;
+    border-radius: 20px;
+    font-size: 20px;
+    outline-style: none;
+    border: none;
+    margin-bottom: 10px;
+}
+
+.btn-block input:hover{
+    background-color: #BA2AC7;
+    color: #fff;
+}
+
+a{
+    text-align: center;
+    text-decoration: none;
 }
 
 a img {
