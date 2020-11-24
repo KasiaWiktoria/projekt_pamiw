@@ -1,4 +1,4 @@
-import {GET, POST, URL, HTTP_STATUS,AVAILABLE_LOGIN,NAME_FIELD_ID, SURNAME_FIELD_ID, BDATE_FIELD_ID, PESEL_FIELD_ID, COUNTRY_FIELD_ID, POSTAL_CODE_FIELD_ID, CITY_FIELD_ID, STREET_FIELD_ID, HOUSE_NR_FIELD_ID, LOGIN_FIELD_ID,PASSWD_FIELD_ID, REPEAT_PASSWD_FIELD_ID} from './const.js'
+import {GET, POST, URL, HTTP_STATUS,AVAILABLE_LOGIN,NAME_FIELD_ID, SURNAME_FIELD_ID, BDATE_FIELD_ID, PESEL_FIELD_ID, COUNTRY_FIELD_ID, POSTAL_CODE_FIELD_ID, CITY_FIELD_ID, STREET_FIELD_ID, HOUSE_NR_FIELD_ID, LOGIN_FIELD_ID, PASSWD_FIELD_ID, REPEAT_PASSWD_FIELD_ID} from './const.js'
 
 function alphabetOnly(FIELD_ID) {
     let input = document.getElementById(FIELD_ID).value;
@@ -22,7 +22,7 @@ function noSpecialCharacters(FIELD_ID) {
     }
 }
 
-export function validateName() {
+export function validateName(NAME_FIELD_ID) {
     let nameInput = document.getElementById(NAME_FIELD_ID).value;
 
     if(/^\s$/.test(nameInput)){
@@ -34,7 +34,7 @@ export function validateName() {
     }
 }
 
-export function validateSurname() {
+export function validateSurname(SURNAME_FIELD_ID) {
     let surnameInput = document.getElementById(SURNAME_FIELD_ID).value;
 
     if (!(/^[A-Z].*$/.test(surnameInput))){
@@ -52,7 +52,7 @@ export function validateSurname() {
     }
 }
 
-export function validateBDate(){
+export function validateBDate(BDATE_FIELD_ID){
     let bdateInput = document.getElementById(BDATE_FIELD_ID).value;
 
     if(!(/^\d{2}\.\d{2}.\d{4}$/.test(bdateInput))){
@@ -62,7 +62,7 @@ export function validateBDate(){
     }
 }
 
-export function validatePesel() {
+export function validatePesel(PESEL_FIELD_ID) {
     let peselInput = document.getElementById(PESEL_FIELD_ID).value;
     
     if (peselInput.length == 11 && !isNaN(peselInput)) {
@@ -91,23 +91,23 @@ export function validatePesel() {
     }   
 }
 
-export function validateCountry(){
+export function validateCountry(COUNTRY_FIELD_ID){
     return alphabetOnly(COUNTRY_FIELD_ID);
 }
 
-export function validatePostalCode(){
+export function validatePostalCode(POSTAL_CODE_FIELD_ID){
     return noSpecialCharacters(POSTAL_CODE_FIELD_ID);
 }
 
-export function validateCity(){
+export function validateCity(CITY_FIELD_ID){
     return alphabetOnly(CITY_FIELD_ID);
 }
 
-export function validateStreet(){
+export function validateStreet(STREET_FIELD_ID){
     return noSpecialCharacters(STREET_FIELD_ID);
 }
 
-export function validateHouseNr() {
+export function validateHouseNr(HOUSE_NR_FIELD_ID) {
     let houseNrInput = document.getElementById(HOUSE_NR_FIELD_ID).value;
 
     if (!(/^\d+[a-zA-Z]?$/.test(houseNrInput))){

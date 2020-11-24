@@ -62,11 +62,11 @@ export function prepareEventOnChange(FIELD_ID, validationFunction, updateMessage
 export function updateCorrectnessMessage(FIELD_ID, validationFunction) {
     let warningElemId = FIELD_ID + "Warning";
 
-    if (validationFunction() == "") {
+    if (validationFunction(FIELD_ID) == "") {
         console.log("Correct " + FIELD_ID + "!");
         removeWarningMessage(warningElemId);
     } else {
         console.log("Uncorrect " + FIELD_ID + ".");
-        showWarningMessage(warningElemId, validationFunction(), FIELD_ID);
+        showWarningMessage(warningElemId, validationFunction(FIELD_ID), FIELD_ID);
     }
 }

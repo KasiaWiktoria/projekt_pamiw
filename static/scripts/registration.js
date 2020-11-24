@@ -14,9 +14,9 @@ document.addEventListener('DOMContentLoaded', function (event) {
     prepareEventOnChange(CITY_FIELD_ID, validateCity, updateCorrectnessMessage);
     prepareEventOnChange(STREET_FIELD_ID, validateStreet, updateCorrectnessMessage);
     prepareEventOnChange(HOUSE_NR_FIELD_ID, validateHouseNr, updateCorrectnessMessage);
-    prepareLoginEventOnChange(LOGIN_FIELD_ID, updateLoginAvailabilityMessage);
-    prepareLoginEventOnChange(PASSWD_FIELD_ID, updatePasswdCorrectnessMessage);
-    prepareLoginEventOnChange(REPEAT_PASSWD_FIELD_ID, updateRepeatPasswdCorrectnessMessage);
+    prepareOtherEventOnChange(LOGIN_FIELD_ID, updateLoginAvailabilityMessage);
+    prepareOtherEventOnChange(PASSWD_FIELD_ID, updatePasswdCorrectnessMessage);
+    prepareOtherEventOnChange(REPEAT_PASSWD_FIELD_ID, updateRepeatPasswdCorrectnessMessage);
 
     let registrationForm = document.getElementById("registration-form");
 
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     });
 
     
-    function prepareLoginEventOnChange(FIELD_ID, updateMessageFunction) {
+    function prepareOtherEventOnChange(FIELD_ID, updateMessageFunction) {
         let loginInput = document.getElementById(FIELD_ID);
         loginInput.addEventListener("change", updateMessageFunction);
     }
