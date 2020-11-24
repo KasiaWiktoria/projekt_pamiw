@@ -43,6 +43,7 @@ a img {
 
 header{
     display: flex;
+    justify-content: space-between;
     flex-wrap: nowrap;
     align-items: center;
     border-bottom: 1px;

@@ -8,19 +8,6 @@ document.addEventListener('DOMContentLoaded', function (event) {
     const POST = "POST";
     const URL = "https://pamiw2020registration.herokuapp.com/";
 
-    const NAME_FIELD_ID = "name";
-    const SURNAME_FIELD_ID = "surname";
-    const BDATE_FIELD_ID = "bdate";
-    const PESEL_FIELD_ID = "pesel";
-    const COUNTRY_FIELD_ID = "country";
-    const POSTAL_CODE_FIELD_ID = "postal_code";
-    const CITY_FIELD_ID = "city";
-    const STREET_FIELD_ID = "street";
-    const HOUSE_NR_FIELD_ID = "house_nr";
-    const LOGIN_FIELD_ID = "login";
-    const PASSWD_FIELD_ID = "password";
-    const REPEAT_PASSWD_FIELD_ID = "second_password";
-
     var HTTP_STATUS = {OK: 200, CREATED: 201, NOT_FOUND: 404};
 
     var AVAILABLE_LOGIN = false;
