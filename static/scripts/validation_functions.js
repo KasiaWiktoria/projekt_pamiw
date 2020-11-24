@@ -136,13 +136,12 @@ export function validateFile(IMAGE_FIELD_ID) {
             var allowedExtensions =  
                     /(\.jpg|\.jpeg|\.png|\.gif)$/i; 
               
-            if (!allowedExtensions.exec(filePath)) { 
-                //fileInput.value = ''; 
-                return 'Nieprawidłowy format pliku. Dozwolone rozszerzenia: .jpg, .jpeg, .png, .gif'; 
+            if (allowedExtensions.exec(filePath) !== null) { 
+                return "";
             }  
             else  
             { 
-                return "";
+                return 'Nieprawidłowy format pliku. Dozwolone rozszerzenia: .jpg, .jpeg, .png, .gif'; 
             } 
 }
 
