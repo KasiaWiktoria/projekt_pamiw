@@ -1,10 +1,10 @@
 
-function showWarningMessage(newElemId, message, field_id) {
+export function showWarningMessage(newElemId, message, field_id) {
     let warningElem = prepareWarningElem(newElemId, message);
     appendAfterElem(field_id, warningElem);
 }
 
-function removeWarningMessage(warningElemId) {
+export function removeWarningMessage(warningElemId) {
     let warningElem = document.getElementById(warningElemId);
 
     if (warningElem !== null) {
@@ -12,7 +12,7 @@ function removeWarningMessage(warningElemId) {
     }
 }
 
-function prepareWarningElem(newElemId, message) {
+export function prepareWarningElem(newElemId, message) {
     let warningField = document.getElementById(newElemId);
 
     if (warningField === null) {
@@ -26,7 +26,7 @@ function prepareWarningElem(newElemId, message) {
     return warningField;
 }
 
-function appendAfterElem(currentElemId, newElem) {
+export function appendAfterElem(currentElemId, newElem) {
     let currentElem = document.getElementById(currentElemId);
     currentElem.insertAdjacentElement('afterend', newElem);
 }

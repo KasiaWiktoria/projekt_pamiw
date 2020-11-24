@@ -21,7 +21,7 @@ function noSpecialCharacters(FIELD_ID) {
     }
 }
 
-function validateName() {
+export function validateName() {
     let nameInput = document.getElementById(NAME_FIELD_ID).value;
 
     if(/^\s$/.test(nameInput)){
@@ -33,7 +33,7 @@ function validateName() {
     }
 }
 
-function validateSurname() {
+export function validateSurname() {
     let surnameInput = document.getElementById(SURNAME_FIELD_ID).value;
 
     if (!(/^[A-Z].*$/.test(surnameInput))){
@@ -51,7 +51,7 @@ function validateSurname() {
     }
 }
 
-function validateBDate(){
+export function validateBDate(){
     let bdateInput = document.getElementById(BDATE_FIELD_ID).value;
 
     if(!(/^\d{2}\.\d{2}.\d{4}$/.test(bdateInput))){
@@ -61,7 +61,7 @@ function validateBDate(){
     }
 }
 
-function validatePesel() {
+export function validatePesel() {
     let peselInput = document.getElementById(PESEL_FIELD_ID).value;
     
     if (peselInput.length == 11 && !isNaN(peselInput)) {
@@ -90,23 +90,23 @@ function validatePesel() {
     }   
 }
 
-function validateCountry(){
+export function validateCountry(){
     return alphabetOnly(COUNTRY_FIELD_ID);
 }
 
-function validatePostalCode(){
+export function validatePostalCode(){
     return noSpecialCharacters(POSTAL_CODE_FIELD_ID);
 }
 
-function validateCity(){
+export function validateCity(){
     return alphabetOnly(CITY_FIELD_ID);
 }
 
-function validateStreet(){
+export function validateStreet(){
     return noSpecialCharacters(STREET_FIELD_ID);
 }
 
-function validateHouseNr() {
+export function validateHouseNr() {
     let houseNrInput = document.getElementById(HOUSE_NR_FIELD_ID).value;
 
     if (!(/^\d+[a-zA-Z]?$/.test(houseNrInput))){
@@ -116,7 +116,7 @@ function validateHouseNr() {
     }
 }
 
-function isLoginAvailable() {
+export function isLoginAvailable() {
     return Promise.resolve(checkLoginAvailability().then(function (statusCode) {
         if (statusCode === HTTP_STATUS.OK) {
             return false;
@@ -141,7 +141,7 @@ function checkLoginAvailability() {
     }));
 }
 
-function validateLogin(){
+export function validateLogin(){
     let loginInput = document.getElementById(LOGIN_FIELD_ID).value;
     if (!(/^[a-zA-Z]+$/.test(loginInput))){
         return "Login może składać się tylko z liter.";
@@ -152,7 +152,7 @@ function validateLogin(){
     }
 }
 
-function validatePasswd() {
+export function validatePasswd() {
     let passwdInput = document.getElementById(PASSWD_FIELD_ID).value;
     if (passwdInput.length < 8) {
         return "Hasło musi mieć powyżej 8 znaków";
@@ -167,7 +167,7 @@ function validatePasswd() {
     }
 }
 
-function arePasswdsTheSame() {
+export function arePasswdsTheSame() {
     let passwdInput = document.getElementById(PASSWD_FIELD_ID).value;
     let repeatPasswdInput = document.getElementById(REPEAT_PASSWD_FIELD_ID).value;
 

@@ -16,7 +16,7 @@ export function submitForm(form, name, successMessage, failureMessage) {
             });
 }
 
-export function getResponseData(response) {
+function getResponseData(response) {
     let status = response.status;
 
     if (status === HTTP_STATUS.OK || status === HTTP_STATUS.CREATED) {
@@ -50,12 +50,12 @@ function displayInConsoleCorrectResponse(correctResponse, successMessage, failur
     }
 }
 
-function prepareEventOnChange(FIELD_ID, validationFunction, updateMessageFunction) {
+export function prepareEventOnChange(FIELD_ID, validationFunction, updateMessageFunction) {
     let loginInput = document.getElementById(FIELD_ID);
     loginInput.addEventListener("change", updateMessageFunction.bind(event, FIELD_ID, validationFunction));
 }
 
-function updateCorrectnessMessage(FIELD_ID, validationFunction) {
+export function updateCorrectnessMessage(FIELD_ID, validationFunction) {
     let warningElemId = FIELD_ID + "Warning";
 
     if (validationFunction() == "") {
