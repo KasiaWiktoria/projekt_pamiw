@@ -63,7 +63,7 @@ export function updateCorrectnessMessage(FIELD_ID, validationFunction) {
     let warningElemId = FIELD_ID + "Warning";
 
     if(document.getElementById(FIELD_ID).value == ""){
-        showWarningMessage(warningElemId, "puste pole", FIELD_ID);
+        removeWarningMessage(warningElemId);
     } else if (validationFunction(FIELD_ID) == "") {
         console.log("Correct " + FIELD_ID + "!");
         removeWarningMessage(warningElemId);

@@ -11,7 +11,7 @@ function alphabetOnly(FIELD_ID) {
     }
 }
 
-function noSpecialCharacters(FIELD_ID) {
+export function noSpecialCharacters(FIELD_ID) {
     let input = document.getElementById(FIELD_ID).value;
     let input_name = document.getElementById(FIELD_ID).getAttribute('name');
 
