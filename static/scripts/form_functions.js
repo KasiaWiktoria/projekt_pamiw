@@ -1,4 +1,4 @@
-function submitForm(form, name, successMessage, failureMessage) {
+export function submitForm(form, name, successMessage, failureMessage) {
     let registerUrl = URL + name;
 
     let registerParams = {
@@ -16,7 +16,7 @@ function submitForm(form, name, successMessage, failureMessage) {
             });
 }
 
-function getResponseData(response) {
+export function getResponseData(response) {
     let status = response.status;
 
     if (status === HTTP_STATUS.OK || status === HTTP_STATUS.CREATED) {
