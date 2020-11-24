@@ -3,6 +3,10 @@ export const GET = "GET";
 export const POST = "POST";
 export const URL = "https://pamiw2020registration.herokuapp.com/";
 
+export const POLSKIE_ZNAKI = "a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ";
+export const POLSKIE_ZNAKI_MALE = "a-ząćęłńóśźż";
+export const POLSKIE_ZNAKI_DUZE = "A-ZĄĆĘŁŃÓŚŹŻ";
+
 export const NAME_FIELD_ID = "name";
 export const SURNAME_FIELD_ID = "surname";
 export const BDATE_FIELD_ID = "bdate";

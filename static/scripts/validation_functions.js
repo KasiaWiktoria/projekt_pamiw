@@ -4,7 +4,7 @@ function alphabetOnly(FIELD_ID) {
     let input = document.getElementById(FIELD_ID).value;
     let input_name = document.getElementById(FIELD_ID).getAttribute('name');
 
-    if (!(/^[a-zA-Z]+$/.test(input))){
+    if (!(RegExp("^[" + POLSKIE_ZNAKI +"]+$").test(input))){
         return "Pole " + input_name + " może zawierać tylko litery.";
     }else{
         return "";
@@ -15,7 +15,7 @@ export function noSpecialCharacters(FIELD_ID) {
     let input = document.getElementById(FIELD_ID).value;
     let input_name = document.getElementById(FIELD_ID).getAttribute('name');
 
-    if (!(/^[a-zA-Z-\d ]+$/.test(input))){
+    if (!(RegExp("^[" + POLSKIE_ZNAKI +"-\d ]+$").test(input))){
         return "Pole " + input_name + " może zawierać tylko litery, cyfry, znak spacji lub znak '-'.";
     }else{
         return "";
@@ -25,9 +25,9 @@ export function noSpecialCharacters(FIELD_ID) {
 export function validateName(NAME_FIELD_ID) {
     let nameInput = document.getElementById(NAME_FIELD_ID).value;
 
-    if(/^\s$/.test(nameInput)){
+    if(RegExp("^\s$").test(nameInput)){
         return "Wpisz tylko jedno imię";
-    }else if (!(/^[a-zA-Z]+$/.test(nameInput))){
+    }else if (!(RegExp("^[" + POLSKIE_ZNAKI +"]+$").test(nameInput))){
         return "Imię może zawierać tylko litery.";
     }else{
         return "";
@@ -37,15 +37,15 @@ export function validateName(NAME_FIELD_ID) {
 export function validateSurname(SURNAME_FIELD_ID) {
     let surnameInput = document.getElementById(SURNAME_FIELD_ID).value;
 
-    if (!(/^[A-Z].*$/.test(surnameInput))){
+    if (!(RegExp("^[A-Z].*$").test(surnameInput))){
         return "Nazwisko musi zaczynać się wielką literą."
-    }else if(/^.+\s+.+$/.test(surnameInput)){
+    }else if(RegExp("^.+\s+.+$").test(surnameInput)){
         return "Nazwisko nie może zawierać spacji. W przypadku dwuczłonowego nazwiska wpisz '-' pomiędzy";
-    }else if (!(/^[a-zA-Z\-]+$/.test(surnameInput))){
+    }else if (!(RegExp("^[" + POLSKIE_ZNAKI +"\-]+$").test(surnameInput))){
         return "Nazwisko może zawierać tylko litery i opcjonalnie jeden znak '-'.";
-    }else if ((/^([A-Z][a-z]+)-.*$/.test(surnameInput)) && !(/^([A-Z][a-z]+)-[A-Z].*$/.test(surnameInput))){
+    }else if ((RegExp("^([A-Z][a-z]+)-.*$").test(surnameInput)) && !(RegExp("^([A-Z][a-z]+)-[A-Z].*$").test(surnameInput))){
         return "Drugi człon nazwiska musi zaczynać się wielką literą.";
-    }else if(/^([A-Z][a-z]+)-[A-Z]*$/.test(surnameInput)){
+    }else if(RegExp("^([A-Z][a-z]+)-[A-Z]*$").test(surnameInput)){
         return "Drugie nazwisko musi mieć więcej niż jedną literę.";
     }else{
         return "";
@@ -55,7 +55,7 @@ export function validateSurname(SURNAME_FIELD_ID) {
 export function validateBDate(BDATE_FIELD_ID){
     let bdateInput = document.getElementById(BDATE_FIELD_ID).value;
 
-    if(!(/^\d{2}\.\d{2}.\d{4}$/.test(bdateInput))){
+    if(!(RegExp("^\d{2}\.\d{2}.\d{4}$").test(bdateInput))){
         return "Data powinna mieć format dd.mm.rrrr";
     }else{
         return "";
@@ -110,7 +110,7 @@ export function validateStreet(STREET_FIELD_ID){
 export function validateHouseNr(HOUSE_NR_FIELD_ID) {
     let houseNrInput = document.getElementById(HOUSE_NR_FIELD_ID).value;
 
-    if (!(/^\d+[a-zA-Z]?$/.test(houseNrInput))){
+    if (!(RegExp("^\d+[" + POLSKIE_ZNAKI +"]?$").test(houseNrInput))){
         return "Numer domu może zawierać tylko cyfry i opcjonalnie jedną literę.";
     }else{
         return "";
@@ -120,7 +120,7 @@ export function validateHouseNr(HOUSE_NR_FIELD_ID) {
 export function validatePhone(PHONE_FIELD_ID) {
     let phoneInput = document.getElementById(PHONE_FIELD_ID).value;
 
-    if (!(/^\d+$/.test(phoneInput))){
+    if (!(RegExp("^\d+$").test(phoneInput))){
         return "Numer telefonu może składać się tylko z cyfr.";
     }else{
         return "";
@@ -160,7 +160,7 @@ function checkLoginAvailability() {
 
 export function validateLogin(){
     let loginInput = document.getElementById(LOGIN_FIELD_ID).value;
-    if (!(/^[a-zA-Z]+$/.test(loginInput))){
+    if (!(RegExp("^[" + POLSKIE_ZNAKI +"]+$").test(loginInput))){
         return "Login może składać się tylko z liter.";
     } else if(loginInput.length < 4 ){
         return "Login musi mieć powyżej 4 znaków."
