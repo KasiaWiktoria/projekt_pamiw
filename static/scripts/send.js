@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     
     function updateCorrectnessMessageAndShowFile(FIELD_ID, validationFunction) {
         let warningElemId = FIELD_ID + "Warning";
-        let fileInput = document.getElementById(IMAGE_FIELD_ID).value;
+        let fileInput = document.getElementById(FIELD_ID).value;
     
         if(document.getElementById(FIELD_ID).value == ""){
             removeWarningMessage(warningElemId);
