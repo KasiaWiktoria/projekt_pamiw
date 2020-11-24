@@ -27,14 +27,14 @@ export const SENDER_CITY_FIELD_ID = "sender_city";
 export const SENDER_STREET_FIELD_ID = "sender_street";
 export const SENDER_HOUSE_NR_FIELD_ID = "sender_house_nr";
 
-export const RECIPENT_NAME_FIELD_ID = "recipent_name";
-export const RECIPENT_SURNAME_FIELD_ID = "recipent_surname";
-export const RECIPENT_PHONE_FIELD_ID = "recipent_phone";
-export const RECIPENT_COUNTRY_FIELD_ID = "recipent_country";
-export const RECIPENT_POSTAL_CODE_FIELD_ID = "recipent_postal_code";
-export const RECIPENT_CITY_FIELD_ID = "recipent_city";
-export const RECIPENT_STREET_FIELD_ID = "recipent_street";
-export const RECIPENT_HOUSE_NR_FIELD_ID = "recipent_house_nr";
+export const RECIPIENT_NAME_FIELD_ID = "recipient_name";
+export const RECIPIENT_SURNAME_FIELD_ID = "recipient_surname";
+export const RECIPIENT_PHONE_FIELD_ID = "recipient_phone";
+export const RECIPIENT_COUNTRY_FIELD_ID = "recipient_country";
+export const RECIPIENT_POSTAL_CODE_FIELD_ID = "recipient_postal_code";
+export const RECIPIENT_CITY_FIELD_ID = "recipient_city";
+export const RECIPIENT_STREET_FIELD_ID = "recipient_street";
+export const RECIPIENT_HOUSE_NR_FIELD_ID = "recipient_house_nr";
 
 export const PACK_IMAGE_FIELD_ID = "pack_image";
 
