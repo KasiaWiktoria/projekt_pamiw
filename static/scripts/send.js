@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     prepareEventOnChange(RECIPIENT_STREET_FIELD_ID, validateStreet);
     prepareEventOnChange(RECIPIENT_HOUSE_NR_FIELD_ID, validateHouseNr);
 
-    //prepareEventOnChange(PACK_IMAGE_FIELD_ID, validateFile);
+    prepareEventOnFileChange(PACK_IMAGE_FIELD_ID, validateFile);
 
     let sendForm = document.getElementById("send-form");
 
@@ -47,12 +47,12 @@ document.addEventListener('DOMContentLoaded', function (event) {
         }
     });
 
-    export function prepareEventOnFileChange(FIELD_ID, validationFunction) {
+    function prepareEventOnFileChange(FIELD_ID, validationFunction) {
         let loginInput = document.getElementById(FIELD_ID);
         loginInput.addEventListener("change", updateCorrectnessMessageAndShowFile.bind(event, FIELD_ID, validationFunction));
     }
     
-    export function updateCorrectnessMessageAndShowFile(FIELD_ID, validationFunction) {
+    function updateCorrectnessMessageAndShowFile(FIELD_ID, validationFunction) {
         let warningElemId = FIELD_ID + "Warning";
         let fileInput = document.getElementById(IMAGE_FIELD_ID).value;
     
