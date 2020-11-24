@@ -37,15 +37,15 @@ export function validateName(NAME_FIELD_ID) {
 export function validateSurname(SURNAME_FIELD_ID) {
     let surnameInput = document.getElementById(SURNAME_FIELD_ID).value;
 
-    if (!(RegExp("^[A-Z].*$").test(surnameInput))){
+    if (!(RegExp("^[" + POLSKIE_ZNAKI_DUZE +"].*$").test(surnameInput))){
         return "Nazwisko musi zaczynać się wielką literą."
     }else if(RegExp("^.+\s+.+$").test(surnameInput)){
         return "Nazwisko nie może zawierać spacji. W przypadku dwuczłonowego nazwiska wpisz '-' pomiędzy";
     }else if (!(RegExp("^[" + POLSKIE_ZNAKI +"\-]+$").test(surnameInput))){
         return "Nazwisko może zawierać tylko litery i opcjonalnie jeden znak '-'.";
-    }else if ((RegExp("^([A-Z][a-z]+)-.*$").test(surnameInput)) && !(RegExp("^([A-Z][a-z]+)-[A-Z].*$").test(surnameInput))){
+    }else if ((RegExp("^([" + POLSKIE_ZNAKI_DUZE +"][" + POLSKIE_ZNAKI_MALE +"]+)-.*$").test(surnameInput)) && !(RegExp("^([" + POLSKIE_ZNAKI_DUZE +"][" + POLSKIE_ZNAKI_MALE +"]+)-[" + POLSKIE_ZNAKI_DUZE +"].*$").test(surnameInput))){
         return "Drugi człon nazwiska musi zaczynać się wielką literą.";
-    }else if(RegExp("^([A-Z][a-z]+)-[A-Z]*$").test(surnameInput)){
+    }else if(RegExp("^([" + POLSKIE_ZNAKI_DUZE +"][" + POLSKIE_ZNAKI_MALE +"]+)-[" + POLSKIE_ZNAKI_DUZE +"]*$").test(surnameInput)){
         return "Drugie nazwisko musi mieć więcej niż jedną literę.";
     }else{
         return "";
@@ -175,9 +175,9 @@ export function validatePasswd() {
         return "Hasło musi mieć powyżej 8 znaków";
     } else if (!(/\d/.test(passwdInput))){
         return "Hasło musi zawierać przynajmniej jedną cyfrę.";
-    } else if (!(/[A-Z]+/.test(passwdInput))){
+    } else if (!(/[" + POLSKIE_ZNAKI_DUZE +"]+/.test(passwdInput))){
         return "Hasło musi zawierać przynajmniej jedną wielką literę.";
-    } else if (!(/[a-z]+/.test(passwdInput))){
+    } else if (!(/[" + POLSKIE_ZNAKI_MALE +"]+/.test(passwdInput))){
         return "Hasło musi zawierać przynajmniej jedną małą literę.";
     } else {
         return "";
