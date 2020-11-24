@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     }
     
     function prepareImgElem() {
-        newElemId = "imagePreview";
+        let newElemId = "imagePreview";
         let imagePreview = document.getElementById(newElemId);
     
         if (imagePreview === null) {
