@@ -4,7 +4,7 @@ function alphabetOnly(FIELD_ID) {
     let input = document.getElementById(FIELD_ID).value;
     let input_name = document.getElementById(FIELD_ID).getAttribute('name');
 
-    if (!(RegExp("^[" + POLSKIE_ZNAKI +"]+$").test(input))){
+    if (!(RegExp("^[" + POLSKIE_ZNAKI +" ]+$").test(input))){
         return "Pole " + input_name + " może zawierać tylko litery.";
     }else{
         return "";
