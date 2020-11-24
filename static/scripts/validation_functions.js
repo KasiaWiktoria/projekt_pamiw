@@ -137,7 +137,7 @@ export function validateFile(IMAGE_FIELD_ID) {
                     /(\.jpg|\.jpeg|\.png|\.gif)$/i; 
               
             if (!allowedExtensions.exec(filePath)) { 
-                fileInput.value = ''; 
+                //fileInput.value = ''; 
                 return 'Nieprawidłowy format pliku. Dozwolone rozszerzenia: .jpg, .jpeg, .png, .gif'; 
             }  
             else  
