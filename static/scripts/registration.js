@@ -1,6 +1,6 @@
-import 'form_functions.js';
-import 'validation_functions.js';
-import 'warning_functions.js';
+import './form_functions.js';
+import './validation_functions.js';
+import './warning_functions.js';
 
 document.addEventListener('DOMContentLoaded', function (event) {
 
