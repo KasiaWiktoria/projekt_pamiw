@@ -117,6 +117,16 @@ export function validateHouseNr(HOUSE_NR_FIELD_ID) {
     }
 }
 
+export function validatePhone(PHONE_FIELD_ID) {
+    let phoneInput = document.getElementById(PHONE_FIELD_ID).value;
+
+    if (!(/^\d+$/.test(phoneInput))){
+        return "Numer telefonu może składać się tylko z cyfr.";
+    }else{
+        return "";
+    }
+}
+
 export function isLoginAvailable() {
     return Promise.resolve(checkLoginAvailability().then(function (statusCode) {
         if (statusCode === HTTP_STATUS.OK) {

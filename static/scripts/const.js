@@ -16,6 +16,8 @@ export const LOGIN_FIELD_ID = "login";
 export const PASSWD_FIELD_ID = "password";
 export const REPEAT_PASSWD_FIELD_ID = "second_password";
 
+export const PRODUCT_NAME_FIELD_ID = "product_name";
+
 export const SENDER_NAME_FIELD_ID = "sender_name";
 export const SENDER_SURNAME_FIELD_ID = "sender_surname";
 export const SENDER_PHONE_FIELD_ID = "sender_phone";
@@ -33,6 +35,8 @@ export const RECIPENT_POSTAL_CODE_FIELD_ID = "recipent_postal_code";
 export const RECIPENT_CITY_FIELD_ID = "recipent_city";
 export const RECIPENT_STREET_FIELD_ID = "recipent_street";
 export const RECIPENT_HOUSE_NR_FIELD_ID = "recipent_house_nr";
+
+export const PACK_IMAGE_FIELD_ID = "pack_image";
 
 export var HTTP_STATUS = {OK: 200, CREATED: 201, NOT_FOUND: 404};
 

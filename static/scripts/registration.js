@@ -5,15 +5,15 @@ import {GET, POST, URL, HTTP_STATUS,AVAILABLE_LOGIN,NAME_FIELD_ID, SURNAME_FIELD
 
 document.addEventListener('DOMContentLoaded', function (event) {
 
-    prepareEventOnChange(NAME_FIELD_ID, validateName, updateCorrectnessMessage);
-    prepareEventOnChange(SURNAME_FIELD_ID, validateSurname, updateCorrectnessMessage);
-    prepareEventOnChange(BDATE_FIELD_ID, validateBDate, updateCorrectnessMessage);
-    prepareEventOnChange(PESEL_FIELD_ID, validatePesel, updateCorrectnessMessage);
-    prepareEventOnChange(COUNTRY_FIELD_ID, validateCountry, updateCorrectnessMessage);
-    prepareEventOnChange(POSTAL_CODE_FIELD_ID, validatePostalCode ,updateCorrectnessMessage);
-    prepareEventOnChange(CITY_FIELD_ID, validateCity, updateCorrectnessMessage);
-    prepareEventOnChange(STREET_FIELD_ID, validateStreet, updateCorrectnessMessage);
-    prepareEventOnChange(HOUSE_NR_FIELD_ID, validateHouseNr, updateCorrectnessMessage);
+    prepareEventOnChange(NAME_FIELD_ID, validateName);
+    prepareEventOnChange(SURNAME_FIELD_ID, validateSurname);
+    prepareEventOnChange(BDATE_FIELD_ID, validateBDate);
+    prepareEventOnChange(PESEL_FIELD_ID, validatePesel);
+    prepareEventOnChange(COUNTRY_FIELD_ID, validateCountry);
+    prepareEventOnChange(POSTAL_CODE_FIELD_ID, validatePostalCode);
+    prepareEventOnChange(CITY_FIELD_ID, validateCity);
+    prepareEventOnChange(STREET_FIELD_ID, validateStreet);
+    prepareEventOnChange(HOUSE_NR_FIELD_ID, validateHouseNr);
     prepareOtherEventOnChange(LOGIN_FIELD_ID, updateLoginAvailabilityMessage);
     prepareOtherEventOnChange(PASSWD_FIELD_ID, updatePasswdCorrectnessMessage);
     prepareOtherEventOnChange(REPEAT_PASSWD_FIELD_ID, updateRepeatPasswdCorrectnessMessage);

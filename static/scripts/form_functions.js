@@ -54,9 +54,9 @@ function displayInConsoleCorrectResponse(correctResponse, successMessage, failur
     }
 }
 
-export function prepareEventOnChange(FIELD_ID, validationFunction, updateMessageFunction) {
+export function prepareEventOnChange(FIELD_ID, validationFunction) {
     let loginInput = document.getElementById(FIELD_ID);
-    loginInput.addEventListener("change", updateMessageFunction.bind(event, FIELD_ID, validationFunction));
+    loginInput.addEventListener("change", updateCorrectnessMessage.bind(event, FIELD_ID, validationFunction));
 }
 
 export function updateCorrectnessMessage(FIELD_ID, validationFunction) {
