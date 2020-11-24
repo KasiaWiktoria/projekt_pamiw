@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
                 appendAfterElem("upload-section",prepareImgElem());
                 
                 document.getElementById( 
-                    'image-preview').innerHTML =  
+                    'imagePreview').innerHTML =  
                     '<img src="' + e.target.result 
                     + '"/>'; 
             }; 
