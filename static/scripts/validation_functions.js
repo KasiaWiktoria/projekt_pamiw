@@ -111,7 +111,7 @@ export function validateStreet(STREET_FIELD_ID){
 export function validateHouseNr(HOUSE_NR_FIELD_ID) {
     let houseNrInput = document.getElementById(HOUSE_NR_FIELD_ID).value;
 
-    if (!(RegExp("^\d+[" + POLSKIE_ZNAKI +"]?$").test(houseNrInput))){
+    if (!(RegExp("^\d+[a-zA-Z]?$").test(houseNrInput))){
         return "Numer domu może zawierać tylko cyfry i opcjonalnie jedną literę.";
     }else{
         return "";
