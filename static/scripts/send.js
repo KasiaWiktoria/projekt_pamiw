@@ -25,16 +25,18 @@ document.addEventListener('DOMContentLoaded', function (event) {
     prepareEventOnChange(RECIPENT_STREET_FIELD_ID, validateStreet);
     prepareEventOnChange(RECIPENT_HOUSE_NR_FIELD_ID, validateHouseNr);
 
-    prepareEventOnChange(PACK_IMAGE_FIELD_ID, validateFile);
+    //prepareEventOnChange(PACK_IMAGE_FIELD_ID, validateFile);
 
     let sendForm = document.getElementById("send-form");
 
     sendForm.addEventListener("submit", function (event) {
         event.preventDefault();
 
-        var canSend = ();
+        var senderDataCorrect = (validateName(SENDER_NAME_FIELD_ID) == "" && validateSurname(SENDER_SURNAME_FIELD_ID) == "" && validatePhone(SENDER_PHONE_FIELD_ID)&& validateCountry(SENDER_COUNTRY_FIELD_ID) == "" && validateCity(SENDER_CITY_FIELD_ID) == "" && validateStreet(SENDER_STREET_FIELD_ID) == "" && validateHouseNr(SENDER_HOUSE_NR_FIELD_ID) == "" );
+        var recipentDataCorrect = (validateName(RECIPENT_NAME_FIELD_ID) == "" && validateSurname(RECIPENT_SURNAME_FIELD_ID) == "" && validatePhone(RECIPENT_PHONE_FIELD_ID)&& validateCountry(RECIPENT_COUNTRY_FIELD_ID) == "" && validateCity(RECIPENT_CITY_FIELD_ID) == "" && validateStreet(RECIPENT_STREET_FIELD_ID) == "" && validateHouseNr(RECIPENT_HOUSE_NR_FIELD_ID) == "" );
+        var productNameAndImgCorrect = (noSpecialCharacters(PRODUCT_NAME_FIELD_ID) == "" && validateFile(PACK_IMAGE_FIELD_ID));
 
-        if(canSend) {
+        if(senderDataCorrect && recipentDataCorrect && productNameAndImgCorrect) {
             submitForm(sendForm, "send", " Pomyślnie wygenerowano list przewozowy.", "Generowanie listu przewozowego nie powiodło się. ");
         } else {
             removeWarningMessage("correct");

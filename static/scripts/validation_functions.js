@@ -127,6 +127,12 @@ export function validatePhone(PHONE_FIELD_ID) {
     }
 }
 
+export function validateFile(IMAGE_FIELD_ID) {
+    let fileInput = document.getElementById(IMAGE_FIELD_ID).value;
+
+    return false;
+}
+
 export function isLoginAvailable() {
     return Promise.resolve(checkLoginAvailability().then(function (statusCode) {
         if (statusCode === HTTP_STATUS.OK) {
