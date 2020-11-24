@@ -47,4 +47,54 @@ document.addEventListener('DOMContentLoaded', function (event) {
         }
     });
 
+    export function prepareEventOnFileChange(FIELD_ID, validationFunction) {
+        let loginInput = document.getElementById(FIELD_ID);
+        loginInput.addEventListener("change", updateCorrectnessMessageAndShowFile.bind(event, FIELD_ID, validationFunction));
+    }
+    
+    export function updateCorrectnessMessageAndShowFile(FIELD_ID, validationFunction) {
+        let warningElemId = FIELD_ID + "Warning";
+        let fileInput = document.getElementById(IMAGE_FIELD_ID).value;
+    
+        if(document.getElementById(FIELD_ID).value == ""){
+            removeWarningMessage(warningElemId);
+        } else if (validationFunction(FIELD_ID) == "") {
+            console.log("Correct " + FIELD_ID + "!");
+            removeWarningMessage(warningElemId);
+            addPreview(fileInput);
+        } else {
+            console.log("Uncorrect " + FIELD_ID + ".");
+            showWarningMessage(warningElemId, validationFunction(FIELD_ID), FIELD_ID);
+        }
+    }
+
+    function addPreview(fileInput){
+        if (fileInput.files && fileInput.files[0]) { 
+            var reader = new FileReader(); 
+            reader.onload = function(e) { 
+                appendAfterElem("upload-section",prepareImgElem());
+                
+                document.getElementById( 
+                    'image-preview').innerHTML =  
+                    '<img src="' + e.target.result 
+                    + '"/>'; 
+            }; 
+              
+            reader.readAsDataURL(fileInput.files[0]); 
+        } 
+    }
+    
+    function prepareImgElem() {
+        newElemId = "imagePreview";
+        let imagePreview = document.getElementById(newElemId);
+    
+        if (imagePreview === null) {
+            imagePreview = document.createElement('div');
+    
+            imagePreview.setAttribute("id", newElemId);
+            imagePreview.className = "image-preview";
+        }
+        return imagePreview;
+    }
+    
 });

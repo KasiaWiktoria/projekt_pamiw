@@ -1,4 +1,5 @@
 import {GET, POST, URL, HTTP_STATUS, POLSKIE_ZNAKI, POLSKIE_ZNAKI_MALE, POLSKIE_ZNAKI_DUZE, LOGIN_FIELD_ID, PASSWD_FIELD_ID, REPEAT_PASSWD_FIELD_ID} from './const.js'
+import { appendAfterElem } from './warning_functions.js';
 
 function alphabetOnly(FIELD_ID) {
     let input = document.getElementById(FIELD_ID).value;
@@ -130,7 +131,19 @@ export function validatePhone(PHONE_FIELD_ID) {
 export function validateFile(IMAGE_FIELD_ID) {
     let fileInput = document.getElementById(IMAGE_FIELD_ID).value;
 
-    return false;
+    var filePath = fileInput.value; 
+          
+            var allowedExtensions =  
+                    /(\.jpg|\.jpeg|\.png|\.gif)$/i; 
+              
+            if (!allowedExtensions.exec(filePath)) { 
+                fileInput.value = ''; 
+                return 'Invalid file type'; 
+            }  
+            else  
+            { 
+                return "";
+            } 
 }
 
 export function isLoginAvailable() {
