@@ -1,6 +1,6 @@
 import {submitForm, updateCorrectnessMessage, prepareEventOnChange} from './form_functions.js';
-import {showWarningMessage, removeWarningMessage, prepareWarningElem, appendAfterElem} from './validation_functions.js';
-import {validateName, validateSurname, validateBDate, validatePesel, validateCountry, validatePostalCode, validateCity, validateStreet, validateHouseNr, validateLogin, validatePasswd, arePasswdsTheSame} from './warning_functions.js';
+import {showWarningMessage, removeWarningMessage, prepareWarningElem, appendAfterElem} from './warning_functions.js';
+import {validateName, validateSurname, validateBDate, validatePesel, validateCountry, validatePostalCode, validateCity, validateStreet, validateHouseNr, validateLogin, validatePasswd, arePasswdsTheSame} from './validation_functions.js';
 
 document.addEventListener('DOMContentLoaded', function (event) {
 
