@@ -1,6 +1,6 @@
-import {submitForm, updateCorrectnessMessage, prepareEventOnChange} from './form_functions.js';
+import {submitForm, updateCorrectnessMessage, prepareOtherEventOnChange, prepareEventOnChange} from './form_functions.js';
 import {showWarningMessage, removeWarningMessage, prepareWarningElem, appendAfterElem} from './warning_functions.js';
-import {validateName, validateSurname, validateBDate, validatePesel, validateCountry, validatePostalCode, validateCity, validateStreet, validateHouseNr, validateLogin, validatePasswd, arePasswdsTheSame} from './validation_functions.js';
+import {isLoginAvailable, validateName, validateSurname, validateBDate, validatePesel, validateCountry, validatePostalCode, validateCity, validateStreet, validateHouseNr, validateLogin, validatePasswd, arePasswdsTheSame} from './validation_functions.js';
 import {GET, POST, URL, HTTP_STATUS,AVAILABLE_LOGIN,NAME_FIELD_ID, SURNAME_FIELD_ID, BDATE_FIELD_ID, PESEL_FIELD_ID, COUNTRY_FIELD_ID, POSTAL_CODE_FIELD_ID, CITY_FIELD_ID, STREET_FIELD_ID, HOUSE_NR_FIELD_ID, LOGIN_FIELD_ID,PASSWD_FIELD_ID, REPEAT_PASSWD_FIELD_ID} from './const.js'
 
 document.addEventListener('DOMContentLoaded', function (event) {
@@ -23,20 +23,9 @@ document.addEventListener('DOMContentLoaded', function (event) {
     registrationForm.addEventListener("submit", function (event) {
         event.preventDefault();
 
-        var login = document.getElementById(LOGIN_FIELD_ID).value;
-        var pesel = document.getElementById(PESEL_FIELD_ID).value;
-        var password = document.getElementById(PASSWD_FIELD_ID).value;
-        var repeatePassword = document.getElementById(REPEAT_PASSWD_FIELD_ID).value;
-
         var canSend = (AVAILABLE_LOGIN && validateLogin() == "" && validateName(NAME_FIELD_ID) == "" && validateSurname(SURNAME_FIELD_ID) == "" && validateBDate(BDATE_FIELD_ID) && validatePesel(PESEL_FIELD_ID) == "" && validateCountry(COUNTRY_FIELD_ID) == "" && validateCity(CITY_FIELD_ID) == "" && validateStreet(STREET_FIELD_ID) == "" && validateHouseNr(HOUSE_NR_FIELD_ID) == "" && validatePasswd() == "" && arePasswdsTheSame());
 
         if(canSend) {
-            var formData = new FormData();
-            formData.set("login", login);
-            formData.set("pesel", pesel);
-            formData.set("password", password);
-            formData.set("second_password", repeatePassword);
-            
             submitForm(registrationForm, "register", " Zarejestrowano pomyślnie.", "Rejestracja nie powiodła się. ");
         } else {
             removeWarningMessage("correct");
@@ -46,12 +35,6 @@ document.addEventListener('DOMContentLoaded', function (event) {
             appendAfterElem(id, uncorrectElem);
         }
     });
-
-    
-    function prepareOtherEventOnChange(FIELD_ID, updateMessageFunction) {
-        let loginInput = document.getElementById(FIELD_ID);
-        loginInput.addEventListener("change", updateMessageFunction);
-    }
 
     function updateLoginAvailabilityMessage() {
         let warningElemId = "loginWarning";

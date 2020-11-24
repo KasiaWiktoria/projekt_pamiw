@@ -53,6 +53,11 @@ function displayInConsoleCorrectResponse(correctResponse, successMessage, failur
         appendAfterElem(id, uncorrectElem);
     }
 }
+    
+export function prepareOtherEventOnChange(FIELD_ID, updateMessageFunction) {
+    let loginInput = document.getElementById(FIELD_ID);
+    loginInput.addEventListener("change", updateMessageFunction);
+}
 
 export function prepareEventOnChange(FIELD_ID, validationFunction) {
     let loginInput = document.getElementById(FIELD_ID);
