@@ -1,16 +1,9 @@
 import {submitForm, updateCorrectnessMessage, prepareEventOnChange} from './form_functions.js';
 import {showWarningMessage, removeWarningMessage, prepareWarningElem, appendAfterElem} from './warning_functions.js';
 import {validateName, validateSurname, validateBDate, validatePesel, validateCountry, validatePostalCode, validateCity, validateStreet, validateHouseNr, validateLogin, validatePasswd, arePasswdsTheSame} from './validation_functions.js';
+import './const.js'
 
 document.addEventListener('DOMContentLoaded', function (event) {
-
-    const GET = "GET";
-    const POST = "POST";
-    const URL = "https://pamiw2020registration.herokuapp.com/";
-
-    var HTTP_STATUS = {OK: 200, CREATED: 201, NOT_FOUND: 404};
-
-    var AVAILABLE_LOGIN = false;
 
     prepareEventOnChange(NAME_FIELD_ID, validateName, updateCorrectnessMessage);
     prepareEventOnChange(SURNAME_FIELD_ID, validateSurname, updateCorrectnessMessage);

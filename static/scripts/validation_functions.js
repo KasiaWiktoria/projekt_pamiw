@@ -1,3 +1,4 @@
+import './const.js'
 
 function alphabetOnly(FIELD_ID) {
     let input = document.getElementById(FIELD_ID).value;

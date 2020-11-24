@@ -1,3 +1,5 @@
+import './const.js'
+
 export function submitForm(form, name, successMessage, failureMessage) {
     let registerUrl = URL + name;
 

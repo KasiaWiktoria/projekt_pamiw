@@ -1,17 +1,3 @@
-NAME_FIELD_ID = "name"
-SURNAME_FIELD_ID = "surname"
-BDATE_FIELD_ID = "bdate"
-PESEL_FIELD_ID = "pesel"
-COUNTRY_FIELD_ID = "country"
-POSTAL_CODE_FIELD_ID = "postal_code"
-CITY_FIELD_ID = "city"
-STREET_FIELD_ID = "street"
-HOUSE_NR_FIELD_ID = "house_nr"
-LOGIN_FIELD_ID = "login"
-PASSWD_FIELD_ID = "password"
-REPEAT_PASSWD_FIELD_ID = "second_password"
-
-
 GET = "GET"
 POST = "POST"
 SECRET_KEY = "LOGIN_JWT_SECRET"

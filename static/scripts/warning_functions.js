@@ -1,3 +1,4 @@
+import './const.js'
 
 export function showWarningMessage(newElemId, message, field_id) {
     let warningElem = prepareWarningElem(newElemId, message);
