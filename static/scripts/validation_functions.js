@@ -1,4 +1,4 @@
-import {GET, POST, URL, HTTP_STATUS, LOGIN_FIELD_ID, PASSWD_FIELD_ID, REPEAT_PASSWD_FIELD_ID} from './const.js'
+import {GET, POST, URL, HTTP_STATUS, POLSKIE_ZNAKI, POLSKIE_ZNAKI_MALE, POLSKIE_ZNAKI_DUZE, LOGIN_FIELD_ID, PASSWD_FIELD_ID, REPEAT_PASSWD_FIELD_ID} from './const.js'
 
 function alphabetOnly(FIELD_ID) {
     let input = document.getElementById(FIELD_ID).value;
