@@ -129,9 +129,7 @@ export function validatePhone(PHONE_FIELD_ID) {
 }
 
 export function validateFile(IMAGE_FIELD_ID) {
-    let fileInput = document.getElementById(IMAGE_FIELD_ID).value;
-
-    var filePath = fileInput.value; 
+    let filePath = document.getElementById(IMAGE_FIELD_ID).value;
           
             var allowedExtensions =  
                     /(\.jpg|\.jpeg|\.png|\.gif)$/i; 
