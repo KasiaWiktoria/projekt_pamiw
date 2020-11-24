@@ -16,7 +16,7 @@ export function noSpecialCharacters(FIELD_ID) {
     let input = document.getElementById(FIELD_ID).value;
     let input_name = document.getElementById(FIELD_ID).getAttribute('name');
 
-    if (!(RegExp("^[" + POLSKIE_ZNAKI +"-\d ]+$").test(input))){
+    if (!(RegExp("^[" + POLSKIE_ZNAKI +"-\\d ]+$").test(input))){
         return "Pole " + input_name + " może zawierać tylko litery, cyfry, znak spacji lub znak '-'.";
     }else{
         return "";
@@ -56,7 +56,7 @@ export function validateSurname(SURNAME_FIELD_ID) {
 export function validateBDate(BDATE_FIELD_ID){
     let bdateInput = document.getElementById(BDATE_FIELD_ID).value;
 
-    if(!(RegExp("^\d{2}\.\d{2}.\d{4}$").test(bdateInput))){
+    if(!(/^\d{2}\.\d{2}.\d{4}$/.test(bdateInput))){
         return "Data powinna mieć format dd.mm.rrrr";
     }else{
         return "";
@@ -111,7 +111,7 @@ export function validateStreet(STREET_FIELD_ID){
 export function validateHouseNr(HOUSE_NR_FIELD_ID) {
     let houseNrInput = document.getElementById(HOUSE_NR_FIELD_ID).value;
 
-    if (!(RegExp("^\d+[a-zA-Z]?$").test(houseNrInput))){
+    if (!(RegExp("^\\d+[a-zA-Z]?$").test(houseNrInput))){
         return "Numer domu może zawierać tylko cyfry i opcjonalnie jedną literę.";
     }else{
         return "";
@@ -121,7 +121,7 @@ export function validateHouseNr(HOUSE_NR_FIELD_ID) {
 export function validatePhone(PHONE_FIELD_ID) {
     let phoneInput = document.getElementById(PHONE_FIELD_ID).value;
 
-    if (!(RegExp("^\d+$").test(phoneInput))){
+    if (!(/^\d+$/.test(phoneInput))){
         return "Numer telefonu może składać się tylko z cyfr.";
     }else{
         return "";
