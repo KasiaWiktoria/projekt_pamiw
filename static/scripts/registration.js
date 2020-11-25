@@ -68,8 +68,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
         let warningElemId = "passwdWarning";
         let warningMessage = validatePasswd();
     
+        removeWarningMessage(warningElemId);
         if (warningMessage == "") {
-            removeWarningMessage(warningElemId);
             if ((arePasswdsTheSame())) {
                 console.log("Correct password!");
                 removeWarningMessage("repeatPasswdWarning");
