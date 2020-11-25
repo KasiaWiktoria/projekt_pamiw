@@ -17,7 +17,16 @@ export function submitForm(form, name, successMessage, failureMessage) {
             .then(response => displayInConsoleCorrectResponse(response, successMessage, failureMessage))
             .catch(err => {
                 console.log("Caught error: " + err);
+                removeWarningMessage("correct");
+                let id = "button-reg-form";
 
+                if (err == HTTP_STATUS.BAD_REQUEST){
+                    var addMessage = ' Nieprawidłowe rządanie.';
+                } 
+                failureMessage = failureMessage + addMessage;
+                let uncorrectElem = prepareWarningElem("uncorrect", failureMessage);
+                uncorrectElem.className = "uncorrect-field"
+                appendAfterElem(id, uncorrectElem);
             });
 }
 
@@ -39,7 +48,7 @@ function displayInConsoleCorrectResponse(correctResponse, successMessage, failur
 
     if (status == "OK") {
         removeWarningMessage("uncorrect");
-        id = "button-reg-form";
+        let id = "button-reg-form";
         let correctElem = prepareWarningElem("correct", successMessage);
         correctElem.className = "correct-field"
         appendAfterElem(id, correctElem);
@@ -48,7 +57,7 @@ function displayInConsoleCorrectResponse(correctResponse, successMessage, failur
         console.log("Errors: " + correctResponse.errors);
 
         removeWarningMessage("correct");
-        id = "button-reg-form";
+        let id = "button-reg-form";
         let uncorrectElem = prepareWarningElem("uncorrect", failureMessage + correctResponse.errors);
         uncorrectElem.className = "uncorrect-field"
         appendAfterElem(id, uncorrectElem);
