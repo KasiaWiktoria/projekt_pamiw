@@ -90,8 +90,9 @@ document.addEventListener('DOMContentLoaded', function (event) {
         if (arePasswdsTheSame()) {
             console.log("Correct repeat password!");
             removeWarningMessage(warningElemId);
-            if (validatePasswd() == "") {
-                removeWarningMessage("passwdWarning");
+            removeWarningMessage("passwdWarning");
+            if (validatePasswd() !== "") {
+                showWarningMessage(warningElemId, validatePasswd(), PASSWD_FIELD_ID);
             }
         } else {
             console.log("Uncorrect repeat password");
