@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
             submitForm(sendForm, "send", " Pomyślnie wygenerowano list przewozowy.", "Generowanie listu przewozowego nie powiodło się. ");
         } else {
             removeWarningMessage("correct");
-            id = "button-send-form";
+            let id = "button-send-form";
             let uncorrectElem = prepareWarningElem("uncorrect", "Generowanie listu przewozowego nie powiodło się. ");
             uncorrectElem.className = "uncorrect-field"
             appendAfterElem(id, uncorrectElem);
