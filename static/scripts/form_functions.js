@@ -19,9 +19,10 @@ export function submitForm(form, name, successMessage, failureMessage) {
                 console.log("Caught error: " + err);
                 removeWarningMessage("correct");
                 let id = "button-reg-form";
+                var addMessage = '';
 
-                if (err == HTTP_STATUS.BAD_REQUEST){
-                    var addMessage = ' Nieprawidłowe rządanie.';
+                if (err.status == HTTP_STATUS.BAD_REQUEST){
+                    addMessage = ' Nieprawidłowe rządanie.';
                 } 
                 failureMessage = failureMessage + addMessage;
                 let uncorrectElem = prepareWarningElem("uncorrect", failureMessage);
