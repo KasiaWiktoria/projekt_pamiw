@@ -4,6 +4,7 @@ import {showWarningMessage, removeWarningMessage, prepareWarningElem, appendAfte
 
 export function submitForm(form, name, successMessage, failureMessage) {
     let registerUrl = URL + name;
+    console.log(registerUrl);
 
     let registerParams = {
         method: POST,
