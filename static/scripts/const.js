@@ -43,5 +43,3 @@ export const RECIPIENT_HOUSE_NR_FIELD_ID = "recipient_house_nr";
 export const PACK_IMAGE_FIELD_ID = "pack_image";
 
 export var HTTP_STATUS = {OK: 200, CREATED: 201, NOT_FOUND: 404};
-
-export var AVAILABLE_LOGIN = false;

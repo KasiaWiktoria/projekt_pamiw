@@ -1,7 +1,7 @@
 import {submitForm, updateCorrectnessMessage, prepareOtherEventOnChange, prepareEventOnChange} from './form_functions.js';
 import {showWarningMessage, removeWarningMessage, prepareWarningElem, appendAfterElem} from './warning_functions.js';
 import {isLoginAvailable, validateName, validateSurname, validateBDate, validatePesel, validateCountry, validatePostalCode, validateCity, validateStreet, validateHouseNr, validateLogin, validatePasswd, arePasswdsTheSame} from './validation_functions.js';
-import {GET, POST, URL, HTTP_STATUS, AVAILABLE_LOGIN, LOGIN_FIELD_ID, PASSWD_FIELD_ID} from './const.js'
+import {GET, POST, URL, HTTP_STATUS, LOGIN_FIELD_ID, PASSWD_FIELD_ID} from './const.js'
 
 
 document.addEventListener('DOMContentLoaded', function (event) {
