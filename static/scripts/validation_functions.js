@@ -30,7 +30,7 @@ export function validateName(NAME_FIELD_ID) {
         return "Wpisz tylko jedno imię";
     }else if (!(RegExp("^[" + POLSKIE_ZNAKI +"]+$").test(nameInput))){
         return "Imię może zawierać tylko litery.";
-    }else if (!(RegExp("^[" + POLSKIE_ZNAKI_DUZE +"].*$").test(surnameInput))){
+    }else if (!(RegExp("^[" + POLSKIE_ZNAKI_DUZE +"].*$").test(nameInput))){
         return "Imię musi zaczynać się wielką literą."
     }else {
         return "";
