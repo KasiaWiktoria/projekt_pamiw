@@ -39,11 +39,11 @@ document.addEventListener('DOMContentLoaded', function (event) {
     function updateLoginAvailabilityMessage() {
         let warningElemId = "loginWarning";
     
-        warningMessage = validateLogin();
+        let warningMessage = validateLogin();
         if (warningMessage == "") {
             console.log("Correct login!");
             removeWarningMessage(warningElemId);
-            let warningMessage = "Podany login jest już zajęty.";
+            warningMessage = "Podany login jest już zajęty.";
     
             isLoginAvailable().then(function (isAvailable) {
                 if (isAvailable) {
