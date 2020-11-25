@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
             submitForm(loginForm, "login", " Zalogowano pomyślnie.", "Błędny login lub hasło.");
         } else {
             removeWarningMessage("correct");
-            id = "button-log-form";
+            let id = "button-log-form";
             let uncorrectElem = prepareWarningElem("uncorrect", "Błędny login lub hasło.");
             uncorrectElem.className = "uncorrect-field"
             appendAfterElem(id, uncorrectElem);

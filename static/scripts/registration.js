@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
             submitForm(registrationForm, "register", " Zarejestrowano pomyślnie.", "Rejestracja nie powiodła się. ");
         } else {
             removeWarningMessage("correct");
-            id = "button-reg-form";
+            let id = "button-reg-form";
             let uncorrectElem = prepareWarningElem("uncorrect", "Rejestracja nie powiodła się.");
             uncorrectElem.className = "uncorrect-field"
             appendAfterElem(id, uncorrectElem);
