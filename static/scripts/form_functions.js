@@ -20,6 +20,7 @@ export function submitForm(form, name, successMessage, failureMessage) {
                 removeWarningMessage("correct");
                 let id = "button-reg-form";
                 var addMessage = '';
+                console.log("Status błędu = " + err.status);
 
                 if (err.status == HTTP_STATUS.BAD_REQUEST){
                     addMessage = ' Nieprawidłowe rządanie.';
