@@ -30,7 +30,9 @@ export function validateName(NAME_FIELD_ID) {
         return "Wpisz tylko jedno imię";
     }else if (!(RegExp("^[" + POLSKIE_ZNAKI +"]+$").test(nameInput))){
         return "Imię może zawierać tylko litery.";
-    }else{
+    }else if (!(RegExp("^[" + POLSKIE_ZNAKI_DUZE +"].*$").test(surnameInput))){
+        return "Imię musi zaczynać się wielką literą."
+    }else {
         return "";
     }
 }
@@ -38,12 +40,12 @@ export function validateName(NAME_FIELD_ID) {
 export function validateSurname(SURNAME_FIELD_ID) {
     let surnameInput = document.getElementById(SURNAME_FIELD_ID).value;
 
-    if (!(RegExp("^[" + POLSKIE_ZNAKI_DUZE +"].*$").test(surnameInput))){
-        return "Nazwisko musi zaczynać się wielką literą."
-    }else if(/^ +$/.test(surnameInput)){
+    if(/^ +$/.test(surnameInput)){
         return "Nazwisko nie może zawierać spacji. W przypadku dwuczłonowego nazwiska wpisz '-' pomiędzy";
     }else if (!(RegExp("^[" + POLSKIE_ZNAKI +"\-]+$").test(surnameInput))){
         return "Nazwisko może zawierać tylko litery i opcjonalnie jeden znak '-'.";
+    }else if (!(RegExp("^[" + POLSKIE_ZNAKI_DUZE +"].*$").test(surnameInput))){
+        return "Nazwisko musi zaczynać się wielką literą."
     }else if ((RegExp("^([" + POLSKIE_ZNAKI_DUZE +"][" + POLSKIE_ZNAKI_MALE +"]+)-.*$").test(surnameInput)) && !(RegExp("^([" + POLSKIE_ZNAKI_DUZE +"][" + POLSKIE_ZNAKI_MALE +"]+)-[" + POLSKIE_ZNAKI_DUZE +"].*$").test(surnameInput))){
         return "Drugi człon nazwiska musi zaczynać się wielką literą.";
     }else if(RegExp("^([" + POLSKIE_ZNAKI_DUZE +"][" + POLSKIE_ZNAKI_MALE +"]+)-[" + POLSKIE_ZNAKI_DUZE +"]*$").test(surnameInput)){
