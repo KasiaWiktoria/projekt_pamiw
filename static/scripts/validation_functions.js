@@ -40,7 +40,7 @@ export function validateSurname(SURNAME_FIELD_ID) {
 
     if (!(RegExp("^[" + POLSKIE_ZNAKI_DUZE +"].*$").test(surnameInput))){
         return "Nazwisko musi zaczynać się wielką literą."
-    }else if(RegExp("^.+\s+.+$").test(surnameInput)){
+    }else if(/^ +$/.test(surnameInput)){
         return "Nazwisko nie może zawierać spacji. W przypadku dwuczłonowego nazwiska wpisz '-' pomiędzy";
     }else if (!(RegExp("^[" + POLSKIE_ZNAKI +"\-]+$").test(surnameInput))){
         return "Nazwisko może zawierać tylko litery i opcjonalnie jeden znak '-'.";
