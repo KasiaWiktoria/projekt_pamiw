@@ -40,13 +40,13 @@
                         <th>imię i nazwisko odbiorcy</th>
                         <th>adres odbiorcy</th>
                     </tr>
-                    {% for shipment in my_shipments %}
+                    {% for waybill in my_waybills %}
                     <tr>
-                        <td>{{shipment.get_title()}}</td>
-                        <td>{{shipment.get_sender_name()}}</td>
-                        <td>{{shipment.get_sender_addr()}}</td>
-                        <td>{{shipment.get_recipient_name()}}</td>
-                        <td>{{shipment.get_recipient_addr()}}</td>
+                        <td>{{waybill.get_title()}}</td>
+                        <td>{{waybill.get_sender_name()}}</td>
+                        <td>{{waybill.get_sender_addr()}}</td>
+                        <td>{{waybill.get_recipient_name()}}</td>
+                        <td>{{waybill.get_recipient_addr()}}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

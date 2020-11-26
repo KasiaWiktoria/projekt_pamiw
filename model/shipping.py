@@ -26,11 +26,11 @@ class Shipping:
 
 class Person:
 
-    def __init__(self, name, surname, phone, postcode, city, street, house_nr):
+    def __init__(self, name, surname, phone, postal_code, city, street, house_nr):
         self.__name = name
         self.__surname = surname
         self.__phone = phone
-        self.__postcode = postcode
+        self.__postal_code = postal_code
         self.__city = city
         self.__street = street
         self.__house_nr = house_nr
@@ -39,6 +39,6 @@ class Person:
         return "{} {}".format(self.__name, self.__surname)
 
     def get__addr(self):
-        return "ul. {} {}, {} {}".format(self.__street, self.__house_nr, self.__city, self.__postcode)
+        return "ul. {} {}, {} {}".format(self.__street, self.__house_nr, self.__city, self.__postal_code)
 
     

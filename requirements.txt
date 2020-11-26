@@ -1,5 +1,7 @@
 Flask
+flask-restplus
 gunicorn
 redis
 pyopenssl
 flask-jwt-extended
+fpdf
