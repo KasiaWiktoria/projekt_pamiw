@@ -8,17 +8,43 @@ export function submitForm(form, name, successMessage, failureMessage) {
 
     let registerParams = {
         method: POST,
+        mode: 'cors',
         body: new FormData(form),
         redirect: "follow"
     };
 
-    fetch(registerUrl, { mode: 'cors'}, registerParams)
+    fetch(registerUrl, registerParams)
             .then(response => getResponseData(response))
             .then(response => displayInConsoleCorrectResponse(response, successMessage, failureMessage))
             .catch(err => {
                 console.log("Caught error: " + err);
                 removeWarningMessage("correct");
                 let id = "button-reg-form";
+
+                let uncorrectElem = prepareWarningElem("uncorrect", failureMessage);
+                uncorrectElem.className = "uncorrect-field"
+                appendAfterElem(id, uncorrectElem);
+            });
+}
+
+export function submitLoginForm(form, name, successMessage, failureMessage) {
+    let registerUrl = URL + name;
+    console.log(registerUrl);
+
+    let registerParams = {
+        method: POST,
+        mode: 'cors',
+        body: new FormData(form),
+        redirect: "follow"
+    };
+
+    fetch(registerUrl, registerParams)
+            .then(response => getResponseData(response))
+            .then(response => displayInConsoleLoginCorrectResponse(response, successMessage, failureMessage))
+            .catch(err => {
+                console.log("Caught error: " + err);
+                removeWarningMessage("correct");
+                let id = "button-log-form";
 
                 let uncorrectElem = prepareWarningElem("uncorrect", failureMessage);
                 uncorrectElem.className = "uncorrect-field"
@@ -55,6 +81,29 @@ function displayInConsoleCorrectResponse(correctResponse, successMessage, failur
 
         removeWarningMessage("correct");
         let id = "button-reg-form";
+        let uncorrectElem = prepareWarningElem("uncorrect", failureMessage + correctResponse);
+        uncorrectElem.className = "uncorrect-field"
+        appendAfterElem(id, uncorrectElem);
+    }
+}
+
+function displayInConsoleLoginCorrectResponse(correctResponse, successMessage, failureMessage) {
+
+    console.log("Status: " + correctResponse);
+
+    if (correctResponse == "OK") {
+        removeWarningMessage("uncorrect");
+        let id = "button-log-form";
+        let correctElem = prepareWarningElem("correct", successMessage);
+        correctElem.className = "correct-field"
+        appendAfterElem(id, correctElem);
+        window.location.href = '/login/waybills-list'
+        
+    } else {
+        console.log("Errors: " + correctResponse);
+
+        removeWarningMessage("correct");
+        let id = "button-log-form";
         let uncorrectElem = prepareWarningElem("uncorrect", failureMessage + correctResponse);
         uncorrectElem.className = "uncorrect-field"
         appendAfterElem(id, uncorrectElem);

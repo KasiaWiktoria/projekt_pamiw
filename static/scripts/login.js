@@ -1,4 +1,4 @@
-import {submitForm, updateCorrectnessMessage, prepareOtherEventOnChange, prepareEventOnChange} from './form_functions.js';
+import {submitLoginForm, updateCorrectnessMessage, prepareOtherEventOnChange, prepareEventOnChange} from './form_functions.js';
 import {showWarningMessage, removeWarningMessage, prepareWarningElem, appendAfterElem} from './warning_functions.js';
 import {isLoginAvailable, validateName, validateSurname, validateBDate, validatePesel, validateCountry, validatePostalCode, validateCity, validateStreet, validateHouseNr, validateLogin, validatePasswd, arePasswdsTheSame} from './validation_functions.js';
 import {GET, POST, URL, HTTP_STATUS, LOGIN_FIELD_ID, PASSWD_FIELD_ID} from './const.js'
@@ -6,17 +6,19 @@ import {GET, POST, URL, HTTP_STATUS, LOGIN_FIELD_ID, PASSWD_FIELD_ID} from './co
 
 document.addEventListener('DOMContentLoaded', function (event) {
 
-    prepareOtherEventOnChange(LOGIN_FIELD_ID, updateLoginCorrectMessage);
+    //prepareOtherEventOnChange(LOGIN_FIELD_ID, updateLoginCorrectMessage);
 
     let loginForm = document.getElementById("login-form");
 
     loginForm.addEventListener("submit", function (event) {
         event.preventDefault();
 
-        var canSend = (false);
+        let login = document.getElementById(LOGIN_FIELD_ID).value;
+        let password = document.getElementById(PASSWD_FIELD_ID).value;
+        var canSend = true;
 
         if(canSend) {
-            submitForm(loginForm, "login", " Zalogowano pomyślnie.", "Błędny login lub hasło.");
+            submitLoginForm(loginForm, "login", " Zalogowano pomyślnie.", "Błędny login lub hasło.");
         } else {
             removeWarningMessage("correct");
             let id = "button-log-form";

@@ -1,7 +1,8 @@
 
 export const GET = "GET";
 export const POST = "POST";
-export const URL = "https://localhost:8081/";
+export const URL = "https://localhost:8080/";
+export const waybillURL = "https://localhost:8081/";
 
 export const POLSKIE_ZNAKI = "a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ";
 export const POLSKIE_ZNAKI_MALE = "a-ząćęłńóśźż";
