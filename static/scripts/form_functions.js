@@ -12,20 +12,14 @@ export function submitForm(form, name, successMessage, failureMessage) {
         redirect: "follow"
     };
 
-    fetch(registerUrl, registerParams)
+    fetch(registerUrl, { mode: 'cors'}, registerParams)
             .then(response => getResponseData(response))
             .then(response => displayInConsoleCorrectResponse(response, successMessage, failureMessage))
             .catch(err => {
                 console.log("Caught error: " + err);
                 removeWarningMessage("correct");
                 let id = "button-reg-form";
-                var addMessage = '';
-                console.log("Status błędu = " + err.response.status);
 
-                if (err.response.status == HTTP_STATUS.BAD_REQUEST){
-                    addMessage = ' Nieprawidłowe rządanie.';
-                } 
-                failureMessage = failureMessage + addMessage;
                 let uncorrectElem = prepareWarningElem("uncorrect", failureMessage);
                 uncorrectElem.className = "uncorrect-field"
                 appendAfterElem(id, uncorrectElem);
@@ -36,7 +30,9 @@ function getResponseData(response) {
     let status = response.status;
 
     if (status === HTTP_STATUS.OK || status === HTTP_STATUS.CREATED) {
-        return response.json();
+        console.log("Rejestracja powiodła się. status =" + status);
+        console.warn(response);
+        return "OK"
     } else {
         console.error("Response status code: " + response.status);
         throw "Unexpected response status: " + response.status;
@@ -44,11 +40,10 @@ function getResponseData(response) {
 }
 
 function displayInConsoleCorrectResponse(correctResponse, successMessage, failureMessage) {
-    let status = correctResponse.registration_status;
 
-    console.log("Status: " + status);
+    console.log("Status: " + correctResponse);
 
-    if (status == "OK") {
+    if (correctResponse == "OK") {
         removeWarningMessage("uncorrect");
         let id = "button-reg-form";
         let correctElem = prepareWarningElem("correct", successMessage);
@@ -56,11 +51,11 @@ function displayInConsoleCorrectResponse(correctResponse, successMessage, failur
         appendAfterElem(id, correctElem);
         
     } else {
-        console.log("Errors: " + correctResponse.errors);
+        console.log("Errors: " + correctResponse);
 
         removeWarningMessage("correct");
         let id = "button-reg-form";
-        let uncorrectElem = prepareWarningElem("uncorrect", failureMessage + correctResponse.errors);
+        let uncorrectElem = prepareWarningElem("uncorrect", failureMessage + correctResponse);
         uncorrectElem.className = "uncorrect-field"
         appendAfterElem(id, uncorrectElem);
     }

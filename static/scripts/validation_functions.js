@@ -58,7 +58,7 @@ export function validateSurname(SURNAME_FIELD_ID) {
 export function validateBDate(BDATE_FIELD_ID){
     let bdateInput = document.getElementById(BDATE_FIELD_ID).value;
 
-    if(!(/^\d{2}\.\d{2}.\d{4}$/.test(bdateInput))){
+    if(!(/^\d{4}-\d{2}-\d{2}$/.test(bdateInput))){
         return "Data powinna mieć format dd.mm.rrrr";
     }else{
         return "";
@@ -163,8 +163,8 @@ function checkLoginAvailability() {
     let baseUrl = URL + "user/";
     let userUrl = baseUrl + loginInput.value;
 
-    return Promise.resolve(fetch(userUrl, { mode: 'no-cors'}, {method: GET}).then(function (resp) {
-        console.log("jaki status = " + status);
+    return Promise.resolve(fetch(userUrl, { mode: 'cors'}, {method: GET}).then(function (resp) {
+        console.log("status = " + resp.status);
         return resp.status;
     }).catch(function (err) {
         

@@ -19,9 +19,9 @@
                 <div class="menu">
                     <ul>
                         <li><a href="/">Strona główna</a></li>
-                        <li><a href="/registration">Rejestracja</a></li>
-                        <li><a href="/send">Nadaj paczkę</a></li>
-                        <li><a href="#">Kontakt</a></li>
+                        <li class="logged_out_only"><a href="/registration">Rejestracja</a></li>
+                        <li class="logged_in_only"><a href="/send">Nadaj paczkę</a></li>
+                        <li class="logged_in_only"><a href="/waybills-list">Lista wysłanych paczek</a></li>
                     </ul>
                 </div>
             </nav>
@@ -33,10 +33,10 @@
 
         <section class="nav-block">
             <a href="/login">Zaloguj się</a>
-            <a href="/registration">Zarejestruj się</a>
+            <a class="selected" href="/registration">Zarejestruj się</a>
         </section>
 
-        <form action="/save_user"  method="POST" id="registration-form">
+        <form action="https://localhost:8081/register"  method="POST" id="registration-form">
             <div class="column">
                 <div class="form-col">
                     <h6>Dane osobowe</h6>
@@ -110,7 +110,7 @@
                 </div>
 
                 <div class="btn-block">
-                    <input id="button-reg-form" type="submit" value="Rejestruj"/>               
+                    <input class="btn" id="button-reg-form" type="submit" value="Rejestruj"/>               
                 </div>    
 
                 </div>

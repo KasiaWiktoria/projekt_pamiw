@@ -35,7 +35,10 @@ def list(name):
 
 @app.route("/<string:name>/", methods=[GET])
 def set(name):
-    return render_template(name + '.html')
+    try:    
+        return render_template(name + '.html')
+    except Exception:
+        abort(401) 
 
 @app.route("/login", methods=[POST])
 def login():

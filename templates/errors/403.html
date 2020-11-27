@@ -1,9 +1,10 @@
+</html>
 <!DOCTYPE html>
 <html lang="pl">
     <head>
         <title>PAX</title>
         <meta charset="utf-8">
-        <link href="/styles/waybills-list.css" rel="stylesheet" type="text/css">
+        <link href="/styles/error.css" rel="stylesheet" type="text/css">
         <link href="/styles/main_style.css" rel="stylesheet" type="text/css">
         <link rel="shortcut icon" href="/images/favicon.ico"/>
     </head>
@@ -27,30 +28,18 @@
                 <img src="/images/konto.svg" alt="moje konto"> 
             </a>
         </header>
-
         <section>
-            <h1>Lista twoich paczek</h1>
-            <table><tbody>
-                    <tr>
-                        <th>nazwa zamówienia</th>
-                        <th>imię i nazwisko nadawcy</th>
-                        <th>adres nadawcy</th>
-                        <th>imię i nazwisko odbiorcy</th>
-                        <th>adres odbiorcy</th>
-                    </tr>
-                    {% for waybill in my_waybills %}
-                    <tr>
-                        <td>{{waybill.get_title()}}</td>
-                        <td>{{waybill.get_sender_name()}}</td>
-                        <td>{{waybill.get_sender_addr()}}</td>
-                        <td>{{waybill.get_recipient_name()}}</td>
-                        <td>{{waybill.get_recipient_addr()}}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <h1>403!</h1>
+            <p>
+                Nie masz dostępu do żądanego zasobu. 
+            </p>
+            <p class="small">
+                <strong>Szczegóły błędu:</strong>
+                {{error}}
+            </p>
+            <a href="{{ url_for('index') }}"> Wróć na stronę główną. </a> 
+            
         </section>
-
 
         <footer>
             <p class="footer-inline left">&copy; 2020 Katarzyna Stankiewicz</p>

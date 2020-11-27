@@ -24,14 +24,17 @@ document.addEventListener('DOMContentLoaded', function (event) {
     registrationForm.addEventListener("submit", function (event) {
         event.preventDefault();
 
-        var canSend = (AVAILABLE_LOGIN && validateLogin() == "" && validateName(NAME_FIELD_ID) == "" && validateSurname(SURNAME_FIELD_ID) == "" && validateBDate(BDATE_FIELD_ID) && validatePesel(PESEL_FIELD_ID) == "" && validateCountry(COUNTRY_FIELD_ID) == "" && validateCity(CITY_FIELD_ID) == "" && validateStreet(STREET_FIELD_ID) == "" && validateHouseNr(HOUSE_NR_FIELD_ID) == "" && validatePasswd() == "" && arePasswdsTheSame());
+        var canSend = (AVAILABLE_LOGIN && validateLogin() == "" && validateName(NAME_FIELD_ID) == "" && validateSurname(SURNAME_FIELD_ID) == "" && validateBDate(BDATE_FIELD_ID) == "" && validatePesel(PESEL_FIELD_ID) == "" && validateCountry(COUNTRY_FIELD_ID) == "" && validateCity(CITY_FIELD_ID) == "" && validateStreet(STREET_FIELD_ID) == "" && validateHouseNr(HOUSE_NR_FIELD_ID) == "" && validatePasswd() == "" && arePasswdsTheSame());
 
         if(canSend) {
             submitForm(registrationForm, "register", " Zarejestrowano pomyślnie.", "Rejestracja nie powiodła się. ");
+        } else if(canSend != false){
+            console.log('Wrong type of variable.');
         } else {
+            console.log('Not correct fields.');
             removeWarningMessage("correct");
             let id = "button-reg-form";
-            let uncorrectElem = prepareWarningElem("uncorrect", "Rejestracja nie powiodła się.");
+            let uncorrectElem = prepareWarningElem("uncorrect", "Rejestracja nie powiodła się. Sprawdź czy wszystkie pola są wypełnione poprawnie.");
             uncorrectElem.className = "uncorrect-field"
             appendAfterElem(id, uncorrectElem);
         }
@@ -56,6 +59,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
                     showWarningMessage(warningElemId, warningMessage, LOGIN_FIELD_ID);
                 }
             }).catch(function (error) {
+                showWarningMessage(warningElemId, "W tej chwili nie jesteśmy w stanie zweryfikować dostępności loginu.", LOGIN_FIELD_ID);
                 console.error("Something went wrong while checking login.");
                 console.error(error);
             });

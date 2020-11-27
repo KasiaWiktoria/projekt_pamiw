@@ -19,9 +19,9 @@
                 <div class="menu">
                     <ul>
                         <li><a href="/">Strona główna</a></li>
-                        <li><a href="/registration">Rejestracja</a></li>
-                        <li><a href="/send">Nadaj paczkę</a></li>
-                        <li><a href="#">Kontakt</a></li>
+                        <li class="logged_out_only"><a href="/registration">Rejestracja</a></li>
+                        <li class="logged_in_only"><a href="/send">Nadaj paczkę</a></li>
+                        <li class="logged_in_only"><a href="/waybills-list">Lista wysłanych paczek</a></li>
                     </ul>
                 </div>
             </nav>
@@ -33,7 +33,7 @@
         <section>
             <h1>Nadaj paczkę</h1>
             
-            <form method="POST" action="/login/shipment" id="send-form">
+            <form method="POST" action="https://localhost:8081/waybill" id="send-form">
                 <div class="max-width-elem">
                     <div class="form-row">
                         <label for="product_name">Nazwa produktu</label>
@@ -137,7 +137,7 @@
                     <input type="file" id="pack_image" name="pack_image">
                 </div>
                 <div class="btn-block" id="button-send-form">
-                    <input type="submit" value="Nadaj paczkę">
+                    <input class="btn" type="submit" value="Nadaj paczkę">
                 </div>
             </form>
         </section>

@@ -1,25 +1,52 @@
+</html>
 <!DOCTYPE html>
 <html lang="pl">
+    <head>
+        <title>PAX</title>
+        <meta charset="utf-8">
+        <link href="/styles/error.css" rel="stylesheet" type="text/css">
+        <link href="/styles/main_style.css" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="/images/favicon.ico"/>
+    </head>
+    <body>
+        <header>
+            <a href="/" class="logo">
+                <img src="/images/logo.svg" alt="logo">
+                <p><span>PAX</span> System obsługi paczek</p>
+            </a> 
+            <nav>
+                <div class="menu">
+                    <ul>
+                        <li><a href="/">Strona główna</a></li>
+                        <li class="logged_out_only"><a href="/registration">Rejestracja</a></li>
+                        <li class="logged_in_only"><a href="/send">Nadaj paczkę</a></li>
+                        <li class="logged_in_only"><a href="/waybills-list">Lista wysłanych paczek</a></li>
+                    </ul>
+                </div>
+            </nav>
+            <a href="/registration">
+                <img src="/images/konto.svg" alt="moje konto"> 
+            </a>
+        </header>
+        <section>
+            <h1>401!</h1>
+            <p>
+                Nie masz dostępu do żądanego zasobu. Zaloguj się aby przejść do strony.
+            </p>
+            <p class="small">
+                <strong>Szczegóły błędu:</strong>
+                {{error}}
+            </p>
+            <div class="btn-block">
+                <a class="btn" href="{{ url_for('login') }}"> Zaloguj się. </a>               
+            </div>
+            <a href="{{ url_for('index') }}"> Wróć na stronę główną. </a> 
+            
+        </section>
 
-<head>
-    <title>[401] POSTawa -> Redis + Session</title>
-    <meta charset="utf-8">
-    <link href="/styles/style.css" rel="stylesheet" type="text/css">
-    <link href="http://fonts.googleapis.com/css?family=Cambay&subset=latin,latin-ext" rel="stylesheet" type="text/css">
-</head>
-
-<body>
-    <section>
-        <h1>401!</h1>
-        <p>
-            Nie masz dostępu do żądanego zasobu. Nie wiem, kim jesteś.
-            <a href="{{ url_for('home') }}">Zawróć!</a>
-        </p>
-        <p>
-            <strong>Szczegóły błędu:</strong>
-            {{error}}
-        </p>
-    </section>
-</body>
-
+        <footer>
+            <p class="footer-inline left">&copy; 2020 Katarzyna Stankiewicz</p>
+            <p class="footer-inline right">Projekt realizowany w ramach laboratorium Programowanie Aplikacji Mobilnych i Webowych</p>
+        </footer>
+    </body>
 </html>

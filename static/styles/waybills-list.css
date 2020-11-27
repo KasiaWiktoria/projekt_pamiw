@@ -1,0 +1,14 @@
+section {
+    display: flex;
+    justify-content: center;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+h1 {
+    width: 80%;
+}
+table {
+    width: 80%;
+}
