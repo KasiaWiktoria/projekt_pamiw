@@ -25,7 +25,6 @@ body article{
 }
 
 body h1, body h2, body h3, body h4{
-    color:  #421450;
     font-weight: 700;
 }
 
@@ -127,7 +126,7 @@ nav ul li a:hover {
     margin-bottom: 40px;
 }
 
-.btn-block .btn{
+.btn{
     padding: 10px 50px;
     background-color: #5dd401;
     color: #fff;
@@ -138,9 +137,15 @@ nav ul li a:hover {
     margin-bottom: 10px;
 }
 
-.btn-block .btn:hover{
+.btn:hover{
     background-color: #BA2AC7;
     color: #fff;
+}
+
+.max-width-elem{
+    display: flex;
+    width: 100%;
+    margin: auto;
 }
 
 a{

@@ -1,4 +1,4 @@
-import {submitForm, prepareEventOnChange} from './form_functions.js';
+import {prepareEventOnChange} from './form_functions.js';
 import {showWarningMessage, removeWarningMessage, prepareWarningElem, appendAfterElem} from './warning_functions.js';
 import {noSpecialCharacters, validateName, validateSurname, validateCountry, validatePostalCode, validateCity, validateStreet, validateHouseNr, validatePhone, validateFile} from './validation_functions.js';
 import {GET, POST, URL, HTTP_STATUS, PRODUCT_NAME_FIELD_ID, SENDER_NAME_FIELD_ID, SENDER_SURNAME_FIELD_ID, SENDER_PHONE_FIELD_ID, SENDER_COUNTRY_FIELD_ID, SENDER_POSTAL_CODE_FIELD_ID, SENDER_CITY_FIELD_ID, SENDER_STREET_FIELD_ID, SENDER_HOUSE_NR_FIELD_ID, RECIPIENT_NAME_FIELD_ID, RECIPIENT_SURNAME_FIELD_ID, RECIPIENT_PHONE_FIELD_ID, RECIPIENT_COUNTRY_FIELD_ID, RECIPIENT_POSTAL_CODE_FIELD_ID, RECIPIENT_CITY_FIELD_ID, RECIPIENT_STREET_FIELD_ID, RECIPIENT_HOUSE_NR_FIELD_ID, PACK_IMAGE_FIELD_ID} from './const.js'
@@ -37,15 +37,53 @@ document.addEventListener('DOMContentLoaded', function (event) {
         var productNameAndImgCorrect = (noSpecialCharacters(PRODUCT_NAME_FIELD_ID) == "" && validateFile(PACK_IMAGE_FIELD_ID) == "");
 
         if(senderDataCorrect && recipientDataCorrect && productNameAndImgCorrect) {
-            submitForm(sendForm, "waybill", " Pomyślnie wygenerowano list przewozowy.", "Generowanie listu przewozowego nie powiodło się. ");
+            submitForm(sendForm)
         } else {
             removeWarningMessage("correct");
-            let id = "button-send-form";
+            let id = "button-submit-form";
             let uncorrectElem = prepareWarningElem("uncorrect", "Generowanie listu przewozowego nie powiodło się. ");
             uncorrectElem.className = "uncorrect-field"
             appendAfterElem(id, uncorrectElem);
         }
     });
+
+    function submitForm(form) {
+        let url = "https://localhost:8081/waybill";
+        console.log(url);
+
+        let successMessage = "Pomyślnie wygenerowano list przewozowy.";
+        let failureMessage = "Generowanie listu przewozowego nie powiodło się. ";
+    
+        let registerParams = {
+            method: POST,
+            mode: 'cors',
+            body: new FormData(form),
+            redirect: "follow"
+        };
+    
+        fetch(url, registerParams)
+                .then(response => getResponseData(response, successMessage, failureMessage)).catch(err => {
+                    console.log("Caught error: " + err);
+                    removeWarningMessage("correct");
+                    let id = "button-submit-form";
+    
+                    let uncorrectElem = prepareWarningElem("uncorrect", failureMessage);
+                    uncorrectElem.className = "uncorrect-field"
+                    appendAfterElem(id, uncorrectElem);
+                });
+    }
+
+    function getResponseData(response, successMessage, failureMessage) {
+        let status = response.status;
+    
+        if (status === HTTP_STATUS.OK) {
+            console.log("Status =" + status);
+            return "OK"
+        } else {
+            console.error("Response status code: " + response.status);
+            throw "Unexpected response status: " + response.status;
+        }
+    }
 
     function prepareEventOnFileChange(FIELD_ID, validationFunction) {
         let loginInput = document.getElementById(FIELD_ID);

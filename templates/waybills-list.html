@@ -23,26 +23,32 @@
                     </ul>
                 </div>
             </nav>
-            <a href="/registration">
+            <a class="logged_in_only" href="/registration">
                 <img src="/images/konto.svg" alt="moje konto"> 
             </a>
         </header>
+
+        <div class="max-width-elem">
+            <a class="btn" href="/logout"> Wyloguj się</a>
+        </div>
 
         <section>
             <h1>Lista twoich paczek</h1>
             <table><tbody>
                     <tr>
-                        <th>nazwa zamówienia</th>
-                        <th>imię i nazwisko nadawcy</th>
-                        <th>adres nadawcy</th>
-                        <th>imię i nazwisko odbiorcy</th>
-                        <th>adres odbiorcy</th>
-                        <th>list przewozowy</th>
+                        <th>zjęcie paczki</th>
+                        <th>List przewozowy</th>
+                        <th>pobieranie</th>
                     </tr>
                     {% for waybill in my_waybills %}
                     <tr>
+                        <td><img src="{{ waybill.__image_path }}" alt="zdjęcie paczki"></td>
                         <td>{{ waybill }}</td>
-                        <td><button action="https://localhost:8081/waybill/{{}}"><img src="pobieranie" alt=""><p>Pobierz</p></button></td>
+                        <td>
+                            <a href="https://localhost:8081/waybill/{{waybill}}">
+                                <img src="/images/download.svg" alt="pobierz"><p>Pobierz</p>
+                            </a>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>

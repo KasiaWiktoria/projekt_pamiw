@@ -1,9 +1,10 @@
 from flask import Flask, render_template, url_for, redirect, send_file, make_response, abort, session
 from flask import request, jsonify
 from flask import logging
+from datetime import timedelta
 from uuid import uuid4
 from const import *
-from flask_jwt_extended import JWTManager, jwt_required, create_access_token, set_access_cookies, create_refresh_token, unset_jwt_cookies
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token, create_refresh_token, set_refresh_cookies, set_access_cookies, create_refresh_token, unset_jwt_cookies
 import redis
 import os
 import hashlib
@@ -14,7 +15,11 @@ db = redis.Redis(host="redis-db", port=6379, decode_responses=True)
 
 app.config["JWT_SECRET_KEY"] = os.environ.get(SECRET_KEY)
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
-app.config["JWT_TOKEN_LOCATION"] = ['cookies']
+app.config["JWT_REFRESH_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
+app.config["JWT_TOKEN_LOCATION"] = JWT_TOKEN_LOCATION
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=5)
+app.config["SESSION_REFRESH_EACH_REQUEST"] = True
+
 jwt = JWTManager(app)
 
 GET = "GET"
@@ -112,15 +117,20 @@ def login():
         username = request.form[LOGIN_FIELD_ID]
         password = request.form[PASSWD_FIELD_ID]
 
-        if db.hexists(username, username):
+        if db.hexists(username, LOGIN_FIELD_ID):
+            log.debug("Użytkownik " + username + " jest w bazie danych.")
             if check_passwd(username,password):
+                log.debug("Hasło przeszło.")
                 hash_ = uuid4().hex 
-                db.hset(username, SESSION_ID, session_id)
+                db.hset(username, SESSION_ID, hash_)
                 response = make_response(redirect("/waybills-list"))
                 response.set_cookie(SESSION_ID, hash_,
                                     max_age=300, secure=True, httponly=True)
                 access_token = create_access_token(identity=username)
+                refresh_token = create_refresh_token(identity=username)
+
                 set_access_cookies(response, access_token)
+                set_refresh_cookies(response, refresh_token)
                 return response
         else:
             response = make_response("Błędny login lub hasło", 400)

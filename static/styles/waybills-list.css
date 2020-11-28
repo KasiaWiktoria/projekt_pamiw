@@ -6,8 +6,36 @@ section {
     flex-wrap: wrap;
 }
 
-h1 {
+.max-width-elem {
+    justify-content: flex-end;
+    margin-right: 50px;
+}
+
+.max-width-elem .btn {
+    margin-top: 30px;
+    margin-right: 50px;
+}
+
+td img{
+    width: 30px;
+}
+
+td a {
+    background: none;
+    outline: none;
+    border: none;
+    display: flex;
+    align-items: center;
+}
+
+td a:hover {
+    filter: drop-shadow( 3px 3px 2px #00000080);
+}
+
+section h1 {
     width: 80%;
+    font-size: 40px;
+    color: #5dd401;;
 }
 table {
     width: 80%;

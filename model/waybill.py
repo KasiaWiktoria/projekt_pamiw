@@ -24,9 +24,9 @@ class Waybill:
 
     def __add_table_to_pdf(self, pdf):
         n_cols = 2
-        col_width = (pdf.w - pdf.l_margin - pdf.r_margin) / n_cols / 2
+        col_width = (pdf.w - pdf.l_margin - pdf.r_margin) / n_cols
         font_size = pdf.font_size
-        n_lines = 6
+        n_lines = 5
         col_height = n_lines * font_size
 
         pdf.cell(col_width, col_height, "Sender", border=1)
@@ -35,9 +35,12 @@ class Waybill:
         pdf.cell(col_width, col_height, "Recipient", border=1)
         pdf.multi_cell(col_width, font_size, txt=self.__recipient.str_full(), border=1)
         pdf.ln(0)
-        pdf.cell(col_width, col_height, "Image of the pack", border=1)
-        pdf.cell(col_width, col_height, "", border=1)
-        pdf.image(self.__image_path, x = pdf.l_margin + col_width, y = pdf.t_margin + 2*col_height, w=col_width, h=col_height)
+        pdf.cell(col_width, 4*col_height, "Image of the pack", border=1)
+        try:
+            pdf.cell(col_width, 4*col_height, "", border=1)
+            pdf.image(self.__image_path, x = pdf.l_margin + col_width, y = pdf.t_margin + 2*col_height, w=col_width, h=4*col_height)
+        except Exception:
+            pdf.cell(col_width, 4*col_height, "Nie udało się pobrać zdjęcia", border=1)
 
     def __generate_filename(self, path):
         unique_filename = uuid.uuid4().hex

@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
             submitLoginForm(loginForm, "login");
         } else {
             removeWarningMessage("correct");
-            let id = "button-log-form";
+            let id = "button-submit-form";
             let uncorrectElem = prepareWarningElem("uncorrect", "Błędny login lub hasło.");
             uncorrectElem.className = "uncorrect-field"
             appendAfterElem(id, uncorrectElem);
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     });
 });
 
-export function submitLoginForm(form, name) {
+function submitLoginForm(form, name) {
     let registerUrl = URL + name;
     console.log(registerUrl);
     let successMessage = "Zalogowano pomyślnie.";
@@ -44,7 +44,7 @@ export function submitLoginForm(form, name) {
             .then(response => getResponseData(response, successMessage, failureMessage)).catch(err => {
                 console.log("Caught error: " + err);
                 removeWarningMessage("correct");
-                let id = "button-log-form";
+                let id = "button-submit-form";
 
                 let uncorrectElem = prepareWarningElem("uncorrect", failureMessage);
                 uncorrectElem.className = "uncorrect-field"
@@ -60,12 +60,12 @@ function getResponseData(response, successMessage, failureMessage) {
         console.log("Logged in successfully.");
 
         removeWarningMessage("uncorrect");
-        let id = "button-log-form";
+        let id = "button-submit-form";
         let correctElem = prepareWarningElem("correct", successMessage);
         correctElem.className = "correct-field"
         appendAfterElem(id, correctElem);
         
-        window.location.href = '/login/waybills-list'
+        window.location.href = '/waybills-list'
     } else if (status == HTTP_STATUS.BAD_REQUEST) {
         console.log("Incorrect authorization data.")
         

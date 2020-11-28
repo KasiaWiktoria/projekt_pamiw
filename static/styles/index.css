@@ -34,7 +34,7 @@ table tbody td{
     text-align: center;
 }
 
-section.image1 {
+section.image2 {
     background-image: url('../images/paczki-tlo.jpg');
     height: 400px;
     background-repeat: no-repeat;
@@ -43,7 +43,7 @@ section.image1 {
     background-attachment: fixed;
 }
 
-section.image2 {
+section.image {
     background-image: url('../images/kurier.jpg');
     height: 400px;
     background-repeat: no-repeat;

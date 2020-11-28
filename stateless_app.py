@@ -20,12 +20,6 @@ app.config["JWT_TOKEN_LOCATION"] = ['cookies']
 
 jwt = JWTManager(app)
 
-@app.route("/secret-files", methods=[GET])
-@jwt_required
-def show_waybills():
-    files = db.hvals(FILENAMES)
-    return render_template("index.html", my_files=files)
-
 @cross_origin(origins=["https://localhost:8080"], supports_creditentials=True)
 @app.route("/waybill/<string:waybill_hash>", methods=[GET])
 @jwt_required
@@ -45,7 +39,7 @@ def download_waybill(waybill_hash):
 
 @cross_origin(origins=["https://localhost:8080"], supports_creditentials=True)
 @app.route("/waybill", methods=[POST])
-@jwt_required
+#@jwt_required
 def add_waybill():
     log.debug("Receive request to create a waybill.")
     form = request.form
@@ -54,7 +48,7 @@ def add_waybill():
     waybill = to_waybill(form)
     save_waybill(waybill)
 
-    return redirect(url_for("show_waybills"))
+    return redirect('https://localhost:8080/waybills-list')
 
 
 def to_waybill(form):
