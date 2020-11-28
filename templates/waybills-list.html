@@ -37,14 +37,12 @@
                         <th>adres nadawcy</th>
                         <th>imię i nazwisko odbiorcy</th>
                         <th>adres odbiorcy</th>
+                        <th>list przewozowy</th>
                     </tr>
                     {% for waybill in my_waybills %}
                     <tr>
-                        <td>{{waybill.get_title()}}</td>
-                        <td>{{waybill.get_sender_name()}}</td>
-                        <td>{{waybill.get_sender_addr()}}</td>
-                        <td>{{waybill.get_recipient_name()}}</td>
-                        <td>{{waybill.get_recipient_addr()}}</td>
+                        <td>{{ waybill }}</td>
+                        <td><button action="https://localhost:8081/waybill/{{}}"><img src="pobieranie" alt=""><p>Pobierz</p></button></td>
                     </tr>
                     {% endfor %}
                 </tbody>

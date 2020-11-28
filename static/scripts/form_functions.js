@@ -2,6 +2,7 @@ import {GET, POST, URL, HTTP_STATUS} from './const.js'
 import {showWarningMessage, removeWarningMessage, prepareWarningElem, appendAfterElem} from './warning_functions.js';
 
 
+
 export function submitForm(form, name, successMessage, failureMessage) {
     let registerUrl = URL + name;
     console.log(registerUrl);
@@ -19,7 +20,7 @@ export function submitForm(form, name, successMessage, failureMessage) {
             .catch(err => {
                 console.log("Caught error: " + err);
                 removeWarningMessage("correct");
-                let id = "button-reg-form";
+                let id = "button-submit-form";
 
                 let uncorrectElem = prepareWarningElem("uncorrect", failureMessage);
                 uncorrectElem.className = "uncorrect-field"
@@ -27,67 +28,8 @@ export function submitForm(form, name, successMessage, failureMessage) {
             });
 }
 
-export function submitLoginForm(form, name, successMessage, failureMessage) {
-    let registerUrl = URL + name;
-    console.log(registerUrl);
-
-    let registerParams = {
-        method: POST,
-        mode: 'cors',
-        body: new FormData(form),
-        redirect: "follow"
-    };
-
-    fetch(registerUrl, registerParams)
-            .then(response => getResponseData(response))
-            .then(response => displayInConsoleLoginCorrectResponse(response, successMessage, failureMessage))
-            .catch(err => {
-                console.log("Caught error: " + err);
-                removeWarningMessage("correct");
-                let id = "button-log-form";
-
-                let uncorrectElem = prepareWarningElem("uncorrect", failureMessage);
-                uncorrectElem.className = "uncorrect-field"
-                appendAfterElem(id, uncorrectElem);
-            });
-}
-
-function getResponseData(response) {
-    let status = response.status;
-
-    if (status === HTTP_STATUS.OK || status === HTTP_STATUS.CREATED) {
-        console.log("Rejestracja powiodła się. status =" + status);
-        console.warn(response);
-        return "OK"
-    } else {
-        console.error("Response status code: " + response.status);
-        throw "Unexpected response status: " + response.status;
-    }
-}
 
 function displayInConsoleCorrectResponse(correctResponse, successMessage, failureMessage) {
-
-    console.log("Status: " + correctResponse);
-
-    if (correctResponse == "OK") {
-        removeWarningMessage("uncorrect");
-        let id = "button-reg-form";
-        let correctElem = prepareWarningElem("correct", successMessage);
-        correctElem.className = "correct-field"
-        appendAfterElem(id, correctElem);
-        
-    } else {
-        console.log("Errors: " + correctResponse);
-
-        removeWarningMessage("correct");
-        let id = "button-reg-form";
-        let uncorrectElem = prepareWarningElem("uncorrect", failureMessage + correctResponse);
-        uncorrectElem.className = "uncorrect-field"
-        appendAfterElem(id, uncorrectElem);
-    }
-}
-
-function displayInConsoleLoginCorrectResponse(correctResponse, successMessage, failureMessage) {
 
     console.log("Status: " + correctResponse);
 
@@ -103,10 +45,22 @@ function displayInConsoleLoginCorrectResponse(correctResponse, successMessage, f
         console.log("Errors: " + correctResponse);
 
         removeWarningMessage("correct");
-        let id = "button-log-form";
+        let id = "button-submit-form";
         let uncorrectElem = prepareWarningElem("uncorrect", failureMessage + correctResponse);
         uncorrectElem.className = "uncorrect-field"
         appendAfterElem(id, uncorrectElem);
+    }
+}
+
+function getResponseData(response) {
+    let status = response.status;
+
+    if (status === HTTP_STATUS.OK) {
+        console.log("Status =" + status);
+        return "OK"
+    } else {
+        console.error("Response status code: " + response.status);
+        throw "Unexpected response status: " + response.status;
     }
 }
     

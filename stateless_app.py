@@ -20,10 +20,6 @@ app.config["JWT_TOKEN_LOCATION"] = ['cookies']
 
 jwt = JWTManager(app)
 
-
-def setup():
-    log.setLevel(logging.DEBUG)
-
 @app.route("/secret-files", methods=[GET])
 @jwt_required
 def show_waybills():
@@ -65,8 +61,9 @@ def to_waybill(form):
     product_name = form.get(PRODUCT_NAME_FIELD_ID)
     sender = to_sender(form)
     recipient = to_recipient(form)
+    img = form.get(PACK_IMAGE_FIELD_ID)
 
-    return Waybill(product_name, sender, recipient)
+    return Waybill(product_name, sender, recipient, img)
 
 
 def to_sender(form):

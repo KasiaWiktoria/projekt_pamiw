@@ -91,6 +91,15 @@ nav ul {
 nav ul li {
     display: inline;
 }
+/*
+nav ul li.logged_out_only {
+    display: inline;
+}
+
+nav ul li.logged_in_only {
+    display: none;
+}
+*/
 
 nav ul li a {
     display: inline-block;

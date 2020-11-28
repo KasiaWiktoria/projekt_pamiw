@@ -1,9 +1,9 @@
-from flask import Flask, render_template, url_for, redirect, send_file, make_response, abort
+from flask import Flask, render_template, url_for, redirect, send_file, make_response, abort, session
 from flask import request, jsonify
 from flask import logging
 from uuid import uuid4
 from const import *
-from flask_jwt_extended import JWTManager, jwt_required, create_access_token, set_access_cookies, create_refresh_token
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token, set_access_cookies, create_refresh_token, unset_jwt_cookies
 import redis
 import os
 import hashlib
@@ -24,17 +24,27 @@ POST = "POST"
 def index():
     return render_template("index.html")
 
-@app.route("/login/waybills-list", methods=[GET])
+@app.route("/waybills-list", methods=[GET])
 def list():
-    waybills = db.hvals(FILENAMES)
-    return render_template('waybills-list.html', my_waybills = waybills)
+    if active_session():
+        waybills = db.hvals(FILENAMES)
+        return render_template('waybills-list.html', my_waybills = waybills)
+    else:
+        abort(401)
 
 @app.route("/<string:name>/", methods=[GET])
 def set(name):
     try:    
         return render_template(name + '.html')
     except Exception:
-        abort(401) 
+        abort(404) 
+
+@app.route("/send", methods=[GET])
+def send():
+    if active_session():
+        return render_template('send.html')
+    else:
+        abort(401)
 
 @app.route("/user/<string:username>", methods=[GET,POST])
 def check_user(username):
@@ -102,17 +112,20 @@ def login():
         username = request.form[LOGIN_FIELD_ID]
         password = request.form[PASSWD_FIELD_ID]
 
-        if check_passwd(username,password):
-            session_id = uuid4().hex 
-            db.hset(username, SESSION_ID, session_id)
-            response = make_response(redirect("/login/waybills-list"))
-            response.set_cookie(SESSION_ID, session_id,
-                                max_age=300, secure=True, httponly=True)
-            access_token = create_access_token(identity=username)
-            set_access_cookies(response, access_token)
-            return response
+        if db.hexists(username, username):
+            if check_passwd(username,password):
+                hash_ = uuid4().hex 
+                db.hset(username, SESSION_ID, session_id)
+                response = make_response(redirect("/waybills-list"))
+                response.set_cookie(SESSION_ID, hash_,
+                                    max_age=300, secure=True, httponly=True)
+                access_token = create_access_token(identity=username)
+                set_access_cookies(response, access_token)
+                return response
         else:
-            return f"Uncorrect password for user {username}"
+            response = make_response("Błędny login lub hasło", 400)
+            return response
+        
     else:
         return render_template("login.html")
 
@@ -123,16 +136,24 @@ def check_passwd(username, password):
 
 @app.route("/logout", methods=[POST])
 def logout():
-    name_hash = request.cookies.get(SESSION_ID)
+    hash_ = request.cookies.get(SESSION_ID)
     response = make_response(render_template("index.html"))
-    response.set_cookie(SESSION_ID, name_hash,
-                            max_age=0, secure=True, httponly=True)
+    response.set_cookie(SESSION_ID, hash_, max_age=0, secure=True, httponly=True)
+    session.clear()
+    unset_jwt_cookies(response)
     return response
+
+def active_session():
+    hash_ = request.cookies.get(SESSION_ID)
+
+    if hash_ is not None:
+        return True
+    else:
+        return False
 
 @app.errorhandler(400)
 def bad_request(error):
     return render_template("errors/400.html", error=error)
-
 
 @app.errorhandler(401)
 def page_unauthorized(error):

@@ -5,10 +5,11 @@ from fpdf import FPDF
 
 class Waybill:
 
-    def __init__(self, product_name: str, sender, recipient):
+    def __init__(self, product_name: str, sender, recipient, img):
         self.__product_name = product_name
         self.__sender = sender
         self.__recipient = recipient
+        self.__image_path = "static/images/" + img
 
     def generate_and_save(self, path="./"):
         pdf = FPDF()
@@ -26,12 +27,17 @@ class Waybill:
         col_width = (pdf.w - pdf.l_margin - pdf.r_margin) / n_cols / 2
         font_size = pdf.font_size
         n_lines = 6
+        col_height = n_lines * font_size
 
-        pdf.cell(col_width, n_lines * font_size, "Sender", border=1)
+        pdf.cell(col_width, col_height, "Sender", border=1)
         pdf.multi_cell(col_width, font_size, txt=self.__sender.str_full(), border=1)
         pdf.ln(0)
-        pdf.cell(col_width, n_lines * font_size, "Recipient", border=1)
+        pdf.cell(col_width, col_height, "Recipient", border=1)
         pdf.multi_cell(col_width, font_size, txt=self.__recipient.str_full(), border=1)
+        pdf.ln(0)
+        pdf.cell(col_width, col_height, "Image of the pack", border=1)
+        pdf.cell(col_width, col_height, "", border=1)
+        pdf.image(self.__image_path, x = pdf.l_margin + col_width, y = pdf.t_margin + 2*col_height, w=col_width, h=col_height)
 
     def __generate_filename(self, path):
         unique_filename = uuid.uuid4().hex
@@ -66,7 +72,7 @@ class Person:
         return self.__address
 
     def str_full(self):
-        return "{}\n{}".format(self.get_fullname(), self.__address.str_full())
+        return "{}\n \n{}".format(self.get_fullname(), self.__address.str_full())
 
     @classmethod
     def from_json(cls, data):
@@ -99,8 +105,9 @@ class Address:
 
     def str_full(self):
         result = ""
-        for field_value in self.__dict__.values():
-            result += "\n{}".format(field_value)
+        result += "{} {}".format(self.__street, self.__house_nr)
+        result += "\n{} {}".format(self.__postal_code, self.__city)
+        result += "\n{}".format(self.__country)
 
         return result
 
