@@ -1,12 +1,12 @@
+</html>
 <!DOCTYPE html>
 <html lang="pl">
     <head>
         <title>PAX</title>
         <meta charset="utf-8">
-        <link href="/styles/waybills-list.css" rel="stylesheet" type="text/css">
+        <link href="/styles/error.css" rel="stylesheet" type="text/css">
         <link href="/styles/main_style.css" rel="stylesheet" type="text/css">
         <link rel="shortcut icon" href="/images/favicon.ico"/>
-        <script type="module" src="/scripts/waybills-list.js"></script>
     </head>
     <body>
         <header>
@@ -39,34 +39,12 @@
             </a>
             {% endif %}
         </header>
-
-        <div class="max-width-elem">
-            <a id="logout_button" class="btn" href="/logout" method="POST"> Wyloguj się</a>
-        </div>
-
+        
         <section>
-            <h1>Lista twoich paczek</h1>
-            <table><tbody>
-                    <tr>
-                        <th>zdjęcie paczki</th>
-                        <th>List przewozowy</th>
-                        <th>pobieranie</th>
-                    </tr>
-                    {% for waybill, img_path in my_waybills %}
-                    <tr>
-                        <td><img src="/images/packs_images/{{ img_path }}" alt="zdjęcie paczki"></td>
-                        <td>{{ waybill }}</td>
-                        <td>
-                            <a href="https://localhost:8081/waybill/{{ waybill}}">
-                                <img src="/images/download.svg" alt="pobierz"><p>Pobierz</p>
-                            </a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <h1 class="smaller">Jesteś już zalogowany ;).</h1>
+            <a href="{{ url_for('index') }}"> Wróć na stronę główną. </a> 
+            
         </section>
-
 
         <footer>
             <p class="footer-inline left">&copy; 2020 Katarzyna Stankiewicz</p>

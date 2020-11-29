@@ -1,6 +1,6 @@
-import {submitForm, updateCorrectnessMessage, prepareOtherEventOnChange, prepareEventOnChange} from './form_functions.js';
+import {addCorrectMessage, addfailureMessage, submitForm, updateCorrectnessMessage, prepareOtherEventOnChange, prepareEventOnChange} from './form_functions.js';
 import {showWarningMessage, removeWarningMessage, prepareWarningElem, appendAfterElem} from './warning_functions.js';
-import {isLoginAvailable, validateName, validateSurname, validateBDate, validatePesel, validateCountry, validatePostalCode, validateCity, validateStreet, validateHouseNr, validateLogin, validatePasswd, arePasswdsTheSame} from './validation_functions.js';
+import {isAnyFieldBlank, isLoginAvailable, validateName, validateSurname, validateBDate, validatePesel, validateCountry, validatePostalCode, validateCity, validateStreet, validateHouseNr, validateLogin, validatePasswd, arePasswdsTheSame} from './validation_functions.js';
 import {GET, POST, URL, HTTP_STATUS,NAME_FIELD_ID, SURNAME_FIELD_ID, BDATE_FIELD_ID, PESEL_FIELD_ID, COUNTRY_FIELD_ID, POSTAL_CODE_FIELD_ID, CITY_FIELD_ID, STREET_FIELD_ID, HOUSE_NR_FIELD_ID, LOGIN_FIELD_ID,PASSWD_FIELD_ID, REPEAT_PASSWD_FIELD_ID} from './const.js'
 
 document.addEventListener('DOMContentLoaded', function (event) {
@@ -27,16 +27,15 @@ document.addEventListener('DOMContentLoaded', function (event) {
         var canSend = (AVAILABLE_LOGIN && validateLogin() == "" && validateName(NAME_FIELD_ID) == "" && validateSurname(SURNAME_FIELD_ID) == "" && validateBDate(BDATE_FIELD_ID) == "" && validatePesel(PESEL_FIELD_ID) == "" && validateCountry(COUNTRY_FIELD_ID) == "" && validateCity(CITY_FIELD_ID) == "" && validateStreet(STREET_FIELD_ID) == "" && validateHouseNr(HOUSE_NR_FIELD_ID) == "" && validatePasswd() == "" && arePasswdsTheSame());
 
         if(canSend) {
-            submitForm(registrationForm, "register", " Zarejestrowano pomyślnie.", "Rejestracja nie powiodła się. ");
+            submitForm(registrationForm, "registration", " Zarejestrowano pomyślnie.", "Rejestracja nie powiodła się. ");
         } else if(canSend != false){
             console.log('Wrong type of variable.');
         } else {
             console.log('Not correct fields.');
-            removeWarningMessage("correct");
-            let id = "button-reg-form";
-            let uncorrectElem = prepareWarningElem("uncorrect", "Rejestracja nie powiodła się. Sprawdź czy wszystkie pola są wypełnione poprawnie.");
-            uncorrectElem.className = "uncorrect-field"
-            appendAfterElem(id, uncorrectElem);
+            
+            let failureMessage = "Rejestracja nie powiodła się. Sprawdź czy wszystkie pola są wypełnione poprawnie.";
+            let id = "button-submit-form";
+                addfailureMessage(id,failureMessage);
         }
     });
 

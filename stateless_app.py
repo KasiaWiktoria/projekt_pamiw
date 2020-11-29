@@ -17,10 +17,12 @@ cors = CORS(app)
 app.config["JWT_SECRET_KEY"] = os.environ.get(SECRET_KEY)
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
 app.config["JWT_TOKEN_LOCATION"] = ['cookies']
+app.config["IMAGE_UPLOADS"] = CUSTOM_IMG_PATH
+
 
 jwt = JWTManager(app)
 
-@cross_origin(origins=["https://localhost:8080"], supports_creditentials=True)
+@cross_origin(origins=["https://localhost:8080/"], supports_creditentials=True)
 @app.route("/waybill/<string:waybill_hash>", methods=[GET])
 @jwt_required
 def download_waybill(waybill_hash):
@@ -37,7 +39,7 @@ def download_waybill(waybill_hash):
 
     return filename, 200
 
-@cross_origin(origins=["https://localhost:8080"], supports_creditentials=True)
+@cross_origin(origins=["https://localhost:8080/"], supports_creditentials=True)
 @app.route("/waybill", methods=[POST])
 #@jwt_required
 def add_waybill():
@@ -45,19 +47,23 @@ def add_waybill():
     form = request.form
     log.debug("Request form: {}.".format(form))
 
-    waybill = to_waybill(form)
+    waybill = to_waybill(request)
     save_waybill(waybill)
 
     return redirect('https://localhost:8080/waybills-list')
 
 
-def to_waybill(form):
-    product_name = form.get(PRODUCT_NAME_FIELD_ID)
-    sender = to_sender(form)
-    recipient = to_recipient(form)
-    img = form.get(PACK_IMAGE_FIELD_ID)
+def to_waybill(request):
+    product_name = request.form.get(PRODUCT_NAME_FIELD_ID)
+    sender = to_sender(request.form)
+    recipient = to_recipient(request.form)
+    image = request.files[PACK_IMAGE_FIELD_NAME]
+    try:
+        image.save(os.path.join(app.config["IMAGE_UPLOADS"], image.filename))
+    except:
+        log.debug('File saving failed.')
 
-    return Waybill(product_name, sender, recipient, img)
+    return Waybill(product_name, sender, recipient, image.filename)
 
 
 def to_sender(form):
@@ -99,10 +105,17 @@ def to_recipient_foo_address(form):
 
 
 def save_waybill(waybill):
-    fullname = waybill.generate_and_save(FILES_PATH)
+    fullname = waybill.generate_and_save(log,FILES_PATH)
     filename = os.path.basename(fullname)
 
     db.hset(filename, PATH_AND_FILENAME, fullname)
+    db.hset(IMAGES_PATHS, filename , waybill.get_img_path())
     db.hset(FILENAMES, fullname, filename)
 
     log.debug("Saved waybill [fullname: {}, filename: {}].".format(fullname, filename))
+
+
+
+@app.errorhandler(401)
+def page_unauthorized(error):
+    return render_template("errors/401.html", error=error)

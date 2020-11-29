@@ -1,6 +1,6 @@
-import {submitForm, updateCorrectnessMessage, prepareOtherEventOnChange, prepareEventOnChange} from './form_functions.js';
+import {addCorrectMessage, addfailureMessage, submitForm, updateCorrectnessMessage, prepareOtherEventOnChange, prepareEventOnChange} from './form_functions.js';
 import {showWarningMessage, removeWarningMessage, prepareWarningElem, appendAfterElem} from './warning_functions.js';
-import {isLoginAvailable, validateName, validateSurname, validateBDate, validatePesel, validateCountry, validatePostalCode, validateCity, validateStreet, validateHouseNr, validateLogin, validatePasswd, arePasswdsTheSame} from './validation_functions.js';
+import {isAnyFieldBlank, isLoginAvailable, validateName, validateSurname, validateBDate, validatePesel, validateCountry, validatePostalCode, validateCity, validateStreet, validateHouseNr, validateLogin, validatePasswd, arePasswdsTheSame} from './validation_functions.js';
 import {GET, POST, URL, HTTP_STATUS, LOGIN_FIELD_ID, PASSWD_FIELD_ID} from './const.js'
 
 
@@ -11,18 +11,15 @@ document.addEventListener('DOMContentLoaded', function (event) {
     loginForm.addEventListener("submit", function (event) {
         event.preventDefault();
 
-        let login = document.getElementById(LOGIN_FIELD_ID).value;
-        let password = document.getElementById(PASSWD_FIELD_ID).value;
-        var canSend = true;
+        let login = document.getElementById(LOGIN_FIELD_ID);
+        let password = document.getElementById(PASSWD_FIELD_ID);
 
-        if(canSend) {
+        let fields = [login, password];
+        if(!isAnyFieldBlank(fields)) {
             submitLoginForm(loginForm, "login");
         } else {
-            removeWarningMessage("correct");
             let id = "button-submit-form";
-            let uncorrectElem = prepareWarningElem("uncorrect", "Błędny login lub hasło.");
-            uncorrectElem.className = "uncorrect-field"
-            appendAfterElem(id, uncorrectElem);
+            addfailureMessage(id,"Błędny login lub hasło.")
         }
     });
 });
@@ -41,14 +38,11 @@ function submitLoginForm(form, name) {
     };
 
     fetch(registerUrl, registerParams)
-            .then(response => getResponseData(response, successMessage, failureMessage)).catch(err => {
+            .then(response => getResponseData(response, successMessage, failureMessage))
+            .catch(err => {
                 console.log("Caught error: " + err);
-                removeWarningMessage("correct");
                 let id = "button-submit-form";
-
-                let uncorrectElem = prepareWarningElem("uncorrect", failureMessage);
-                uncorrectElem.className = "uncorrect-field"
-                appendAfterElem(id, uncorrectElem);
+                addfailureMessage(id,failureMessage);
             });
 }
 
@@ -59,27 +53,15 @@ function getResponseData(response, successMessage, failureMessage) {
     if (status === HTTP_STATUS.OK) {
         console.log("Logged in successfully.");
 
-        removeWarningMessage("uncorrect");
-        let id = "button-submit-form";
-        let correctElem = prepareWarningElem("correct", successMessage);
-        correctElem.className = "correct-field"
-        appendAfterElem(id, correctElem);
-        
+        addCorrectMessage(id,successMessage)
         window.location.href = '/waybills-list'
     } else if (status == HTTP_STATUS.BAD_REQUEST) {
         console.log("Incorrect authorization data.")
-        
-        removeWarningMessage("correct");
-        let uncorrectElem = prepareWarningElem("uncorrect", failureMessage);
-        uncorrectElem.className = "uncorrect-field"
-        appendAfterElem(id, uncorrectElem);
+        addfailureMessage(id,failureMessage)
     } else {
         console.error("Response status code: " + response.status);
-
-        removeWarningMessage("correct");
-        let uncorrectElem = prepareWarningElem("uncorrect", "Logowanie nie powiodło się. Nie jesteśmy w stanie zweryfikować poprawności wprowadzonych danych.");
-        uncorrectElem.className = "uncorrect-field"
-        appendAfterElem(id, uncorrectElem);
+        addfailureMessage(id,"Logowanie nie powiodło się. Nie jesteśmy w stanie zweryfikować poprawności wprowadzonych danych.")
         throw "Unexpected response status: " + response.status;
     }
 }
+

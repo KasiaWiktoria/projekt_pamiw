@@ -18,15 +18,26 @@
                 <div class="menu">
                     <ul>
                         <li><a href="/">Strona główna</a></li>
-                        <li class="logged_out_only"><a href="/registration">Rejestracja</a></li>
-                        <li class="logged_in_only"><a href="/send">Nadaj paczkę</a></li>
-                        <li class="logged_in_only"><a href="/waybills-list">Lista wysłanych paczek</a></li>
+                        {% if not loggedin %}
+                        <li><a href="/registration">Rejestracja</a></li>
+                        {% endif %}
+                        {% if loggedin %}
+                        <li><a href="/send">Nadaj paczkę</a></li>
+                        <li><a href="/waybills-list">Lista wysłanych paczek</a></li>
+                        {% endif %}
                     </ul>
                 </div>
             </nav>
-            <a href="/registration">
+            {% if not loggedin %}
+            <a href="/login">
                 <img src="/images/konto.svg" alt="moje konto"> 
             </a>
+            {% endif %}
+            {% if loggedin %}
+            <a href="/waybills-list">
+                <img src="/images/konto.svg" alt="moje konto"> 
+            </a>
+            {% endif %}
         </header>
         <section>
             <h1>403!</h1>

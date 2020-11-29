@@ -27,6 +27,10 @@ body article{
 body h1, body h2, body h3, body h4{
     font-weight: 700;
 }
+body section h1.smaller{
+    font-size: 60px;
+    margin-bottom: 100px;
+}
 
 body h3{
     font-size: 24px;

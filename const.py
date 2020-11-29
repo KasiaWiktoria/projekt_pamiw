@@ -3,10 +3,12 @@ POST = "POST"
 SECRET_KEY = "LOGIN_JWT_SECRET"
 JWT_TOKEN_LOCATION = ['cookies']
 TOKEN_EXPIRES_IN_SECONDS = 300
-SESSION_ID = "session-id"
+SESSION_ID = "session"
 FILES_PATH = "waybill_files/"
+CUSTOM_IMG_PATH = "static/images/packs_images/"
 PATH_AND_FILENAME = "path_and_filename"
 FILENAMES = "filenames"
+IMAGES_PATHS = "images_paths"
 
 NAME_FIELD_ID = "name"
 SURNAME_FIELD_ID = "surname"
@@ -48,4 +50,4 @@ RECIPIENT_CITY_FIELD_ID = "recipient_city"
 RECIPIENT_STREET_FIELD_ID = "recipient_street"
 RECIPIENT_HOUSE_NR_FIELD_ID = "recipient_house_nr"
 
-PACK_IMAGE_FIELD_ID = "pack_image"
+PACK_IMAGE_FIELD_NAME = "pack_image"

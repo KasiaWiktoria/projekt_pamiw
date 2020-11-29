@@ -1,5 +1,20 @@
 import {GET, POST, URL, HTTP_STATUS, POLSKIE_ZNAKI, POLSKIE_ZNAKI_MALE, POLSKIE_ZNAKI_DUZE, LOGIN_FIELD_ID, PASSWD_FIELD_ID, REPEAT_PASSWD_FIELD_ID} from './const.js'
-import { appendAfterElem } from './warning_functions.js';
+import {prepareWarningElem, appendAfterElem } from './warning_functions.js';
+
+export function isAnyFieldBlank(fields) {
+    let isBlank = false
+    fields.forEach(field => {
+        if (field.value == "") {
+            let message = "Pole nie może być puste.";
+            let field_id = field.name
+            let warningElemId = field_id + "Warning"
+            let warningElem = prepareWarningElem(warningElemId, message);
+            appendAfterElem(field_id, warningElem);
+            isBlank = true;
+        }
+    });
+    return isBlank
+}
 
 function alphabetOnly(FIELD_ID) {
     let input = document.getElementById(FIELD_ID).value;

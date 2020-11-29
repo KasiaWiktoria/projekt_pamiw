@@ -16,7 +16,11 @@ section {
     margin-right: 50px;
 }
 
-td img{
+td img {
+    height: 80px;
+}
+
+td a img{
     width: 30px;
 }
 

@@ -87,3 +87,17 @@ export function updateCorrectnessMessage(FIELD_ID, validationFunction) {
         showWarningMessage(warningElemId, validationFunction(FIELD_ID), FIELD_ID);
     }
 }
+
+export function addCorrectMessage(id,successMessage) {
+    removeWarningMessage("uncorrect");
+    let correctElem = prepareWarningElem("correct", successMessage);
+    correctElem.className = "correct-field"
+    appendAfterElem(id, correctElem);
+}
+
+export function addfailureMessage(id,failureMessage) {
+    removeWarningMessage("correct");
+    let uncorrectElem = prepareWarningElem("uncorrect", failureMessage);
+    uncorrectElem.className = "uncorrect-field"
+    appendAfterElem(id, uncorrectElem);
+}

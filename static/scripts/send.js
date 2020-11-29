@@ -1,6 +1,6 @@
-import {prepareEventOnChange} from './form_functions.js';
+import {addCorrectMessage, addfailureMessage, prepareEventOnChange} from './form_functions.js';
 import {showWarningMessage, removeWarningMessage, prepareWarningElem, appendAfterElem} from './warning_functions.js';
-import {noSpecialCharacters, validateName, validateSurname, validateCountry, validatePostalCode, validateCity, validateStreet, validateHouseNr, validatePhone, validateFile} from './validation_functions.js';
+import {isAnyFieldBlank, noSpecialCharacters, validateName, validateSurname, validateCountry, validatePostalCode, validateCity, validateStreet, validateHouseNr, validatePhone, validateFile} from './validation_functions.js';
 import {GET, POST, URL, HTTP_STATUS, PRODUCT_NAME_FIELD_ID, SENDER_NAME_FIELD_ID, SENDER_SURNAME_FIELD_ID, SENDER_PHONE_FIELD_ID, SENDER_COUNTRY_FIELD_ID, SENDER_POSTAL_CODE_FIELD_ID, SENDER_CITY_FIELD_ID, SENDER_STREET_FIELD_ID, SENDER_HOUSE_NR_FIELD_ID, RECIPIENT_NAME_FIELD_ID, RECIPIENT_SURNAME_FIELD_ID, RECIPIENT_PHONE_FIELD_ID, RECIPIENT_COUNTRY_FIELD_ID, RECIPIENT_POSTAL_CODE_FIELD_ID, RECIPIENT_CITY_FIELD_ID, RECIPIENT_STREET_FIELD_ID, RECIPIENT_HOUSE_NR_FIELD_ID, PACK_IMAGE_FIELD_ID} from './const.js'
 
 document.addEventListener('DOMContentLoaded', function (event) {
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     prepareEventOnFileChange(PACK_IMAGE_FIELD_ID, validateFile);
 
     let sendForm = document.getElementById("send-form");
-
+/*
     sendForm.addEventListener("submit", function (event) {
         event.preventDefault();
 
@@ -39,14 +39,12 @@ document.addEventListener('DOMContentLoaded', function (event) {
         if(senderDataCorrect && recipientDataCorrect && productNameAndImgCorrect) {
             submitForm(sendForm)
         } else {
-            removeWarningMessage("correct");
+            let failureMessage = "Generowanie listu przewozowego nie powiodło się. ";
             let id = "button-submit-form";
-            let uncorrectElem = prepareWarningElem("uncorrect", "Generowanie listu przewozowego nie powiodło się. ");
-            uncorrectElem.className = "uncorrect-field"
-            appendAfterElem(id, uncorrectElem);
+            addfailureMessage(id,failureMessage);
         }
     });
-
+*/
     function submitForm(form) {
         let url = "https://localhost:8081/waybill";
         console.log(url);

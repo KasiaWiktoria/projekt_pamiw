@@ -9,16 +9,18 @@ class Waybill:
         self.__product_name = product_name
         self.__sender = sender
         self.__recipient = recipient
-        self.__image_path = "static/images/" + img
+        self.__image_path = img
 
-    def generate_and_save(self, path="./"):
+    def generate_and_save(self,log, path="./"):
         pdf = FPDF()
         pdf.add_page()
-        pdf.set_font("Arial", size=10)
+        pdf.set_font("Arial", size=12)
         self.__add_table_to_pdf(pdf)
 
         filename = self.__generate_filename(path)
-        pdf.output(filename)
+        log.debug(filename)
+        new_filename = filename.encode('latin-1', 'replace').decode('latin-1')
+        pdf.output(new_filename)
 
         return filename
 
@@ -36,16 +38,20 @@ class Waybill:
         pdf.multi_cell(col_width, font_size, txt=self.__recipient.str_full(), border=1)
         pdf.ln(0)
         pdf.cell(col_width, 4*col_height, "Image of the pack", border=1)
+        image_path = "static/images/packs_images/" + self.__image_path
         try:
+            pdf.image(image_path, x = pdf.l_margin + col_width, y = pdf.t_margin + 2*col_height, w=col_width, h=4*col_height)
             pdf.cell(col_width, 4*col_height, "", border=1)
-            pdf.image(self.__image_path, x = pdf.l_margin + col_width, y = pdf.t_margin + 2*col_height, w=col_width, h=4*col_height)
         except Exception:
-            pdf.cell(col_width, 4*col_height, "Nie udało się pobrać zdjęcia", border=1)
+            pdf.cell(col_width, 4*col_height, "File upload failed. ", border=1)
 
     def __generate_filename(self, path):
         unique_filename = uuid.uuid4().hex
 
         return "{}{}.pdf".format(path, unique_filename)
+
+    def get_img_path(self):
+        return self.__image_path
 
     @classmethod
     def from_json(cls, data):

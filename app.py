@@ -4,16 +4,22 @@ from flask import logging
 from datetime import timedelta
 from uuid import uuid4
 from const import *
+from model.pack import *
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, create_refresh_token, set_refresh_cookies, set_access_cookies, create_refresh_token, unset_jwt_cookies
 import redis
 import os
 import hashlib
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__, static_url_path="")
 log = logging.create_logger(app)
 db = redis.Redis(host="redis-db", port=6379, decode_responses=True)
+cors = CORS(app)
 
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SECRET_KEY'] = SECRET_KEY
 app.config["JWT_SECRET_KEY"] = os.environ.get(SECRET_KEY)
+app.config["JWT_SESSION_COOKIE"] = False
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
 app.config["JWT_REFRESH_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
 app.config["JWT_TOKEN_LOCATION"] = JWT_TOKEN_LOCATION
@@ -27,27 +33,36 @@ POST = "POST"
 
 @app.route("/", methods=[GET])
 def index():
-    return render_template("index.html")
+    return render_template("index.html", loggedin=active_session())
+
+@app.before_request
+def refresh_session():
+    session.modified = True
 
 @app.route("/waybills-list", methods=[GET])
 def list():
     if active_session():
         waybills = db.hvals(FILENAMES)
-        return render_template('waybills-list.html', my_waybills = waybills)
+        waybills_images = db.hvals(IMAGES_PATHS)
+        log.debug(waybills)
+        log.debug(waybills_images)
+        return render_template('waybills-list.html', my_waybills = zip(waybills,waybills_images), loggedin=active_session())
     else:
         abort(401)
 
+'''
 @app.route("/<string:name>/", methods=[GET])
 def set(name):
     try:    
         return render_template(name + '.html')
     except Exception:
         abort(404) 
-
+'''
+@cross_origin(origins=["https://localhost:8081/"], supports_creditentials=True)
 @app.route("/send", methods=[GET])
 def send():
     if active_session():
-        return render_template('send.html')
+        return render_template('send.html', loggedin=active_session())
     else:
         abort(401)
 
@@ -59,11 +74,10 @@ def check_user(username):
         return response
     else:
         response = make_response(jsonify({"message": "There is no user with this username.", "status" : 404}),404,{'Access-Control-Allow-Origin': '*'})
-        #response.header('Access-Control-Allow-Origin': '*')
         return response
 
 
-@app.route("/register", methods=[GET,POST])
+@app.route("/registration", methods=[GET,POST])
 def register():
     log.debug('cosss')
     if request.method == POST:
@@ -87,7 +101,7 @@ def register():
 
         return response
     else:
-        return render_template("registration.html") 
+        return render_template("registration.html", loggedin=active_session()) 
 
 def add_user(login, password, name, surname, bdate, pesel, country, postal_code, city, street, house_nr):
     log.debug("Login: " + login + ", name: " + name + ", city: " + city)
@@ -120,14 +134,15 @@ def login():
         if db.hexists(username, LOGIN_FIELD_ID):
             log.debug("Użytkownik " + username + " jest w bazie danych.")
             if check_passwd(username,password):
-                log.debug("Hasło przeszło.")
                 hash_ = uuid4().hex 
                 db.hset(username, SESSION_ID, hash_)
+                session.permanent = True
                 response = make_response(redirect("/waybills-list"))
-                response.set_cookie(SESSION_ID, hash_,
-                                    max_age=300, secure=True, httponly=True)
-                access_token = create_access_token(identity=username)
-                refresh_token = create_refresh_token(identity=username)
+                #response.set_cookie(SESSION_ID, hash_,  max_age=300, secure=True, httponly=True)
+
+                expires = timedelta( minutes = 5)
+                access_token = create_access_token(identity=username, expires_delta=expires)
+                refresh_token = create_refresh_token(identity=username, expires_delta=expires)
 
                 set_access_cookies(response, access_token)
                 set_refresh_cookies(response, refresh_token)
@@ -137,17 +152,19 @@ def login():
             return response
         
     else:
-        return render_template("login.html")
+        if active_session():
+            return render_template("errors/already-logged-in.html", loggedin=active_session())
+        return render_template("login.html", loggedin=active_session())
 
 def check_passwd(username, password):
     password = password.encode("utf-8")
     passwd_hash = hashlib.sha512(password).hexdigest()
     return passwd_hash == db.hget(username, PASSWD_FIELD_ID)
 
-@app.route("/logout", methods=[POST])
+@app.route("/logout", methods=[GET, POST])
 def logout():
     hash_ = request.cookies.get(SESSION_ID)
-    response = make_response(render_template("index.html"))
+    response = make_response(render_template("index.html", loggedin=active_session()))
     response.set_cookie(SESSION_ID, hash_, max_age=0, secure=True, httponly=True)
     session.clear()
     unset_jwt_cookies(response)
@@ -163,23 +180,23 @@ def active_session():
 
 @app.errorhandler(400)
 def bad_request(error):
-    return render_template("errors/400.html", error=error)
+    return render_template("errors/400.html", error=error, loggedin=active_session())
 
 @app.errorhandler(401)
 def page_unauthorized(error):
-    return render_template("errors/401.html", error=error)
+    return render_template("errors/401.html", error=error, loggedin=active_session())
 
 @app.errorhandler(403)
 def forbidden(error):
-    return render_template("errors/403.html", error=error)
+    return render_template("errors/403.html", error=error, loggedin=active_session())
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return render_template("errors/404.html", error=error)
+    return render_template("errors/404.html", error=error, loggedin=active_session())
     
 @app.errorhandler(500)
 def internal_server_error(error):
-    return render_template("errors/500.html", error=error)
+    return render_template("errors/500.html", error=error, loggedin=active_session())
 
 
 if __name__ == "__main__":
