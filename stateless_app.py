@@ -41,7 +41,7 @@ def download_waybill(waybill_hash):
 
 @cross_origin(origins=["https://localhost:8080/"], supports_creditentials=True)
 @app.route("/<string:user>/waybill", methods=[POST])
-#@jwt_required
+@jwt_required
 def add_waybill(user):
     log.debug("Receive request to create a waybill.")
     form = request.form
@@ -58,9 +58,6 @@ def add_waybill(user):
     save_waybill(user, waybill)
     response = make_response(redirect(f'https://localhost:8080/waybills-list'))
     return response
-
-
-
 
 def to_waybill(request):
     product_name = request.form.get(PRODUCT_NAME_FIELD_ID)

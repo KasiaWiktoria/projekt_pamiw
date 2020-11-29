@@ -31,24 +31,16 @@ export function submitForm(form, name, successMessage, failureMessage) {
 
 function displayInConsoleCorrectResponse(correctResponse, successMessage, failureMessage) {
 
-    console.log("Status: " + correctResponse);
+    console.log("Status: " + correctResponse.registration_status);
 
-    if (correctResponse == "OK") {
-        removeWarningMessage("uncorrect");
+    if (correctResponse.registration_status == "OK") {
         let id = "button-submit-form";
-        let correctElem = prepareWarningElem("correct", successMessage);
-        correctElem.className = "correct-field"
-        appendAfterElem(id, correctElem);
-        //window.location.href = '/waybills-list'
-        
+        addCorrectMessage(id,successMessage);
+
     } else {
-        console.log("Errors: " + correctResponse);
-
-        removeWarningMessage("correct");
+        console.log("Errors: " + correctResponse.registration_status);
         let id = "button-submit-form";
-        let uncorrectElem = prepareWarningElem("uncorrect", failureMessage + correctResponse);
-        uncorrectElem.className = "uncorrect-field"
-        appendAfterElem(id, uncorrectElem);
+        addfailureMessage(id, failureMessage + correctResponse)
     }
 }
 
@@ -57,7 +49,7 @@ function getResponseData(response) {
 
     if (status === HTTP_STATUS.OK) {
         console.log("Status =" + status);
-        return "OK"
+        return response.json()
     } else {
         console.error("Response status code: " + response.status);
         throw "Unexpected response status: " + response.status;
