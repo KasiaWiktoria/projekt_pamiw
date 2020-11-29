@@ -28,9 +28,6 @@ app.config["SESSION_REFRESH_EACH_REQUEST"] = True
 
 jwt = JWTManager(app)
 
-GET = "GET"
-POST = "POST"
-
 @app.route("/", methods=[GET])
 def index():
     return render_template("index.html", loggedin=active_session())
@@ -62,7 +59,11 @@ def set(name):
 
 @app.route("/logged_in_user")
 def get_username():
-    return session['username']
+    try:
+        user = session['username']
+        return { 'user': user }, 200
+    except:
+        return {'message': 'Prawdopodobnie nie jesteś zalogowany'}, 401
 
 @cross_origin(origins=["https://localhost:8081/"], supports_creditentials=True)
 @app.route("/send", methods=[GET])
@@ -78,11 +79,9 @@ def send():
 def check_user(username):
     
     if db.hexists(username, LOGIN_FIELD_ID):
-        response = make_response(jsonify({"message":"User is in the database.", "status" : 200}),200)
-        return response
+        return {"message":"User is in the database.", "status" : 200}, 200
     else:
-        response = make_response(jsonify({"message": "There is no user with this username.", "status" : 404}),404)
-        return response
+        return {"message": "There is no user with this username.", "status" : 404}, 404
 
 
 @app.route("/registration", methods=[GET,POST])
@@ -102,12 +101,8 @@ def register():
         house_nr = request.form[HOUSE_NR_FIELD_ID] 
 
         registration_status = add_user(login, password, name, surname, bdate, pesel, country, postal_code, city, street, house_nr)
-        json_response = jsonify({ "registration_status": registration_status })
-        log.debug("Jaki status rejestracji: " + registration_status)
-        statusCode = 200
-        response = make_response(json_response, statusCode, {'Content-type': 'application/json'})
 
-        return response
+        return { "registration_status": registration_status }, 200
     else:
         return render_template("registration.html", loggedin=active_session()) 
 
@@ -172,13 +167,16 @@ def check_passwd(username, password):
 
 @app.route("/logout", methods=[GET, POST])
 def logout():
-    session.pop('username', None)
-    session.clear()
-    hash_ = request.cookies.get(SESSION_ID)
-    response = make_response(render_template("index.html", loggedin=active_session()))
-    response.set_cookie(SESSION_ID, hash_, max_age=0, secure=True, httponly=True)
-    unset_jwt_cookies(response)
-    return response
+    if active_session:
+        session.pop('username', None)
+        session.clear()
+        hash_ = request.cookies.get(SESSION_ID)
+        response = make_response(render_template("index.html", loggedin=False))
+        response.set_cookie(SESSION_ID, hash_, max_age=0, secure=True, httponly=True)
+        unset_jwt_cookies(response)
+        return response
+    else:
+        return render_template("index.html", loggedin=active_session())
 
 def active_session():
     hash_ = request.cookies.get(SESSION_ID)
@@ -187,6 +185,14 @@ def active_session():
         return True
     else:
         return False
+
+
+
+@app.route("/test")
+def test():
+    return {'test' : 'json() działa!'}, 200
+
+
 
 @app.errorhandler(400)
 def bad_request(error):

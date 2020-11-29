@@ -36,7 +36,12 @@ document.addEventListener('DOMContentLoaded', function (event) {
         var recipientDataCorrect = (validateName(RECIPIENT_NAME_FIELD_ID) == "" && validateSurname(RECIPIENT_SURNAME_FIELD_ID) == "" && validatePhone(RECIPIENT_PHONE_FIELD_ID) == "" && validateCountry(RECIPIENT_COUNTRY_FIELD_ID) == "" && validateCity(RECIPIENT_CITY_FIELD_ID) == "" && validateStreet(RECIPIENT_STREET_FIELD_ID) == "" && validateHouseNr(RECIPIENT_HOUSE_NR_FIELD_ID) == "" );
         var productNameAndImgCorrect = (noSpecialCharacters(PRODUCT_NAME_FIELD_ID) == "" && validateFile(PACK_IMAGE_FIELD_ID) == "");
 
-        if(senderDataCorrect && recipientDataCorrect && productNameAndImgCorrect) {
+        let canSend = senderDataCorrect && recipientDataCorrect && productNameAndImgCorrect;
+        console.log('senderDataCorrect: ' + senderDataCorrect);
+        console.log('recipientDataCorrect: ' + recipientDataCorrect);
+        console.log('productNameAndImgCorrect: ' + productNameAndImgCorrect);
+        console.log('canSend:' + canSend);
+        if(canSend) {
             submitForm(sendForm)
         } else {
             let failureMessage = "Generowanie listu przewozowego nie powiodło się. ";
@@ -47,35 +52,45 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     function submitForm(form) {
         let url = URL + '/logged_in_user'
-        fetch(url, {method: GET}).then(user => {
-            let user = String(user);
-            let url = "https://localhost:8081/" + user + "/waybill";
-            console.log(url);
-
-            let successMessage = "Pomyślnie wygenerowano list przewozowy.";
-            let failureMessage = "Generowanie listu przewozowego nie powiodło się. ";
-        
-            let registerParams = {
-                method: POST,
-                mode: 'cors',
-                body: new FormData(form),
-                redirect: "follow"
-            };
-    
-            fetch(url, registerParams)
-                .then(response => getResponseData(response, successMessage, failureMessage))
-                .catch(err => {
-                    console.log("Caught error: " + err);
-                    let id = "button-submit-form";
-                    addfailureMessage(id,failureMessage)
-                });
-        }).catch(err => {
+        fetch(url, {method: GET}).then(response => getJsonResponse(response))
+        .then(response => sendPackage(response))
+        .catch(err => {
             console.log("Caught error: " + err);
+            let failureMessage = "Generowanie listu przewozowego nie powiodło się. ";
+
             let id = "button-submit-form";
             let failureMessage = failureMessage + "Nie udało się pobrać nazwy aktualnie zalogowanego użytkownika."
             addfailureMessage(id,failureMessage)
         });
         
+    }
+    
+    function getJsonResponse(response){
+        return response.json()
+    }
+
+    function sendPackage(response){
+        let user = response.user
+        let url = "https://localhost:8081/" + user + "/waybill";
+        console.log(url);
+
+        let successMessage = "Pomyślnie wygenerowano list przewozowy.";
+        let failureMessage = "Generowanie listu przewozowego nie powiodło się. ";
+    
+        let registerParams = {
+            method: POST,
+            mode: 'cors',
+            body: new FormData(form),
+            redirect: "follow"
+        };
+
+        fetch(url, registerParams)
+            .then(response => getResponseData(response, successMessage, failureMessage))
+            .catch(err => {
+                console.log("Caught error: " + err);
+                let id = "button-submit-form";
+                addfailureMessage(id,failureMessage)
+            });
     }
 
     function getResponseData(response, successMessage, failureMessage) {
@@ -83,9 +98,13 @@ document.addEventListener('DOMContentLoaded', function (event) {
     
         if (status === HTTP_STATUS.OK) {
             console.log("Status =" + status);
+            let id = "button-submit-form";
+            addCorrectMessage(id,successMessage)
             return "OK"
         } else {
             console.error("Response status code: " + response.status);
+            let id = "button-submit-form";
+            addfailureMessage(id,failureMessage)
             throw "Unexpected response status: " + response.status;
         }
     }

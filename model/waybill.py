@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf8 -*-
 import uuid
 import json
 from fpdf import FPDF
@@ -19,8 +21,7 @@ class Waybill:
 
         filename = self.__generate_filename(path)
         log.debug(filename)
-        new_filename = filename.encode('latin-1', 'replace').decode('latin-1')
-        pdf.output(new_filename)
+        pdf.output(filename)
 
         return filename
 

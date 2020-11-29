@@ -48,9 +48,18 @@ def add_waybill(user):
     log.debug("Request form: {}.".format(form))
 
     waybill = to_waybill(request)
+    '''
+    try:
+        save_waybill(user, waybill)
+        response = make_response(redirect(f'https://localhost:8080/waybills-list'))
+    except:
+        response = make_response("Create waybill failed.", 400)
+    '''
     save_waybill(user, waybill)
+    response = make_response(redirect(f'https://localhost:8080/waybills-list'))
+    return response
 
-    return redirect(f'https://localhost:8080/waybills-list')
+
 
 
 def to_waybill(request):
