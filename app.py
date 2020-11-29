@@ -137,6 +137,7 @@ def login():
         if db.hexists(username, LOGIN_FIELD_ID):
             log.debug("Użytkownik " + username + " jest w bazie danych.")
             if check_passwd(username,password):
+                log.debug("Hasło jest poprawne.")
                 hash_ = uuid4().hex 
                 db.hset(username, SESSION_ID, hash_)
                 session.permanent = True
@@ -150,6 +151,9 @@ def login():
 
                 set_access_cookies(response, access_token)
                 set_refresh_cookies(response, refresh_token)
+                return response
+            else:
+                response = make_response("Błędny login lub hasło", 400)
                 return response
         else:
             response = make_response("Błędny login lub hasło", 400)
