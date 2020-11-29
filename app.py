@@ -167,10 +167,10 @@ def check_passwd(username, password):
 
 @app.route("/logout", methods=[GET, POST])
 def logout():
-    if active_session:
+    if active_session():
+        hash_ = request.cookies.get(SESSION_ID)
         session.pop('username', None)
         session.clear()
-        hash_ = request.cookies.get(SESSION_ID)
         response = make_response(render_template("index.html", loggedin=False))
         response.set_cookie(SESSION_ID, hash_, max_age=0, secure=True, httponly=True)
         unset_jwt_cookies(response)
