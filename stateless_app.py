@@ -40,17 +40,17 @@ def download_waybill(waybill_hash):
     return filename, 200
 
 @cross_origin(origins=["https://localhost:8080/"], supports_creditentials=True)
-@app.route("/waybill", methods=[POST])
+@app.route("/<string:user>/waybill", methods=[POST])
 #@jwt_required
-def add_waybill():
+def add_waybill(user):
     log.debug("Receive request to create a waybill.")
     form = request.form
     log.debug("Request form: {}.".format(form))
 
     waybill = to_waybill(request)
-    save_waybill(waybill)
+    save_waybill(user, waybill)
 
-    return redirect('https://localhost:8080/waybills-list')
+    return redirect(f'https://localhost:8080/waybills-list')
 
 
 def to_waybill(request):
@@ -104,13 +104,13 @@ def to_recipient_foo_address(form):
     return addr
 
 
-def save_waybill(waybill):
+def save_waybill(user, waybill):
     fullname = waybill.generate_and_save(log,FILES_PATH)
     filename = os.path.basename(fullname)
 
     db.hset(filename, PATH_AND_FILENAME, fullname)
-    db.hset(IMAGES_PATHS, filename , waybill.get_img_path())
-    db.hset(FILENAMES, fullname, filename)
+    db.hset(user + '-'+ IMAGES_PATHS, filename , waybill.get_img_path())
+    db.hset(user + '-'+ FILENAMES, fullname, filename)
 
     log.debug("Saved waybill [fullname: {}, filename: {}].".format(fullname, filename))
 

@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     prepareEventOnFileChange(PACK_IMAGE_FIELD_ID, validateFile);
 
     let sendForm = document.getElementById("send-form");
-/*
+
     sendForm.addEventListener("submit", function (event) {
         event.preventDefault();
 
@@ -44,31 +44,38 @@ document.addEventListener('DOMContentLoaded', function (event) {
             addfailureMessage(id,failureMessage);
         }
     });
-*/
-    function submitForm(form) {
-        let url = "https://localhost:8081/waybill";
-        console.log(url);
 
-        let successMessage = "Pomyślnie wygenerowano list przewozowy.";
-        let failureMessage = "Generowanie listu przewozowego nie powiodło się. ";
+    function submitForm(form) {
+        let url = URL + '/logged_in_user'
+        fetch(url, {method: GET}).then(user => {
+            let user = String(user);
+            let url = "https://localhost:8081/" + user + "/waybill";
+            console.log(url);
+
+            let successMessage = "Pomyślnie wygenerowano list przewozowy.";
+            let failureMessage = "Generowanie listu przewozowego nie powiodło się. ";
+        
+            let registerParams = {
+                method: POST,
+                mode: 'cors',
+                body: new FormData(form),
+                redirect: "follow"
+            };
     
-        let registerParams = {
-            method: POST,
-            mode: 'cors',
-            body: new FormData(form),
-            redirect: "follow"
-        };
-    
-        fetch(url, registerParams)
-                .then(response => getResponseData(response, successMessage, failureMessage)).catch(err => {
+            fetch(url, registerParams)
+                .then(response => getResponseData(response, successMessage, failureMessage))
+                .catch(err => {
                     console.log("Caught error: " + err);
-                    removeWarningMessage("correct");
                     let id = "button-submit-form";
-    
-                    let uncorrectElem = prepareWarningElem("uncorrect", failureMessage);
-                    uncorrectElem.className = "uncorrect-field"
-                    appendAfterElem(id, uncorrectElem);
+                    addfailureMessage(id,failureMessage)
                 });
+        }).catch(err => {
+            console.log("Caught error: " + err);
+            let id = "button-submit-form";
+            let failureMessage = failureMessage + "Nie udało się pobrać nazwy aktualnie zalogowanego użytkownika."
+            addfailureMessage(id,failureMessage)
+        });
+        
     }
 
     function getResponseData(response, successMessage, failureMessage) {

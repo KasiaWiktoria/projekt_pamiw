@@ -42,11 +42,12 @@ def refresh_session():
 @app.route("/waybills-list", methods=[GET])
 def list():
     if active_session():
-        waybills = db.hvals(FILENAMES)
-        waybills_images = db.hvals(IMAGES_PATHS)
+        user = session['username']
+        waybills = db.hvals(user + '-' + FILENAMES)
+        waybills_images = db.hvals(user + '-' + IMAGES_PATHS)
         log.debug(waybills)
         log.debug(waybills_images)
-        return render_template('waybills-list.html', my_waybills = zip(waybills,waybills_images), loggedin=active_session())
+        return render_template('waybills-list.html', my_waybills = zip(waybills,waybills_images), loggedin=active_session(), user=user)
     else:
         abort(401)
 
@@ -58,11 +59,18 @@ def set(name):
     except Exception:
         abort(404) 
 '''
+
+@app.route("/logged_in_user")
+def get_username():
+    return session['username']
+
 @cross_origin(origins=["https://localhost:8081/"], supports_creditentials=True)
 @app.route("/send", methods=[GET])
 def send():
     if active_session():
-        return render_template('send.html', loggedin=active_session())
+        username = session['username']
+        log.debug("Username of actually logged in user: " + username)
+        return render_template('send.html', loggedin=active_session(), user= session['username'])
     else:
         abort(401)
 
@@ -73,7 +81,7 @@ def check_user(username):
         response = make_response(jsonify({"message":"User is in the database.", "status" : 200}),200)
         return response
     else:
-        response = make_response(jsonify({"message": "There is no user with this username.", "status" : 404}),404,{'Access-Control-Allow-Origin': '*'})
+        response = make_response(jsonify({"message": "There is no user with this username.", "status" : 404}),404)
         return response
 
 
@@ -97,7 +105,7 @@ def register():
         json_response = jsonify({ "registration_status": registration_status })
         log.debug("Jaki status rejestracji: " + registration_status)
         statusCode = 200
-        response = make_response(json_response, statusCode, {'Content-type': 'application/json'})#,{'Access-Control-Allow-Origin': '*'})
+        response = make_response(json_response, statusCode, {'Content-type': 'application/json'})
 
         return response
     else:
@@ -137,7 +145,8 @@ def login():
                 hash_ = uuid4().hex 
                 db.hset(username, SESSION_ID, hash_)
                 session.permanent = True
-                response = make_response(redirect("/waybills-list"))
+                session['username'] = username
+                response = make_response(redirect("/" + username + "/waybills-list"))
                 #response.set_cookie(SESSION_ID, hash_,  max_age=300, secure=True, httponly=True)
 
                 expires = timedelta( minutes = 5)
@@ -153,7 +162,7 @@ def login():
         
     else:
         if active_session():
-            return render_template("errors/already-logged-in.html", loggedin=active_session())
+            return render_template("errors/already-logged-in.html", loggedin=active_session(), user= session['username'])
         return render_template("login.html", loggedin=active_session())
 
 def check_passwd(username, password):
@@ -163,10 +172,11 @@ def check_passwd(username, password):
 
 @app.route("/logout", methods=[GET, POST])
 def logout():
+    session.pop('username', None)
+    session.clear()
     hash_ = request.cookies.get(SESSION_ID)
     response = make_response(render_template("index.html", loggedin=active_session()))
     response.set_cookie(SESSION_ID, hash_, max_age=0, secure=True, httponly=True)
-    session.clear()
     unset_jwt_cookies(response)
     return response
 

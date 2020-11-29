@@ -35,11 +35,11 @@ function displayInConsoleCorrectResponse(correctResponse, successMessage, failur
 
     if (correctResponse == "OK") {
         removeWarningMessage("uncorrect");
-        let id = "button-log-form";
+        let id = "button-submit-form";
         let correctElem = prepareWarningElem("correct", successMessage);
         correctElem.className = "correct-field"
         appendAfterElem(id, correctElem);
-        window.location.href = '/login/waybills-list'
+        //window.location.href = '/waybills-list'
         
     } else {
         console.log("Errors: " + correctResponse);
