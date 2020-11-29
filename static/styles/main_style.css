@@ -48,6 +48,10 @@ a img {
     margin: 0 30px;
 }
 
+a:hover img {
+    filter: drop-shadow( 3px 3px 2px #00000080);
+}
+
 header{
     display: flex;
     justify-content: space-between;

@@ -16,7 +16,6 @@ class Waybill:
     def generate_and_save(self,log, path="./"):
         pdf = FPDF()
         pdf.add_page()
-        #pdf.set_font("Arial", size=12)
         pdf.add_font('Roboto', '', 'static/fonts/Roboto.ttf', uni=True)
         pdf.set_font('Roboto', '', 12)
         self.__add_table_to_pdf(pdf)

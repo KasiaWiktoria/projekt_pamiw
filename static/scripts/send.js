@@ -4,6 +4,7 @@ import {isAnyFieldBlank, noSpecialCharacters, validateName, validateSurname, val
 import {GET, POST, URL, HTTP_STATUS, PRODUCT_NAME_FIELD_ID, SENDER_NAME_FIELD_ID, SENDER_SURNAME_FIELD_ID, SENDER_PHONE_FIELD_ID, SENDER_COUNTRY_FIELD_ID, SENDER_POSTAL_CODE_FIELD_ID, SENDER_CITY_FIELD_ID, SENDER_STREET_FIELD_ID, SENDER_HOUSE_NR_FIELD_ID, RECIPIENT_NAME_FIELD_ID, RECIPIENT_SURNAME_FIELD_ID, RECIPIENT_PHONE_FIELD_ID, RECIPIENT_COUNTRY_FIELD_ID, RECIPIENT_POSTAL_CODE_FIELD_ID, RECIPIENT_CITY_FIELD_ID, RECIPIENT_STREET_FIELD_ID, RECIPIENT_HOUSE_NR_FIELD_ID, PACK_IMAGE_FIELD_ID} from './const.js'
 
 document.addEventListener('DOMContentLoaded', function (event) {
+    getAccessToken();
 
     prepareEventOnChange(PRODUCT_NAME_FIELD_ID, noSpecialCharacters);
 
@@ -53,13 +54,13 @@ document.addEventListener('DOMContentLoaded', function (event) {
     function submitForm(form) {
         let url = URL + '/logged_in_user'
         fetch(url, {method: GET}).then(response => getJsonResponse(response))
-        .then(response => sendPackage(response))
+        .then(response => sendPackage(response, form))
         .catch(err => {
             console.log("Caught error: " + err);
             let failureMessage = "Generowanie listu przewozowego nie powiodło się. ";
 
             let id = "button-submit-form";
-            let failureMessage = failureMessage + "Nie udało się pobrać nazwy aktualnie zalogowanego użytkownika."
+            failureMessage = failureMessage + "Nie udało się pobrać nazwy aktualnie zalogowanego użytkownika."
             addfailureMessage(id,failureMessage)
         });
         
@@ -69,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
         return response.json()
     }
 
-    function sendPackage(response){
+    function sendPackage(response, form){
         let user = response.user
         let url = "https://localhost:8081/" + user + "/waybill";
         console.log(url);
@@ -77,14 +78,16 @@ document.addEventListener('DOMContentLoaded', function (event) {
         let successMessage = "Pomyślnie wygenerowano list przewozowy.";
         let failureMessage = "Generowanie listu przewozowego nie powiodło się. ";
     
-        let registerParams = {
+        let sendParams = {
+            //headers: {'Access-Control-Allow-Origin': URL, 'Access-Control-Allow-Credentials': true},
+            credentials: 'include',
             method: POST,
             mode: 'cors',
             body: new FormData(form),
             redirect: "follow"
         };
 
-        fetch(url, registerParams)
+        fetch(url, sendParams)
             .then(response => getResponseData(response, successMessage, failureMessage))
             .catch(err => {
                 console.log("Caught error: " + err);
@@ -158,4 +161,42 @@ document.addEventListener('DOMContentLoaded', function (event) {
         }
         return imagePreview;
     }
+
+
+    function getAccessToken(){
+        let url = URL + 'get_access_token'
+        let registerParams = {
+            method: GET,
+            redirect: "follow"
+        };
+
+        fetch(url, registerParams)
+            .then(response => getResponseTokenData(response))
+            .then(response => displayInConsoleCorrectTokenResponse(response))
+            .catch(err => {
+                console.log("Caught error: " + err);
+                
+            });
+    }
+
+    function getResponseTokenData(response) {
+        let status = response.status;
+
+        if (status === HTTP_STATUS.OK) {
+            return response.json();
+        } else {
+            console.error("Response status code: " + response.status);
+            throw "Unexpected response status: " + response.status;
+        }
+    }
+
+    function displayInConsoleCorrectTokenResponse(correctResponse) {
+        let access_token = correctResponse.access_token;
+        console.log('Pobrano token: ' + access_token);
+
+        window.localStorage.setItem('accessToken', 'Bearer: ' + access_token)
+
+    }
 });
+
+

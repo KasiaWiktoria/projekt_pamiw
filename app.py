@@ -16,6 +16,7 @@ log = logging.create_logger(app)
 db = redis.Redis(host="redis-db", port=6379, decode_responses=True)
 cors = CORS(app)
 
+app.config["JWT_COOKIE_CSRF_PROTECT"] = False
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config["JWT_SECRET_KEY"] = os.environ.get(SECRET_KEY)
@@ -36,27 +37,6 @@ def index():
 def refresh_session():
     session.modified = True
 
-@app.route("/waybills-list", methods=[GET])
-def list():
-    if active_session():
-        user = session['username']
-        waybills = db.hvals(user + '-' + FILENAMES)
-        waybills_images = db.hvals(user + '-' + IMAGES_PATHS)
-        log.debug(waybills)
-        log.debug(waybills_images)
-        return render_template('waybills-list.html', my_waybills = zip(waybills,waybills_images), loggedin=active_session(), user=user)
-    else:
-        abort(401)
-
-'''
-@app.route("/<string:name>/", methods=[GET])
-def set(name):
-    try:    
-        return render_template(name + '.html')
-    except Exception:
-        abort(404) 
-'''
-
 @app.route("/logged_in_user")
 def get_username():
     try:
@@ -65,7 +45,13 @@ def get_username():
     except:
         return {'message': 'Prawdopodobnie nie jesteś zalogowany'}, 401
 
-@cross_origin(origins=["https://localhost:8081/"], supports_creditentials=True)
+@app.route('/get_access_token')
+def get_token():
+    user = session['username']
+    access_token = create_access_token(identity=user)
+    return { 'access_token': access_token}
+
+@cross_origin(origins=["https://localhost:8081/"], supports_credentials=True)
 @app.route("/send", methods=[GET])
 def send():
     if active_session():
@@ -142,15 +128,16 @@ def login():
                 db.hset(username, SESSION_ID, hash_)
                 session.permanent = True
                 session['username'] = username
-                response = make_response(redirect("/" + username + "/waybills-list"))
-                #response.set_cookie(SESSION_ID, hash_,  max_age=300, secure=True, httponly=True)
-
+                
                 expires = timedelta( minutes = 5)
                 access_token = create_access_token(identity=username, expires_delta=expires)
                 refresh_token = create_refresh_token(identity=username, expires_delta=expires)
 
+                response = make_response(jsonify({ 'logged_in': 'OK', 'access_token': access_token}))
+                response.set_cookie(SESSION_ID, hash_,  max_age=300, secure=True, httponly=True)
                 set_access_cookies(response, access_token)
                 set_refresh_cookies(response, refresh_token)
+
                 return response
             else:
                 response = make_response("Błędny login lub hasło", 400)
@@ -191,10 +178,32 @@ def active_session():
         return False
 
 
+@app.route("/waybills-list", methods=[GET])
+def list():
+    if active_session():
+        user = session['username']
+        waybills = db.hvals(user + '-' + FILENAMES)
+        waybills_images = db.hvals(user + '-' + IMAGES_PATHS)
+        log.debug(waybills)
+        log.debug(waybills_images)
+        return render_template('waybills-list.html', my_waybills = zip(waybills,waybills_images), loggedin=active_session(), user=user)
+    else:
+        abort(401)
+
+'''
+@app.route("/waybills-list", methods=[GET])
+def list():
+    if active_session():
+        user = session['username']
+        access_token = create_access_token(identity=user)
+        return {'access_token': access_token},200
+    else:
+        abort(401)
+'''
 
 @app.route("/test")
 def test():
-    return {'test' : 'json() działa!'}, 200
+    return {'test' : 'json() działa'}, 200
 
 
 

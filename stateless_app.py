@@ -1,7 +1,7 @@
 from flask import Flask, redirect,request, render_template, jsonify, send_file, url_for, make_response, abort
 from flask import logging
 from const import *
-from flask_jwt_extended import JWTManager, jwt_required, create_access_token, set_access_cookies, create_refresh_token
+from flask_jwt_extended import JWTManager, jwt_required, jwt_refresh_token_required, create_access_token, set_access_cookies, create_refresh_token, get_jwt_identity
 import redis
 import os
 from model.waybill import *
@@ -13,16 +13,18 @@ db = redis.Redis(host="redis-db", port=6379, decode_responses=True)
 log = logging.create_logger(app)
 cors = CORS(app)
 
-
+app.config["JWT_COOKIE_CSRF_PROTECT"] = False
 app.config["JWT_SECRET_KEY"] = os.environ.get(SECRET_KEY)
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
 app.config["JWT_TOKEN_LOCATION"] = ['cookies']
 app.config["IMAGE_UPLOADS"] = CUSTOM_IMG_PATH
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
+app.config["JWT_REFRESH_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
+app.config["JWT_TOKEN_LOCATION"] = JWT_TOKEN_LOCATION
 
 
 jwt = JWTManager(app)
 
-@cross_origin(origins=["https://localhost:8080/"], supports_creditentials=True)
+@cross_origin(origins=["https://localhost:8080/"], supports_credentials=True)
 @app.route("/waybill/<string:waybill_hash>", methods=[GET])
 @jwt_required
 def download_waybill(waybill_hash):
@@ -32,6 +34,20 @@ def download_waybill(waybill_hash):
     filepath = db.hget(filename, PATH_AND_FILENAME)
 
     if filepath is not None:
+        filepath = db.hget(waybill_hash, PATH_AND_FILENAME)
+        if os.path.isfile(filepath):
+            try:
+                return send_file(filepath, attachment_filename=filename)
+            except Exception as e:
+                log.error(e)
+        else:
+            filepath = create_file(filename)
+            try:
+                return send_file(filepath, attachment_filename=filename)
+            except Exception as e:
+                log.error(e)
+    else:
+        filepath = create_file(filepath)
         try:
             return send_file(filepath, attachment_filename=filename)
         except Exception as e:
@@ -39,25 +55,52 @@ def download_waybill(waybill_hash):
 
     return filename, 200
 
-@cross_origin(origins=["https://localhost:8080/"], supports_creditentials=True)
-@app.route("/<string:user>/waybill", methods=[POST])
-#@jwt_required
+def create_file(filename):
+    waybill = to_waybill(filename)
+    filepath = waybill.generate_and_save(FILES_PATH, IMAGES_PATHS)
+    db.hset(filename, PATH_AND_FILENAME, filepath)
+    return filepath
+
+@cross_origin(origins=["https://localhost:8080/"], supports_credentials=True)
+@app.route("/<string:user>/waybill", methods=[GET, POST, 'OPTIONS'])
+@jwt_required
 def add_waybill(user):
+    user = get_jwt_identity()
+    log.debug(user)
     log.debug("Receive request to create a waybill.")
     form = request.form
     log.debug("Request form: {}.".format(form))
 
     waybill = to_waybill(request)
-    '''
     try:
         save_waybill(user, waybill)
         response = make_response(redirect(f'https://localhost:8080/waybills-list'))
     except:
         response = make_response("Create waybill failed.", 400)
-    '''
-    save_waybill(user, waybill)
-    response = make_response(redirect(f'https://localhost:8080/waybills-list'))
+        return response
     return response
+
+@cross_origin(origins=["https://localhost:8080/"], supports_credentials=True)
+@jwt_required
+@app.route("/<string:user>/waybills-list", methods=[GET])
+def list(user):
+    user = get_jwt_identity()
+    waybills = db.hvals(user + '-' + FILENAMES)
+    waybills_images = db.hvals(user + '-' + IMAGES_PATHS)
+    log.debug(waybills)
+    log.debug(waybills_images)
+    return zip(waybills,waybills_images)
+
+@cross_origin(origins=["https://localhost:8080/"], supports_credentials=True)
+@app.route('/refresh', methods=['POST'])
+@jwt_refresh_token_required
+def refresh():
+    current_user = get_jwt_identity()
+    access_token = create_access_token(identity=current_user)
+
+    resp = jsonify({'refresh': True})
+    set_access_cookies(resp, access_token)
+    return resp, 200
 
 def to_waybill(request):
     product_name = request.form.get(PRODUCT_NAME_FIELD_ID)
@@ -120,6 +163,13 @@ def save_waybill(user, waybill):
 
     log.debug("Saved waybill [fullname: {}, filename: {}].".format(fullname, filename))
 
+
+@cross_origin(origins=["https://localhost:8080/"], supports_credentials=True)
+@jwt_required
+@app.route("/test", methods=[GET])
+def test():
+    user = get_jwt_identity()
+    return {'user' : user}, 200
 
 
 @app.errorhandler(401)
