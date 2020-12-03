@@ -82,7 +82,7 @@ def add_waybill():
     waybill = to_waybill(request)
     try:
         save_waybill(user, waybill)
-        response = make_response({'message': 'Waybill was created.'}, 201)
+        response = make_response({'message': 'Waybill was created.'}, 200)
         response.headers.add('Access-Control-Allow-Credentials', 'true')
         return response
     except:
