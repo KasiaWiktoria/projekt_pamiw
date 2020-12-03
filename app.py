@@ -4,7 +4,6 @@ from flask import logging
 from datetime import timedelta
 from uuid import uuid4
 from const import *
-from model.pack import *
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, create_refresh_token, set_refresh_cookies, set_access_cookies, create_refresh_token, unset_jwt_cookies
 import redis
 import os
@@ -26,6 +25,8 @@ app.config["JWT_REFRESH_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
 app.config["JWT_TOKEN_LOCATION"] = JWT_TOKEN_LOCATION
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=5)
 app.config["SESSION_REFRESH_EACH_REQUEST"] = True
+app.config['CORS_SUPPORTS_CREDENTIALS'] = True
+
 
 jwt = JWTManager(app)
 
@@ -177,9 +178,10 @@ def active_session():
     else:
         return False
 
-
+@cross_origin(origins=["https://localhost:8081/"], supports_credentials=True)
 @app.route("/waybills-list", methods=[GET])
 def list():
+    log.debug('lista powinna się już wyświetlić.')
     if active_session():
         user = session['username']
         waybills = db.hvals(user + '-' + FILENAMES)

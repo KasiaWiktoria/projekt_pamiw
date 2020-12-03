@@ -26,16 +26,36 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
         var canSend = (AVAILABLE_LOGIN && validateLogin() == "" && validateName(NAME_FIELD_ID) == "" && validateSurname(SURNAME_FIELD_ID) == "" && validateBDate(BDATE_FIELD_ID) == "" && validatePesel(PESEL_FIELD_ID) == "" && validateCountry(COUNTRY_FIELD_ID) == "" && validateCity(CITY_FIELD_ID) == "" && validateStreet(STREET_FIELD_ID) == "" && validateHouseNr(HOUSE_NR_FIELD_ID) == "" && validatePasswd() == "" && arePasswdsTheSame());
 
-        if(canSend) {
-            submitForm(registrationForm, "registration", " Zarejestrowano pomyślnie.", "Rejestracja nie powiodła się. ");
-        } else if(canSend != false){
-            console.log('Wrong type of variable.');
+        let name = document.getElementById(NAME_FIELD_ID)
+        let surname = document.getElementById(SURNAME_FIELD_ID)
+        let bdate = document.getElementById(BDATE_FIELD_ID)
+        let pesel = document.getElementById(PESEL_FIELD_ID)
+        let country = document.getElementById(COUNTRY_FIELD_ID)
+        let postal_code = document.getElementById(POSTAL_CODE_FIELD_ID)
+        let city = document.getElementById(CITY_FIELD_ID)
+        let street = document.getElementById(STREET_FIELD_ID)
+        let house_nr = document.getElementById(HOUSE_NR_FIELD_ID)
+        let login = document.getElementById(LOGIN_FIELD_ID);
+        let password = document.getElementById(PASSWD_FIELD_ID);
+        let repeat_password = document.getElementById(REPEAT_PASSWD_FIELD_ID)
+
+
+        let fields = [name, surname, bdate, pesel, country, postal_code, city, street, house_nr, login, password, repeat_password];
+        if(!isAnyFieldBlank(fields)) {
+            if(canSend) {
+                submitForm(registrationForm, "registration", " Zarejestrowano pomyślnie.", "Rejestracja nie powiodła się. ");
+            } else if(canSend != false){
+                console.log('Wrong type of variable.');
+            } else {
+                console.log('Not correct fields.');
+                
+                let failureMessage = "Rejestracja nie powiodła się. Sprawdź czy wszystkie pola są wypełnione poprawnie.";
+                let id = "button-submit-form";
+                    addfailureMessage(id,failureMessage);
+            }
         } else {
-            console.log('Not correct fields.');
-            
-            let failureMessage = "Rejestracja nie powiodła się. Sprawdź czy wszystkie pola są wypełnione poprawnie.";
             let id = "button-submit-form";
-                addfailureMessage(id,failureMessage);
+            addfailureMessage(id,"Żadne pole nie może pozostać puste.")
         }
     });
 

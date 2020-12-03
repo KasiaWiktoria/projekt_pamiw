@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
             submitLoginForm(loginForm, "login");
         } else {
             let id = "button-submit-form";
-            addfailureMessage(id,"Błędny login lub hasło.")
+            addfailureMessage(id,"Żadne pole nie może pozostać puste.")
         }
     });
 });

@@ -42,19 +42,61 @@ document.addEventListener('DOMContentLoaded', function (event) {
         console.log('recipientDataCorrect: ' + recipientDataCorrect);
         console.log('productNameAndImgCorrect: ' + productNameAndImgCorrect);
         console.log('canSend:' + canSend);
-        if(canSend) {
-            submitForm(sendForm)
+
+        let product_name = document.getElementById(PRODUCT_NAME_FIELD_ID)
+
+        let sender_name = document.getElementById(SENDER_NAME_FIELD_ID)
+        let sender_surname = document.getElementById(SENDER_SURNAME_FIELD_ID)
+        let sender_phone = document.getElementById(SENDER_PHONE_FIELD_ID)
+        let sender_country = document.getElementById(SENDER_COUNTRY_FIELD_ID)
+        let sender_postal_code = document.getElementById(SENDER_POSTAL_CODE_FIELD_ID)
+        let sender_city = document.getElementById(SENDER_CITY_FIELD_ID)
+        let sender_street = document.getElementById(SENDER_STREET_FIELD_ID)
+        let sender_house_nr = document.getElementById(SENDER_HOUSE_NR_FIELD_ID)
+
+        let recipient_name = document.getElementById(RECIPIENT_NAME_FIELD_ID)
+        let recipient_surname = document.getElementById(RECIPIENT_SURNAME_FIELD_ID)
+        let recipient_phone = document.getElementById(RECIPIENT_PHONE_FIELD_ID)
+        let recipient_country = document.getElementById(RECIPIENT_COUNTRY_FIELD_ID)
+        let recipient_postal_code = document.getElementById(RECIPIENT_POSTAL_CODE_FIELD_ID)
+        let recipient_city = document.getElementById(RECIPIENT_CITY_FIELD_ID)
+        let recipient_street = document.getElementById(RECIPIENT_STREET_FIELD_ID)
+        let recipient_house_nr = document.getElementById(RECIPIENT_HOUSE_NR_FIELD_ID)
+
+        let photo = document.getElementById(PACK_IMAGE_FIELD_ID)
+
+        let fields = [product_name, sender_name, sender_surname, sender_phone, sender_country, sender_postal_code, sender_city, sender_street, sender_house_nr, recipient_name, recipient_surname, recipient_phone, recipient_country, recipient_city, recipient_postal_code, recipient_street, recipient_house_nr, photo];
+        if(!isAnyFieldBlank(fields)) {
+            if(canSend) {
+                submitForm(sendForm)
+            } else {
+                let failureMessage = "Generowanie listu przewozowego nie powiodło się. ";
+                let id = "button-submit-form";
+                addfailureMessage(id,failureMessage);
+            }
         } else {
-            let failureMessage = "Generowanie listu przewozowego nie powiodło się. ";
             let id = "button-submit-form";
-            addfailureMessage(id,failureMessage);
+            addfailureMessage(id,"Żadne pole nie może pozostać puste.")
         }
     });
 
     function submitForm(form) {
-        let url = URL + '/logged_in_user'
+        let url = URL + 'logged_in_user'
+        console.log(url)
         fetch(url, {method: GET}).then(response => getJsonResponse(response))
-        .then(response => sendPackage(response, form))
+        .then(response => {
+            try{
+                let user = response.user;
+                console.log('user:' + user);
+                sendPackage(form);
+            } catch (error){
+                console.log(error)
+                console.log("User is probably not logged in.")
+                let id = "button-submit-form";
+                failureMessage = "Nie jesteś zalogowany. Spróbuj zalogować się ponownie.";
+                addfailureMessage(id,failureMessage)
+            }
+        })
         .catch(err => {
             console.log("Caught error: " + err);
             let failureMessage = "Generowanie listu przewozowego nie powiodło się. ";
@@ -67,12 +109,15 @@ document.addEventListener('DOMContentLoaded', function (event) {
     }
     
     function getJsonResponse(response){
-        return response.json()
+        if (response.status == HTTP_STATUS.OK) {
+            return response.json();
+        } else {
+            return response.status;
+        }
     }
 
-    function sendPackage(response, form){
-        let user = response.user
-        let url = "https://localhost:8081/" + user + "/waybill";
+    function sendPackage(form){
+        let url = "https://localhost:8081/waybill";
         console.log(url);
 
         let successMessage = "Pomyślnie wygenerowano list przewozowy.";
@@ -84,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
             method: POST,
             mode: 'cors',
             body: new FormData(form),
-            redirect: "follow"
+            //redirect: "follow"
         };
 
         fetch(url, sendParams)
@@ -99,11 +144,10 @@ document.addEventListener('DOMContentLoaded', function (event) {
     function getResponseData(response, successMessage, failureMessage) {
         let status = response.status;
     
-        if (status === HTTP_STATUS.OK) {
+        if (response.status == HTTP_STATUS.CREATED || response.status == HTTP_STATUS.OK) {
             console.log("Status =" + status);
             let id = "button-submit-form";
             addCorrectMessage(id,successMessage)
-            return "OK"
         } else {
             console.error("Response status code: " + response.status);
             let id = "button-submit-form";

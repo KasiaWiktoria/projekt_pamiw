@@ -20,10 +20,18 @@ app.config["IMAGE_UPLOADS"] = CUSTOM_IMG_PATH
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
 app.config["JWT_REFRESH_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
 app.config["JWT_TOKEN_LOCATION"] = JWT_TOKEN_LOCATION
+app.config['CORS_SUPPORTS_CREDENTIALS'] = True
 
 
 jwt = JWTManager(app)
-
+'''
+@app.after_request
+def after_request(response):
+  response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+  response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+  response.headers.add('Access-Control-Allow-Credentials', 'true')
+  return response
+'''
 @cross_origin(origins=["https://localhost:8080/"], supports_credentials=True)
 @app.route("/waybill/<string:waybill_hash>", methods=[GET])
 @jwt_required
@@ -62,9 +70,9 @@ def create_file(filename):
     return filepath
 
 @cross_origin(origins=["https://localhost:8080/"], supports_credentials=True)
-@app.route("/<string:user>/waybill", methods=[GET, POST, 'OPTIONS'])
+@app.route("/waybill", methods=[GET, POST])
 @jwt_required
-def add_waybill(user):
+def add_waybill():
     user = get_jwt_identity()
     log.debug(user)
     log.debug("Receive request to create a waybill.")
@@ -74,16 +82,18 @@ def add_waybill(user):
     waybill = to_waybill(request)
     try:
         save_waybill(user, waybill)
-        response = make_response(redirect(f'https://localhost:8080/waybills-list'))
+        response = make_response({'message': 'Waybill was created.'}, 201)
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+        return response
     except:
         response = make_response("Create waybill failed.", 400)
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
         return response
-    return response
 
 @cross_origin(origins=["https://localhost:8080/"], supports_credentials=True)
 @jwt_required
-@app.route("/<string:user>/waybills-list", methods=[GET])
-def list(user):
+@app.route("/waybills-list", methods=[GET])
+def list():
     user = get_jwt_identity()
     waybills = db.hvals(user + '-' + FILENAMES)
     waybills_images = db.hvals(user + '-' + IMAGES_PATHS)
