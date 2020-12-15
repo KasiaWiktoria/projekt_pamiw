@@ -4,7 +4,7 @@ from flask import logging
 from datetime import timedelta
 from uuid import uuid4
 from const import *
-from flask_jwt_extended import JWTManager, jwt_required, create_access_token, create_refresh_token, set_refresh_cookies, set_access_cookies, create_refresh_token, unset_jwt_cookies
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token, create_refresh_token, set_refresh_cookies, set_access_cookies, create_refresh_token, unset_jwt_cookies, jwt_refresh_token_required, get_jwt_identity
 import redis
 import os
 import hashlib
@@ -21,7 +21,7 @@ app.config['SECRET_KEY'] = SECRET_KEY
 app.config["JWT_SECRET_KEY"] = os.environ.get(SECRET_KEY)
 app.config["JWT_SESSION_COOKIE"] = False
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
-app.config["JWT_REFRESH_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
+app.config["JWT_REFRESH_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS * 4
 app.config["JWT_TOKEN_LOCATION"] = JWT_TOKEN_LOCATION
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=5)
 app.config["SESSION_REFRESH_EACH_REQUEST"] = True
@@ -37,6 +37,10 @@ def index():
 @app.before_request
 def refresh_session():
     session.modified = True
+    '''
+    if active_session():
+        refresh()
+    '''
 
 @app.route("/logged_in_user")
 def get_username():
@@ -131,8 +135,8 @@ def login():
                 session['username'] = username
                 
                 expires = timedelta( minutes = 5)
-                access_token = create_access_token(identity=username, expires_delta=expires)
-                refresh_token = create_refresh_token(identity=username, expires_delta=expires)
+                access_token = create_access_token(identity=username, expires_delta=expires*10)
+                refresh_token = create_refresh_token(identity=username, expires_delta=expires*4)
 
                 response = make_response(jsonify({ 'logged_in': 'OK', 'access_token': access_token}))
                 response.set_cookie(SESSION_ID, hash_,  max_age=300, secure=True, httponly=True)
@@ -181,31 +185,31 @@ def active_session():
 @cross_origin(origins=["https://localhost:8081/"], supports_credentials=True)
 @app.route("/waybills-list", methods=[GET])
 def list():
-    log.debug('lista powinna się już wyświetlić.')
     if active_session():
         user = session['username']
-        waybills = db.hvals(user + '-' + FILENAMES)
-        waybills_images = db.hvals(user + '-' + IMAGES_PATHS)
-        log.debug(waybills)
-        log.debug(waybills_images)
+        waybills = db.hvals(user + '-' + PACKNAMES)
+        waybills_images = []
+        for waybill in waybills:
+            waybills_images.append(db.hget(IMAGES_PATHS, waybill))
+        #waybills_images = db.hvals(user + '-' + IMAGES_PATHS)
         return render_template('waybills-list.html', my_waybills = zip(waybills,waybills_images), loggedin=active_session(), user=user)
     else:
         abort(401)
 
-'''
-@app.route("/waybills-list", methods=[GET])
-def list():
-    if active_session():
-        user = session['username']
-        access_token = create_access_token(identity=user)
-        return {'access_token': access_token},200
-    else:
-        abort(401)
-'''
+@app.route('/refresh', methods=['POST'])
+@jwt_refresh_token_required
+def refresh():
+    current_user = get_jwt_identity()
+    if current_user != None:
+        expires = timedelta( minutes = 5)
+        access_token = create_access_token(identity=current_user, expires_delta=expires)
 
-@app.route("/test")
-def test():
-    return {'test' : 'json() działa'}, 200
+        resp = jsonify({'refresh': True})
+        set_access_cookies(resp, access_token)
+        log.debug(access_token)
+        return resp, 200
+    else:
+        return jsonify({'refresh': False})
 
 
 

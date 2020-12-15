@@ -25,8 +25,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
 });
 
 function submitLoginForm(form, name) {
-    let registerUrl = URL + name;
-    console.log(registerUrl);
+    let loginUrl = URL + name;
+    console.log(loginUrl);
     let successMessage = "Zalogowano pomyślnie.";
     let failureMessage = "Błędny login lub hasło.";
 
@@ -37,7 +37,7 @@ function submitLoginForm(form, name) {
         redirect: "follow"
     };
 
-    fetch(registerUrl, registerParams)
+    fetch(loginUrl, registerParams)
             .then(response => getResponseData(response, successMessage, failureMessage))
             .catch(err => {
                 console.log("Caught error: " + err);

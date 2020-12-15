@@ -1,6 +1,8 @@
 
 export const GET = "GET";
 export const POST = "POST";
+export const courierURL = "https://localhost:8082/";
+export const paczkomatURL = "https://localhost:8083/";
 export const URL = "https://localhost:8080/";
 export const waybillURL = "https://localhost:8081/";
 
@@ -42,5 +44,9 @@ export const RECIPIENT_STREET_FIELD_ID = "recipient_street";
 export const RECIPIENT_HOUSE_NR_FIELD_ID = "recipient_house_nr";
 
 export const PACK_IMAGE_FIELD_ID = "pack_image";
+
+export const PACK_ID_FIELD_ID = "pack_id";
+
+export const PACZKOMAT_FIELD_ID = "paczkomat_id";
 
 export var HTTP_STATUS = {OK: 200, CREATED: 201, BAD_REQUEST: 400, UNAUTHORIZED: 401, FORBIDDEN: 403, NOT_FOUND: 404, INTERNAL_SERVER_ERROR: 500};

@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;500;700&display=swap');
 
+:root {
+    --main-color: #5dd401; 
+    --second-color: #BA2AC7;
+}
+
 body{
     font-family: 'Comfortaa';
     margin: 0;
@@ -34,7 +39,7 @@ body section h1.smaller{
 
 body h3{
     font-size: 24px;
-    color: #5dd401;
+    color: var(--main-color);
 }
 
 body h2{
@@ -59,7 +64,7 @@ header{
     align-items: center;
     border-bottom: 1px;
     border-bottom-style: inset;
-    border-color: #5dd401;
+    border-color: var(--main-color);
     box-shadow: 0px 0px 15px #dbaef53b;
 }
 
@@ -119,7 +124,7 @@ nav ul li a {
 }
 
 nav ul li a:hover {
-    background-color: #BA2AC7; 
+    background-color: var(--main-color); 
     color: #ffffff;   
     border-radius: 25px;
 }
@@ -136,7 +141,7 @@ nav ul li a:hover {
 
 .btn{
     padding: 10px 50px;
-    background-color: #5dd401;
+    background-color: var(--main-color);
     color: #fff;
     border-radius: 20px;
     font-size: 20px;
@@ -146,7 +151,7 @@ nav ul li a:hover {
 }
 
 .btn:hover{
-    background-color: #BA2AC7;
+    background-color: var(--second-color);
     color: #fff;
 }
 
@@ -163,6 +168,15 @@ a{
     align-items: center;
 }
 
+
+section.text {
+    margin: auto;
+    max-width: 1170px;
+    padding: 20px;
+    padding: 20px 0;
+    position: relative;
+}
+
 footer {
     display: flex;
     justify-content: space-between;
@@ -174,7 +188,7 @@ footer {
     font-size: 15px;
     border-top: 1px;
     border-top-style: outset;
-    border-color: #5dd401;
+    border-color: var(--main-color);
     box-shadow: 0px 0px 15px #dbaef53b;
     margin-top: 40px;
 }

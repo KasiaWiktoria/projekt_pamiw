@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
         let fields = [name, surname, bdate, pesel, country, postal_code, city, street, house_nr, login, password, repeat_password];
         if(!isAnyFieldBlank(fields)) {
             if(canSend) {
-                submitForm(registrationForm, "registration", " Zarejestrowano pomyślnie.", "Rejestracja nie powiodła się. ");
+                submitForm(URL, registrationForm, "registration", " Zarejestrowano pomyślnie.", "Rejestracja nie powiodła się. ");
             } else if(canSend != false){
                 console.log('Wrong type of variable.');
             } else {

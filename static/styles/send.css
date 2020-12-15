@@ -2,3 +2,12 @@
     height: 100px;
     margin-left: 40px;
 }
+
+section.image {
+    background-image: url('../images/3paczki.jpg');
+    height: 300px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+}

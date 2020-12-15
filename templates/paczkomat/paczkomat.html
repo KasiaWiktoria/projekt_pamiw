@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pl">
+    <head>
+        <title>PAX</title>
+        <meta charset="utf-8">
+        <link href="/styles/index.css" rel="stylesheet" type="text/css">
+        <link href="/styles/main_style.css" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="/images/favicon.ico"/>
+        <script type="module" src="/scripts/paczkomat.js"></script>
+    </head>
+    <body>
+        <header>
+            <a href="/" class="logo">
+                <img src="/images/logo.svg" alt="logo">
+                <p><span>PAX - Paczkomat</span> System obsługi paczek</p>
+            </a> 
+            <nav>
+                <div class="menu">
+                    <ul>
+                        <li><a href="/send">Włóż paczkę</a></li>
+                        <li><a href="/pick_up">Wyjmij paczkę</a></li>
+                </div>
+            </nav>
+        </header>
+
+        <section class="image"></section>
+
+        <section class="text">
+            <div class="container">
+                <h2>Witamy w paczkomacie {{paczkomat}}</h2>
+                <p>Jeśli jesteś klientem: </p>
+                <div class="btn-block">
+                    <a class="btn" href="/send">Włóż paczkę do paczkomatu</a>           
+                </div>
+                <p>Jeśli jesteś kurierem: </p>
+                <div class="btn-block">
+                    <a class="btn" href="/pick_up">Wyjmij paczki z paczkomatu</a>           
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p class="footer-inline left">&copy; 2020 Katarzyna Stankiewicz</p>
+            <p class="footer-inline right">Projekt realizowany w ramach laboratorium Programowanie Aplikacji Mobilnych i Webowych</p>
+        </footer>
+    </body>
+</html>

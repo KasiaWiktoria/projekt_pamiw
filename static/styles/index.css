@@ -3,10 +3,10 @@ table{
     margin-bottom: 50px;
 }
 
-table tbody tr:nth-child(odd) {background:#5dd401;}
+table tbody tr:nth-child(odd) {background:var(--main-color);}
 table tbody tr:nth-child(even) {background: #d8f5cc;}
 
-table tbody:hover tr:nth-child(odd) {background:#BA2AC7; color: white;}
+table tbody:hover tr:nth-child(odd) {background:var(--second-color); color: white;}
 table tbody:hover tr:nth-child(even) {background:#E6CBF6;}
 
 table tbody tr td:hover {background:#760c80; color: white;}
@@ -50,14 +50,6 @@ section.image {
     background-position: center;
     background-size: cover;
     background-attachment: fixed;
-}
-
-section.text {
-    margin: auto;
-    max-width: 1170px;
-    padding: 20px;
-    padding: 20px 0;
-    position: relative;
 }
 
 .img-block {

@@ -7,7 +7,7 @@ SESSION_ID = "session"
 FILES_PATH = "waybill_files/"
 CUSTOM_IMG_PATH = "static/images/packs_images/"
 PATH_AND_FILENAME = "path_and_filename"
-FILENAMES = "filenames"
+PACKNAMES = "packnames"
 IMAGES_PATHS = "images_paths"
 
 NAME_FIELD_ID = "name"
@@ -51,3 +51,12 @@ RECIPIENT_STREET_FIELD_ID = "recipient_street"
 RECIPIENT_HOUSE_NR_FIELD_ID = "recipient_house_nr"
 
 PACK_IMAGE_FIELD_NAME = "pack_image"
+
+PACK_ID_FIELD_ID = "pack_id"
+PACZKOMAT_FIELD_ID = "paczkomat_id"
+
+#statusy
+NEW = 'new'
+WAITING = 'waiting'
+PICKED_UP = 'picked_up'
+HANDED_OVER = 'handed_over'

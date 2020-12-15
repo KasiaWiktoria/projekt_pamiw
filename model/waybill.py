@@ -12,6 +12,7 @@ class Waybill:
         self.__sender = sender
         self.__recipient = recipient
         self.__image_path = img
+        self.__unique_filename = uuid.uuid4().hex
 
     def generate_and_save(self,log, path="./"):
         pdf = FPDF()
@@ -39,21 +40,22 @@ class Waybill:
         pdf.cell(col_width, col_height, "Recipient", border=1)
         pdf.multi_cell(col_width, font_size, txt=self.__recipient.str_full(), border=1)
         pdf.ln(0)
-        pdf.cell(col_width, 4*col_height, "Image of the pack", border=1)
+        pdf.cell(col_width*2, 2*font_size, "unique name for shipment: " + str(self.__unique_filename), border=1)
+        pdf.ln(0)
         image_path = "static/images/packs_images/" + self.__image_path
         try:
-            pdf.image(image_path, x = pdf.l_margin + col_width, y = pdf.t_margin + 2*col_height, w=col_width, h=4*col_height)
-            pdf.cell(col_width, 4*col_height, "", border=1)
+            pdf.image(image_path, x = pdf.l_margin + 0.5*col_width, y = pdf.t_margin + 3*col_height, w=col_width)
         except Exception:
-            pdf.cell(col_width, 4*col_height, "File upload failed. ", border=1)
+            pdf.cell(col_width, 3*col_height, "File upload failed. ", border=0)
 
     def __generate_filename(self, path):
-        unique_filename = uuid.uuid4().hex
-
-        return "{}{}.pdf".format(path, unique_filename)
+        return "{}{}.pdf".format(path, self.__unique_filename)
 
     def get_img_path(self):
         return self.__image_path
+
+    def get_id(self):
+        return self.__unique_filename
 
     @classmethod
     def from_json(cls, data):

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pl">
+    <head>
+        <title>PAX</title>
+        <meta charset="utf-8">
+        <link href="/styles/registration.css" rel="stylesheet" type="text/css">
+        <link href="/styles/main_style.css" rel="stylesheet" type="text/css">
+        <link href="/styles/form_style.css" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="/images/favicon.ico"/>
+        <link href="/styles/courier.css" rel="stylesheet" type="text/css">
+        <script  type="module" src="/scripts/courier_registration.js"></script>    
+    </head>
+    <body>
+        <header>
+            <a href="/" class="logo">
+                <img src="/images/logo.svg" alt="logo">
+                <p><span>PAX-Kurier</span> System obsługi paczek</p>
+            </a> 
+            <nav>
+                <div class="menu">
+                    <ul>
+                        <li><a href="/">Strona główna</a></li>
+                        {% if not loggedin %}
+                        <li><a href="/registration">Rejestracja</a></li>
+                        {% endif %}
+                        {% if loggedin %}
+                        <li><a href="/pick_up">Odbierz paczkę</a></li>
+                        <li><a href="/waybills-list">Lista paczek</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </nav>
+            {% if not loggedin %}
+            <a href="/login">
+                <img src="/images/konto-kurier.svg" alt="moje konto"> 
+            </a>
+            {% endif %}
+            {% if loggedin %}
+            <a href="/waybills-list">
+                <img src="/images/konto-kurier.svg" alt="moje konto"> 
+            </a>
+            {% endif %}
+        </header>
+
+
+        <section class="nav-block">
+            <a href="/login">Zaloguj się</a>
+            <a class="selected" href="/registration">Zarejestruj się</a>
+        </section>
+
+        <form id="registration-form">
+            <div class="column">
+                <div class="form-col">
+                    <h6>Dane osobowe</h6>
+
+                    <div class="form-row">
+                        <label for="name" class="required">Imię</label>
+                        <input id="name" type="text" name="name"/>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="surname" class="required">Nazwisko</label>
+                        <input id="surname" type="text" name="surname"/>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="bdate" class="required">Data urodzenia</label>
+                        <input id="bdate" type="date" name="bdate"/>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="pesel" class="required">PESEL</label>
+                        <input id="pesel" type="text" name="pesel"/>
+                    </div>
+
+                    <h6>Adres</h6>
+
+                    <div class="form-row">
+                        <label for="country">Kraj</label>
+                        <input id="country" type="text" name="country">
+                    </div>
+    
+                    <div class="form-row">
+                        <label for="postal_code">Kod pocztowy</label>
+                        <input id="postal_code" type="text" name="postal_code">
+                    </div>
+    
+                    <div class="form-row">
+                        <label for="city">Miasto</label>
+                        <input id="city" type="text" name="city">
+                    </div>
+    
+                    <div class="form-row">
+                        <label for="street">Ulica</label>
+                        <input id="street" type="text" name="street">
+                    </div>
+
+                    <div class="form-row">
+                        <label for="house_nr">nr domu</label>
+                        <input id="house_nr" type="text" name="house_nr">
+                    </div>
+                </div>
+            </div>
+
+            <div class="column">
+                <div class="form-col">
+                    <h6>Dane logowania</h6>
+
+                <div class="form-row">
+                    <label for="login" class="required">Login</label>
+                    <input id="login" type="text" name="login"/>
+                </div>
+
+                <div class="form-row">
+                    <label for="password" class="required">Hasło</label>
+                    <input id="password" type="password" name="password"/>
+                </div>
+
+                <div class="form-row">
+                    <label for="second_password" class="required">Powtórz hasło</label>
+                    <input id="second_password" type="password" name="second_password"/>
+                </div>
+
+                <div class="btn-block">
+                    <input class="btn" id="button-submit-form" type="submit" value="Rejestruj"/>               
+                </div>    
+
+                </div>
+                <img src="/images/paczka.jpg" alt="paczka">
+            </div>
+        </form>
+
+        <footer>
+            <p class="footer-inline left">&copy; 2020 Katarzyna Stankiewicz</p>
+            <p class="footer-inline right">Projekt realizowany w ramach laboratorium Programowanie Aplikacji Mobilnych i Webowych</p>
+        </footer>
+    </body>
+</html>

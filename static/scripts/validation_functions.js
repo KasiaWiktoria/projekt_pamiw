@@ -149,7 +149,7 @@ export function validateFile(IMAGE_FIELD_ID) {
     let filePath = document.getElementById(IMAGE_FIELD_ID).value;
           
             var allowedExtensions =  
-                    /(\.jpg|\.jpeg|\.png|\.gif)$/i; 
+                    /(\.jpg|\.jpeg|\.png)$/i; 
               
             if (allowedExtensions.exec(filePath) !== null) { 
                 return "";
@@ -157,7 +157,7 @@ export function validateFile(IMAGE_FIELD_ID) {
             else  
             { 
                 document.getElementById(IMAGE_FIELD_ID).value = ''
-                return 'Nieprawidłowy format pliku. Dozwolone rozszerzenia: .jpg, .jpeg, .png, .gif'; 
+                return 'Nieprawidłowy format pliku. Dozwolone rozszerzenia: .jpg, .jpeg, .png.'; 
             } 
 }
 

@@ -6,6 +6,7 @@
         <link href="/styles/waybills-list.css" rel="stylesheet" type="text/css">
         <link href="/styles/main_style.css" rel="stylesheet" type="text/css">
         <link rel="shortcut icon" href="/images/favicon.ico"/>
+        <script type="module" src="/scripts/waybills-list.js"></script>
     </head>
     <body>
         <header>
@@ -48,8 +49,9 @@
             <table><tbody>
                     <tr>
                         <th>zdjęcie paczki</th>
-                        <th>List przewozowy</th>
+                        <th>identyfikator paczki</th>
                         <th>pobieranie</th>
+                        <th>usuń</th>
                     </tr>
                     {% for waybill, img_path in my_waybills %}
                     <tr>
@@ -60,6 +62,7 @@
                                 <img src="/images/download.svg" alt="pobierz"><p>Pobierz</p>
                             </a>
                         </td>
+                        <td><a id="delete_button" onClick='delete_pack(" + {{waybill}} + ")' href="https://localhost:8081/delete/{{ waybill}}">usuń</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>

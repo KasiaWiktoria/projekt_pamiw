@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pl">
+    <head>
+        <title>PAX</title>
+        <meta charset="utf-8">
+        <link href="/styles/index.css" rel="stylesheet" type="text/css">
+        <link href="/styles/main_style.css" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="/images/favicon.ico"/>
+        <script type="module" src="/scripts/send_pack.js"></script>
+    </head>
+    <body>
+        <header>
+            <a href="/" class="logo">
+                <img src="/images/logo.svg" alt="logo">
+                <p><span>PAX - Paczkomat</span> System obsługi paczek</p>
+            </a> 
+            <nav>
+                <div class="menu">
+                    <ul>
+                        <li><a href="/send">Włóż paczkę</a></li>
+                        <li><a href="/pick_up">Wyjmij paczkę</a></li>
+                </div>
+            </nav>
+        </header>
+
+        <section class="image"></section>
+
+        <section class="text">
+            <div class="container">
+                <h2>Włóż paczkę do paczkomatu</h2>
+                <p>Podaj identyfikator paczki:</p>
+                <form id="pack-form" class="pack-form">
+
+                    <div class="column">
+                        <div class="form-col">
+        
+                        <div class="form-row">
+                            <label for="pack_id" class="required">identyfikator paczki</label>
+                            <input id="pack_id" type="text" name="pack_id"/>
+                        </div>
+
+                        <div class="btn-block">
+                            <input class="btn" id="button-submit-form" type="submit" value="Włóż paczkę"/>               
+                        </div>    
+        
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <footer>
+            <p class="footer-inline left">&copy; 2020 Katarzyna Stankiewicz</p>
+            <p class="footer-inline right">Projekt realizowany w ramach laboratorium Programowanie Aplikacji Mobilnych i Webowych</p>
+        </footer>
+    </body>
+</html>

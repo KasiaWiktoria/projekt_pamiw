@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pl">
+    <head>
+        <title>PAX</title>
+        <meta charset="utf-8">
+        <link href="/styles/send.css" rel="stylesheet" type="text/css">
+        <link href="/styles/main_style.css" rel="stylesheet" type="text/css">
+        <link href="/styles/form_style.css" rel="stylesheet" type="text/css">
+        <link href="/styles/courier.css" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="/images/favicon.ico"/>
+        <script type="module" src="/scripts/pick_up.js"></script>    
+    </head>
+    <body>
+        <header>
+            <a href="/" class="logo">
+                <img src="/images/logo.svg" alt="logo">
+                <p><span>PAX-Kurier</span> System obsługi paczek</p>
+            </a> 
+            <nav>
+                <div class="menu">
+                    <ul>
+                        <li><a href="/">Strona główna</a></li>
+                        {% if not loggedin %}
+                        <li><a href="/registration">Rejestracja</a></li>
+                        {% endif %}
+                        {% if loggedin %}
+                        <li><a href="/pick_up">Odbierz paczkę</a></li>
+                        <li><a href="/waybills-list">Lista paczek</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </nav>
+            {% if not loggedin %}
+            <a href="/login">
+                <img src="/images/konto-kurier.svg" alt="moje konto"> 
+            </a>
+            {% endif %}
+            {% if loggedin %}
+            <a href="/waybills-list">
+                <img src="/images/konto-kurier.svg" alt="moje konto"> 
+            </a>
+            {% endif %}
+        </header>
+
+        <section class="image"></section>
+
+        <section class="text">
+            <h1>Odbierz paczkę</h1>
+            
+            <form method="POST" action="https://localhost:8082/pick_up_pack" id="pick-up-form">
+                <p>Podaj identyfikator paczki: </p>
+                <div class="max-width-elem">
+                    <div class="form-row">
+                        <label for="pack_id">Identyfikator paczki</label>
+                        <input id="pack_id" type="text" name="pack_id">
+                    </div>
+                </div>
+                
+                <div class="btn-block" id="button-submit-form">
+                    <input class="btn" type="submit" value="Odbierz paczkę">
+                </div>
+            </form>
+        </section>
+
+
+        <footer>
+            <p class="footer-inline left">&copy; 2020 Katarzyna Stankiewicz</p>
+            <p class="footer-inline right">Projekt realizowany w ramach laboratorium Programowanie Aplikacji Mobilnych i Webowych</p>
+        </footer>
+    </body>
+</html>

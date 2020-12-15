@@ -39,7 +39,7 @@ td a:hover {
 section h1 {
     width: 80%;
     font-size: 40px;
-    color: #5dd401;;
+    color: var(--main-color);;
 }
 table {
     width: 80%;

@@ -3,8 +3,8 @@ import {showWarningMessage, removeWarningMessage, prepareWarningElem, appendAfte
 
 
 
-export function submitForm(form, name, successMessage, failureMessage) {
-    let registerUrl = URL + name;
+export function submitForm(url, form, name, successMessage, failureMessage) {
+    let registerUrl = url + name;
     console.log(registerUrl);
 
     let registerParams = {
