@@ -82,6 +82,7 @@ export function updateCorrectnessMessage(FIELD_ID, validationFunction) {
 
 export function addCorrectMessage(id,successMessage) {
     removeWarningMessage("uncorrect");
+    removeWarningMessage("correct");
     let correctElem = prepareWarningElem("correct", successMessage);
     correctElem.className = "correct-field"
     appendAfterElem(id, correctElem);
@@ -89,6 +90,7 @@ export function addCorrectMessage(id,successMessage) {
 
 export function addfailureMessage(id,failureMessage) {
     removeWarningMessage("correct");
+    removeWarningMessage("uncorrect");
     let uncorrectElem = prepareWarningElem("uncorrect", failureMessage);
     uncorrectElem.className = "uncorrect-field"
     appendAfterElem(id, uncorrectElem);

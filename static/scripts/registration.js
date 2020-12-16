@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
                 
                 let failureMessage = "Rejestracja nie powiodła się. Sprawdź czy wszystkie pola są wypełnione poprawnie.";
                 let id = "button-submit-form";
-                    addfailureMessage(id,failureMessage);
+                addfailureMessage(id,failureMessage);
             }
         } else {
             let id = "button-submit-form";

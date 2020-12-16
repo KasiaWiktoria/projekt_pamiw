@@ -1,10 +1,13 @@
-import {addCorrectMessage, addfailureMessage, submitForm, updateCorrectnessMessage, prepareOtherEventOnChange, prepareEventOnChange} from './form_functions.js';
+import {addCorrectMessage, addfailureMessage, submitForm, updateCorrectnessMessage, prepareOtherEventOnChange} from './form_functions.js';
 import {showWarningMessage, removeWarningMessage, prepareWarningElem, appendAfterElem} from './warning_functions.js';
 import {isAnyFieldBlank, isLoginAvailable, validateName, validateSurname, validateBDate, validatePesel, validateCountry, validatePostalCode, validateCity, validateStreet, validateHouseNr, validateLogin, validatePasswd, arePasswdsTheSame} from './validation_functions.js';
 import {GET, POST, courierURL, HTTP_STATUS, LOGIN_FIELD_ID, PASSWD_FIELD_ID} from './const.js'
 
 
 document.addEventListener('DOMContentLoaded', function (event) {
+
+    prepareEventOnChange(LOGIN_FIELD_ID, isLoginBlank);
+    prepareEventOnChange(PASSWD_FIELD_ID, isPasswdBlank);
 
     let loginForm = document.getElementById("login-form");
 
@@ -23,6 +26,31 @@ document.addEventListener('DOMContentLoaded', function (event) {
         }
     });
 });
+
+function isLoginBlank(){
+    let fields = [login];
+    if (!isAnyFieldBlank(fields)){
+        return ""
+    } else{
+        return  "nie"
+    }
+}
+
+function isPasswdBlank(){
+    let fields = [password];
+    if (!isAnyFieldBlank(fields)){
+        return ""
+    } else{
+        return  "nie"
+    }
+}
+
+
+function prepareEventOnChange(FIELD_ID, validationFunction) {
+    let loginInput = document.getElementById(FIELD_ID);
+    loginInput.addEventListener("change", updateCorrectnessMessage.bind(event, FIELD_ID, validationFunction));
+}
+
 
 function submitLoginForm(form, name) {
     let loginUrl = courierURL + name;

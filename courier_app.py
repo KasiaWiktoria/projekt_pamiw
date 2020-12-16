@@ -20,7 +20,7 @@ app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config["JWT_SECRET_KEY"] = os.environ.get(SECRET_KEY)
 app.config["JWT_SESSION_COOKIE"] = False
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = PACZKOMAT_TOKEN_EXPIRES_IN_SECONDS
 app.config["JWT_REFRESH_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS * 4
 app.config["JWT_TOKEN_LOCATION"] = JWT_TOKEN_LOCATION
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=5)
@@ -243,16 +243,26 @@ def check_paczkomat():
         return {'message': 'Nie ma takiego paczkomatu'}, 404
 
 
+
 @app.route("/generate_token", methods=[GET])
 def generate_token():
+    user = session['username']
     token = uuid4()
+    expires = timedelta( minutes = 1)
+    access_token = create_access_token(identity=token, expires_delta=expires)
+    
     response = make_response(jsonify({'token': token}), 200,)
     response.headers["Content-Type"] = "application/json"
+    set_access_cookies(response, access_token)
     return response
 
 def active_session():
     hash_ = request.cookies.get(COURIER_SESSION_ID)
     log.debug(hash_)
+    try:
+        session['username']
+    except:
+        return False
 
     if hash_ is not None:
         return True
