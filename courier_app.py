@@ -116,7 +116,7 @@ def login():
             if check_passwd(username,password):
                 log.debug("Hasło jest poprawne.")
                 hash_ = uuid4().hex 
-                db.hset("kurier-" + username, SESSION_ID, hash_)
+                db.hset("kurier-" + username, COURIER_SESSION_ID, hash_)
                 session.permanent = True
                 session['username'] = username
                 
@@ -125,7 +125,7 @@ def login():
                 refresh_token = create_refresh_token(identity=username, expires_delta=expires*4)
                 log.debug(f'hash: {hash_}')
                 response = make_response(jsonify({ 'logged_in': 'OK', 'access_token': access_token}))
-                response.set_cookie(SESSION_ID, hash_,  max_age=300, secure=True, httponly=True)
+                response.set_cookie(COURIER_SESSION_ID, hash_,  max_age=300, secure=True, httponly=True)
                 set_access_cookies(response, access_token)
                 set_refresh_cookies(response, refresh_token)
 
@@ -150,11 +150,11 @@ def check_passwd(username, password):
 @app.route("/logout", methods=[GET, POST])
 def logout():
     if active_session():
-        hash_ = request.cookies.get(SESSION_ID)
+        hash_ = request.cookies.get(COURIER_SESSION_ID)
         session.pop('username', None)
         session.clear()
         response = make_response(render_template("courier/index.html", loggedin=False))
-        response.set_cookie(SESSION_ID, hash_, max_age=0, secure=True, httponly=True)
+        response.set_cookie(COURIER_SESSION_ID, hash_, max_age=0, secure=True, httponly=True)
         unset_jwt_cookies(response)
         return response
     else:
@@ -180,6 +180,22 @@ def pick_up():
     else:
         abort(401)
 
+@app.route("/get_packs", methods=[GET])
+def get_packs():
+    if active_session():
+        user = session['username']
+        return render_template('courier/get_packs.html', loggedin=active_session(), user=user)
+    else:
+        abort(401)
+
+@app.route("/from_paczkomat", methods=[GET])
+def from_paczkomat():
+    if active_session():
+        user = session['username']
+        return render_template('courier/from_paczkomat.html', loggedin=active_session(), user=user)
+    else:
+        abort(401)
+
 @app.route("/check_pack_id", methods=[POST])
 def check_pack_id():
     pack_id = request.form.get(PACK_ID_FIELD_ID)
@@ -193,10 +209,8 @@ def check_pack_id():
 @app.route("/pick_up_pack", methods=[POST])
 def change_status():
     pack_id = request.form.get(PACK_ID_FIELD_ID)
-    log.debug('narazie ok')
     user = session['username']
     if db.hexists(pack_id, 'status'):
-        log.debug('nadal ok?')
         pack_status = db.hget(pack_id, 'status')
         log.debug('Status paczki: {}'.format(pack_status))
         if pack_status == NEW:
@@ -216,8 +230,28 @@ def save_pack(user, pack_id):
     log.debug("Picked up pack [name: {}].".format(pack_id))
 
 
+@app.route("/check_paczkomat", methods=[POST])
+def check_paczkomat():
+    paczkomat_id = request.form.get(PACZKOMAT_FIELD_ID)
+    log.debug(f'id paczkomatu {paczkomat_id}')
+    session.permanent = True
+    session['paczkomat'] = paczkomat_id
+    if db.hexists('paczkomaty', paczkomat_id):
+        log.debug('paczkomat istnieje w bazie')
+        return {'message': 'Poprawny kod paczkomatu.', 'status': 200}, 200
+    else:
+        return {'message': 'Nie ma takiego paczkomatu'}, 404
+
+
+@app.route("/generate_token", methods=[GET])
+def generate_token():
+    token = uuid4()
+    response = make_response(jsonify({'token': token}), 200,)
+    response.headers["Content-Type"] = "application/json"
+    return response
+
 def active_session():
-    hash_ = request.cookies.get(SESSION_ID)
+    hash_ = request.cookies.get(COURIER_SESSION_ID)
     log.debug(hash_)
 
     if hash_ is not None:

@@ -175,7 +175,12 @@ def logout():
         return render_template("index.html", loggedin=active_session())
 
 def active_session():
+    log.debug(request.cookies.get(SESSION_ID))
     hash_ = request.cookies.get(SESSION_ID)
+    try:
+        session['username']
+    except:
+        return False
 
     if hash_ is not None:
         return True

@@ -3,10 +3,13 @@
     <head>
         <title>PAX</title>
         <meta charset="utf-8">
-        <link href="/styles/index.css" rel="stylesheet" type="text/css">
+        <link href="/styles/send.css" rel="stylesheet" type="text/css">
         <link href="/styles/main_style.css" rel="stylesheet" type="text/css">
+        <link href="/styles/form_style.css" rel="stylesheet" type="text/css">
         <link href="/styles/courier.css" rel="stylesheet" type="text/css">
+        <link href="/styles/token.css" rel="stylesheet" type="text/css">
         <link rel="shortcut icon" href="/images/favicon.ico"/>
+        <script type="module" src="/scripts/token.js"></script>    
     </head>
     <body>
         <header>
@@ -43,15 +46,23 @@
         <section class="image"></section>
 
         <section class="text">
-            <div class="container">
-                <h1>PAX-Kurier</h1>
-                <p>Witamy w naszym zespole. Zaloguj się, aby mieć dostęp do swoich paczek.</p>
-                <div class="btn-block">
-                    <a class="btn" href="/login">Zaloguj się</a>           
-                </div>
-            </div>
+            <h1>Odbierz paczki z paczkomatu</h1>
             
+            <form id="token-form">
+                <p>Podaj identyfikator paczkomatu dla którego chcesz wygenerować token: </p>
+                <div class="max-width-elem">
+                    <div class="form-row">
+                        <label for="paczkomat_id">Identyfikator paczkomatu</label>
+                        <input id="paczkomat_id" type="text" name="paczkomat_id">
+                    </div>
+                </div>
+                
+                <div class="btn-block" id="button-submit-form">
+                    <input class="btn" type="submit" value="Generuj token">
+                </div>
+            </form>
         </section>
+
 
         <footer>
             <p class="footer-inline left">&copy; 2020 Katarzyna Stankiewicz</p>

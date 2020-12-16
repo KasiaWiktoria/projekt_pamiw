@@ -49,9 +49,9 @@ function submitPaczkomatForm(form, name) {
 function getResponseData(response, successMessage, failureMessage) {
     if (response.status == HTTP_STATUS.OK){
         console.log(response)
-        addfailureMessage(id,failureMessage)
-    }else {
         addCorrectMessage(id,successMessage)
+    }else {
+        addfailureMessage(id,failureMessage)
     }
 }
 

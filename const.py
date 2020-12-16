@@ -4,6 +4,7 @@ SECRET_KEY = "LOGIN_JWT_SECRET"
 JWT_TOKEN_LOCATION = ['cookies']
 TOKEN_EXPIRES_IN_SECONDS = 300
 SESSION_ID = "session"
+COURIER_SESSION_ID = "courier_session"
 FILES_PATH = "waybill_files/"
 CUSTOM_IMG_PATH = "static/images/packs_images/"
 PATH_AND_FILENAME = "path_and_filename"

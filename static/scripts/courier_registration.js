@@ -1,6 +1,6 @@
 import {addCorrectMessage, addfailureMessage, submitForm, updateCorrectnessMessage, prepareOtherEventOnChange, prepareEventOnChange} from './form_functions.js';
 import {showWarningMessage, removeWarningMessage, prepareWarningElem, appendAfterElem} from './warning_functions.js';
-import {isAnyFieldBlank, isLoginAvailable, validateName, validateSurname, validateBDate, validatePesel, validateCountry, validatePostalCode, validateCity, validateStreet, validateHouseNr, validateLogin, validatePasswd, arePasswdsTheSame} from './validation_functions.js';
+import {isAnyFieldBlank, validateName, validateSurname, validateBDate, validatePesel, validateCountry, validatePostalCode, validateCity, validateStreet, validateHouseNr, validateLogin, validatePasswd, arePasswdsTheSame} from './validation_functions.js';
 import {GET, POST, courierURL, HTTP_STATUS,NAME_FIELD_ID, SURNAME_FIELD_ID, BDATE_FIELD_ID, PESEL_FIELD_ID, COUNTRY_FIELD_ID, POSTAL_CODE_FIELD_ID, CITY_FIELD_ID, STREET_FIELD_ID, HOUSE_NR_FIELD_ID, LOGIN_FIELD_ID,PASSWD_FIELD_ID, REPEAT_PASSWD_FIELD_ID} from './const.js'
 
 document.addEventListener('DOMContentLoaded', function (event) {
@@ -86,6 +86,32 @@ document.addEventListener('DOMContentLoaded', function (event) {
             console.log("Unorrect login.");
             showWarningMessage(warningElemId, warningMessage, LOGIN_FIELD_ID);
         }
+    }
+
+    function isLoginAvailable() {
+        return Promise.resolve(checkLoginAvailability().then(function (statusCode) {
+            if (statusCode === HTTP_STATUS.OK) {
+                return false;
+            } else if (statusCode === HTTP_STATUS.NOT_FOUND) {
+                return true
+            } else {
+                throw "Unknown login availability status: " + statusCode;
+            }
+        }));
+    }
+    
+    function checkLoginAvailability() {
+        let loginInput = document.getElementById(LOGIN_FIELD_ID);
+        let baseUrl = courierURL + "user/";
+        let userUrl = baseUrl + loginInput.value;
+    
+        return Promise.resolve(fetch(userUrl, { mode: 'cors'}, {method: GET}).then(function (resp) {
+            console.log("status = " + resp.status);
+            return resp.status;
+        }).catch(function (err) {
+            
+            return err.status;
+        }));
     }
     
     function updatePasswdCorrectnessMessage() {
