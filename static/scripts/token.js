@@ -22,19 +22,19 @@ tokenForm.addEventListener("submit", function (event) {
 
 
 function submitTokenForm(form, name) {
-    let loginUrl = courierURL + name;
-    console.log(loginUrl);
+    let url = courierURL + name;
+    console.log(url);
     let successMessage = "Poprawny kod paczkomatu.";
     let failureMessage = "Paczkomat o podanym kodzie nie istnieje.";
 
-    let registerParams = {
+    let params = {
         method: POST,
         mode: 'cors',
         body: new FormData(form),
         redirect: "follow"
     };
 
-    fetch(loginUrl, registerParams).then(response => {
+    fetch(url, params).then(response => {
         console.log("odpowiedź: " + response)
         return getJsonResponse(response)
         }).then(response => getResponseData(response, successMessage, failureMessage))

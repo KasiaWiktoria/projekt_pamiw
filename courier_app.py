@@ -235,7 +235,6 @@ def check_paczkomat():
     paczkomat_id = request.form.get(PACZKOMAT_FIELD_ID)
     log.debug(f'id paczkomatu {paczkomat_id}')
     session.permanent = True
-    session['paczkomat'] = paczkomat_id
     if db.hexists('paczkomaty', paczkomat_id):
         log.debug('paczkomat istnieje w bazie')
         return {'message': 'Poprawny kod paczkomatu.', 'status': 200}, 200

@@ -13,8 +13,7 @@ paczkomatForm.addEventListener("submit", function (event) {
 
     let fields = [paczkomat];
     if(!isAnyFieldBlank(fields)) {
-        let paczkoamt_name = 'paczkomat/' + paczkomat.value
-        submitPaczkomatForm(paczkomatForm, paczkoamt_name);
+        submitPaczkomatForm(paczkomatForm, 'check_paczkomat');
     } else {
         let id = "button-submit-form";
         addfailureMessage(id,"Wpisz identyfikator paczkomatu.")
@@ -23,19 +22,19 @@ paczkomatForm.addEventListener("submit", function (event) {
 
 
 function submitPaczkomatForm(form, name) {
-    let loginUrl = paczkomatURL + name;
-    console.log(loginUrl);
+    let url = paczkomatURL + name;
+    console.log(url);
     let successMessage = "Poprawny kod paczkomatu.";
     let failureMessage = "Paczkomat o podanym kodzie nie istnieje.";
 
-    let registerParams = {
+    let params = {
         method: POST,
         mode: 'cors',
         body: new FormData(form),
         redirect: "follow"
     };
 
-    fetch(loginUrl, registerParams).then(response => {
+    fetch(url, params).then(response => {
         console.log("odpowiedź: " + response)
         return getJsonResponse(response)
         }).then(response => getResponseData(response, successMessage, failureMessage))
@@ -47,11 +46,13 @@ function submitPaczkomatForm(form, name) {
 }
 
 function getResponseData(response, successMessage, failureMessage) {
+    let id = "button-submit-form";
     if (response.status == HTTP_STATUS.OK){
-        console.log(response)
-        addCorrectMessage(id,successMessage)
+        console.log(response.message)
+        addCorrectMessage(id,response.message)
+        window.location.href = '/paczkomat/' + response.kod
     }else {
-        addfailureMessage(id,failureMessage)
+        addfailureMessage(id,response.message)
     }
 }
 

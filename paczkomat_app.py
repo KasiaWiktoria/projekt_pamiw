@@ -40,17 +40,25 @@ def paczkomaty():
 def index():
     return render_template("paczkomat/index.html")
 
-@app.route("/paczkomat", methods=[POST])
-def paczkomat():
+@app.route("/check_paczkomat", methods=[POST])
+def check_paczkomat():
     paczkomat_id = request.form.get(PACZKOMAT_FIELD_ID)
     log.debug(f'id paczkomatu {paczkomat_id}')
     session.permanent = True
-    session['paczkomat'] = paczkomat_id
+    if db.hexists('paczkomaty', paczkomat_id):
+        log.debug('paczkomat istnieje w bazie')
+        session['paczkomat'] = paczkomat_id
+        return {'message': 'Poprawny kod paczkomatu.', 'kod': paczkomat_id, 'status': 200}, 200
+    else:
+        return {'message': 'Nie ma takiego paczkomatu'}, 404
+
+@app.route("/paczkomat/<string:paczkomat_id>", methods=[GET])
+def paczkomat(paczkomat_id):
     if db.hexists('paczkomaty', paczkomat_id):
         log.debug('paczkomat istnieje w bazie')
         return render_template("paczkomat/paczkomat.html", paczkomat=paczkomat_id)
     else:
-        return {'message': 'Nie ma takiego paczkomatu'}, 404
+        abort(404)
 
 @app.route("/send", methods=[GET])
 def send():
