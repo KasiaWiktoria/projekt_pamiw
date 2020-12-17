@@ -82,19 +82,24 @@ def check_pack_id():
 def put_in():
     pack_id = request.form.get(PACK_ID_FIELD_ID)
     log.debug(pack_id)
-    try:
-        paczkomat = session['paczkomat']
-    except:
-        return render_template("paczkomat/index.html")
-    try:
-        if db.hget(pack_id, 'status') == NEW:
-            db.hset(pack_id, 'status', WAITING)
-            db.hset(paczkomat, pack_id, pack_id)
-            return {'message': 'Udało się włożyć paczkę.'}, 200
-        else:
-            return {'message': 'Nieprawidłowy status paczki.'}, 400
-    except:
-        return {'message': 'Nie udało się włożyć paczki.'}, 404
+    if db.hexists(pack_id, 'status'):
+        try:
+            paczkomat = session['paczkomat']
+        except:
+            log.debug('nie przekazano paczkomatu')
+            return {'message': 'Wróć do wyboru paczkomatu.', 'status': 404}, 404
+        try:
+            if db.hget(pack_id, 'status') == NEW:
+                db.hset(pack_id, 'status', WAITING)
+                db.hset(paczkomat, pack_id, pack_id)
+                return {'message': 'Udało się włożyć paczkę.', 'status': 200}, 200
+            else:
+                return {'message': 'Nieprawidłowy status paczki.', 'status': 400}, 400
+        except:
+            log.debug('problem w bazie danych')
+        return {'message': 'Nie udało się włożyć paczki.', 'status': 404}, 404
+    else:
+        return {'message': 'Brak paczki o podanym id w bazie danych.'}, 404
 
 @cross_origin(origins=["https://localhost:8082/"], supports_credentials=True)
 @app.route("/confirm_token", methods=[POST])
