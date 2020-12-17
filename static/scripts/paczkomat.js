@@ -3,22 +3,39 @@ import {showWarningMessage, removeWarningMessage, prepareWarningElem, appendAfte
 import {isAnyFieldBlank, isLoginAvailable, validateName, validateSurname, validateBDate, validatePesel, validateCountry, validatePostalCode, validateCity, validateStreet, validateHouseNr, validateLogin, validatePasswd, arePasswdsTheSame} from './validation_functions.js';
 import {GET, POST, paczkomatURL, HTTP_STATUS, PACZKOMAT_FIELD_ID, PASSWD_FIELD_ID} from './const.js'
 
+document.addEventListener('DOMContentLoaded', function (event) {
 
-let paczkomatForm = document.getElementById("paczkomat-form");
+    prepareEventOnChange(PACZKOMAT_FIELD_ID, isBlank);
 
-paczkomatForm.addEventListener("submit", function (event) {
-    event.preventDefault();
+    let paczkomatForm = document.getElementById("paczkomat-form");
 
-    let paczkomat = document.getElementById(PACZKOMAT_FIELD_ID);
+    paczkomatForm.addEventListener("submit", function (event) {
+        event.preventDefault();
 
-    let fields = [paczkomat];
-    if(!isAnyFieldBlank(fields)) {
-        submitPaczkomatForm(paczkomatForm, 'check_paczkomat');
-    } else {
-        let id = "button-submit-form";
-        addfailureMessage(id,"Wpisz identyfikator paczkomatu.")
-    }
+
+        let paczkomat = document.getElementById(PACZKOMAT_FIELD_ID);
+
+        let fields = [paczkomat];
+        if(!isAnyFieldBlank(fields)) {
+            submitPaczkomatForm(paczkomatForm, 'check_paczkomat');
+        } else {
+            let id = "button-submit-form";
+            addfailureMessage(id,"Wpisz identyfikator paczkomatu.")
+        }
+    });
+
+
 });
+
+function isBlank(){
+    let field = document.getElementById(PACZKOMAT_FIELD_ID);
+    let fields = [field];
+    if (!isAnyFieldBlank(fields)){
+        return ""
+    } else{
+        return  "not blank"
+    }
+}
 
 
 function submitPaczkomatForm(form, name) {
@@ -50,7 +67,7 @@ function getResponseData(response, successMessage, failureMessage) {
     if (response.status == HTTP_STATUS.OK){
         console.log(response.message)
         addCorrectMessage(id,response.message)
-        window.location.href = '/paczkomat/' + response.kod
+        window.location.href = '/' + response.kod
     }else {
         addfailureMessage(id,response.message)
     }

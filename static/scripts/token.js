@@ -3,23 +3,37 @@ import {showWarningMessage, removeWarningMessage, prepareWarningElem, appendAfte
 import {isAnyFieldBlank, isLoginAvailable, validateName, validateSurname, validateBDate, validatePesel, validateCountry, validatePostalCode, validateCity, validateStreet, validateHouseNr, validateLogin, validatePasswd, arePasswdsTheSame} from './validation_functions.js';
 import {GET, POST, paczkomatURL, HTTP_STATUS, PACZKOMAT_FIELD_ID, PASSWD_FIELD_ID, courierURL} from './const.js'
 
+document.addEventListener('DOMContentLoaded', function (event) {
 
-let tokenForm = document.getElementById("token-form");
+    prepareEventOnChange(PACZKOMAT_FIELD_ID, isBlank);
 
-tokenForm.addEventListener("submit", function (event) {
-    event.preventDefault();
+    let tokenForm = document.getElementById("token-form");
 
-    let paczkomat = document.getElementById(PACZKOMAT_FIELD_ID);
+    tokenForm.addEventListener("submit", function (event) {
+        event.preventDefault();
 
-    let fields = [paczkomat];
-    if(!isAnyFieldBlank(fields)) {
-        submitTokenForm(tokenForm, 'check_paczkomat');
-    } else {
-        let id = "button-submit-form";
-        addfailureMessage(id,"Wpisz identyfikator paczkomatu.")
-    }
+        let paczkomat = document.getElementById(PACZKOMAT_FIELD_ID);
+
+        let fields = [paczkomat];
+        if(!isAnyFieldBlank(fields)) {
+            submitTokenForm(tokenForm, 'check_paczkomat');
+        } else {
+            let id = "button-submit-form";
+            addfailureMessage(id,"Wpisz identyfikator paczkomatu.")
+        }
+    });
+
 });
 
+function isBlank(){
+    let field = document.getElementById(PACZKOMAT_FIELD_ID);
+    let fields = [field];
+    if (!isAnyFieldBlank(fields)){
+        return ""
+    } else{
+        return  "not blank"
+    }
+}
 
 function submitTokenForm(form, name) {
     let url = courierURL + name;

@@ -44,3 +44,9 @@ section h1 {
 table {
     width: 80%;
 }
+
+.max-width-elem{
+    justify-content: flex-start;
+    padding-left: 50px;
+    margin-left: 50px;
+}

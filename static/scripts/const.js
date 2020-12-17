@@ -49,4 +49,8 @@ export const PACK_ID_FIELD_ID = "pack_id";
 
 export const PACZKOMAT_FIELD_ID = "paczkomat_id";
 
+export const TOKEN_FIELD_ID = "token";
+
+export const CHECKBOX_FIELD_ID = "checkbox";
+
 export var HTTP_STATUS = {OK: 200, CREATED: 201, BAD_REQUEST: 400, UNAUTHORIZED: 401, FORBIDDEN: 403, NOT_FOUND: 404, INTERNAL_SERVER_ERROR: 500};

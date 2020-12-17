@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 });
 
 function isLoginBlank(){
+    let login = document.getElementById(LOGIN_FIELD_ID);
     let fields = [login];
     if (!isAnyFieldBlank(fields)){
         return ""
@@ -37,6 +38,7 @@ function isLoginBlank(){
 }
 
 function isPasswdBlank(){
+    let password = document.getElementById(PASSWD_FIELD_ID);
     let fields = [password];
     if (!isAnyFieldBlank(fields)){
         return ""

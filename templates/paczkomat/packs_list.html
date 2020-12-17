@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pl">
+    <head>
+        <title>PAX - Paczkomat</title>
+        <meta charset="utf-8">
+        <link href="/styles/waybills-list.css" rel="stylesheet" type="text/css">
+        <link href="/styles/main_style.css" rel="stylesheet" type="text/css">
+        <link href="/styles/form_style.css" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="/images/favicon.ico"/>
+        <script type="module" src="/scripts/take_out.js"></script>
+    </head>
+    <body>
+        <header>
+            <a href="/" class="logo">
+                <img src="/images/logo.svg" alt="logo">
+                <p><span>PAX - Paczkomat</span> System obsługi paczek</p>
+            </a> 
+            <nav>
+                <div class="menu">
+                    <ul>
+                        <li><a href="/{{paczkomat}}/send">Włóż paczkę</a></li>
+                        <li><a href="/{{paczkomat}}/enter_token">Wyjmij paczki</a></li>
+                </div>
+            </nav>
+        </header>
+        <section>
+            <h1>Lista paczek w paczkomacie {{paczkomat}}</h1>
+            <div class="max-width-elem">
+                <p>Zaznacz paczki które chcesz odebrać z paczkomatu.</p>
+            </div>
+            
+            <form id="packs-form">
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>zdjęcie paczki</th>
+                            <th>identyfikator paczki</th>
+                            <th>wybierz</th>
+                        </tr>
+                        {% for pack, img_path in packs %}
+                        <tr>
+                            <td><img src="/images/packs_images/{{ img_path }}" alt="zdjęcie paczki"></td>
+                            <td>{{ pack }}</td>
+                            <td>
+                                <input type="checkbox" class="pack_checkbox" name="checkbox" value="{{pack}}" id="checkbox">
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="btn-block">
+                    <input class="btn" id="button-submit-form" type="submit" value="Odbierz paczki"/>               
+                </div> 
+            </form>
+        </section>
+
+
+        <footer>
+            <p class="footer-inline left">&copy; 2020 Katarzyna Stankiewicz</p>
+            <p class="footer-inline right">Projekt realizowany w ramach laboratorium Programowanie Aplikacji Mobilnych i Webowych</p>
+        </footer>
+    </body>
+</html>

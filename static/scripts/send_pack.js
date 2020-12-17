@@ -1,22 +1,38 @@
-import {addCorrectMessage, addfailureMessage} from './form_functions.js';
+import {addCorrectMessage, addfailureMessage, prepareEventOnChange} from './form_functions.js';
 import {isAnyFieldBlank} from './validation_functions.js';
 import {GET, POST, paczkomatURL, HTTP_STATUS, PACK_ID_FIELD_ID, PASSWD_FIELD_ID} from './const.js'
 
-let packForm = document.getElementById("pack-form");
+document.addEventListener('DOMContentLoaded', function (event) {
 
-packForm.addEventListener("submit", function (event) {
-    event.preventDefault();
+    prepareEventOnChange(PACK_ID_FIELD_ID, isBlank);
 
-    let pack = document.getElementById(PACK_ID_FIELD_ID);
+    let packForm = document.getElementById("pack-form");
 
-    let fields = [pack];
-    if(!isAnyFieldBlank(fields)) {
-        submitPackForm(packForm, 'put_in');
-    } else {
-        let id = "button-submit-form";
-        addfailureMessage(id,"Wpisz identyfikator paczki.")
-    }
+    packForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        let pack = document.getElementById(PACK_ID_FIELD_ID);
+
+        let fields = [pack];
+        if(!isAnyFieldBlank(fields)) {
+            submitPackForm(packForm, 'put_in');
+        } else {
+            let id = "button-submit-form";
+            addfailureMessage(id,"Wpisz identyfikator paczki.")
+        }
+    });
+
 });
+
+function isBlank(){
+    let field = document.getElementById(PACK_ID_FIELD_ID);
+    let fields = [field];
+    if (!isAnyFieldBlank(fields)){
+        return ""
+    } else{
+        return  "not blank"
+    }
+}
 
 
 function submitPackForm(form, name) {

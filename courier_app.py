@@ -4,7 +4,7 @@ from flask import logging
 from datetime import timedelta
 from uuid import uuid4
 from const import *
-from flask_jwt_extended import JWTManager, jwt_required, create_access_token, create_refresh_token, set_refresh_cookies, set_access_cookies, create_refresh_token, unset_jwt_cookies, jwt_refresh_token_required, get_jwt_identity
+from flask_jwt_extended import JWTManager, get_jti, jwt_required, create_access_token, create_refresh_token, set_refresh_cookies, set_access_cookies, create_refresh_token, unset_jwt_cookies, jwt_refresh_token_required, get_jwt_identity
 import redis
 import os
 import hashlib
@@ -43,22 +43,22 @@ def refresh_session():
     '''
 
 @app.route("/logged_in_user")
-def get_username():
+def get_courier_name():
     try:
-        user = session['username']
+        user = session['courier_name']
         return { 'user': user }, 200
     except:
         return {'message': 'Prawdopodobnie nie jesteś zalogowany'}, 401
 
 
 
-@app.route("/user/<string:username>", methods=[GET,POST])
-def check_user(username):
+@app.route("/user/<string:courier_name>", methods=[GET,POST])
+def check_user(courier_name):
     
-    if db.hexists("kurier-" + username, LOGIN_FIELD_ID):
+    if db.hexists("kurier-" + courier_name, LOGIN_FIELD_ID):
         return {"message":"Courier is in the database.", "status" : 200}, 200
     else:
-        return {"message": "There is no courier with this username.", "status" : 404}, 404
+        return {"message": "There is no courier with this courier_name.", "status" : 404}, 404
 
 
 @app.route("/registration", methods=[GET,POST])
@@ -108,26 +108,21 @@ def add_user(login, password, name, surname, bdate, pesel, country, postal_code,
 @app.route("/login", methods=[GET, POST])
 def login():
     if request.method == POST:
-        username = request.form[LOGIN_FIELD_ID]
+        courier_name = request.form[LOGIN_FIELD_ID]
         password = request.form[PASSWD_FIELD_ID]
 
-        if db.hexists("kurier-" + username, LOGIN_FIELD_ID):
-            log.debug("Użytkownik " + username + " jest w bazie danych.")
-            if check_passwd(username,password):
+        if db.hexists("kurier-" + courier_name, LOGIN_FIELD_ID):
+            log.debug("Użytkownik " + courier_name + " jest w bazie danych.")
+            if check_passwd(courier_name,password):
                 log.debug("Hasło jest poprawne.")
                 hash_ = uuid4().hex 
-                db.hset("kurier-" + username, COURIER_SESSION_ID, hash_)
+                db.hset("kurier-" + courier_name, COURIER_SESSION_ID, hash_)
                 session.permanent = True
-                session['username'] = username
+                session['courier_name'] = courier_name
                 
-                expires = timedelta( minutes = 5)
-                access_token = create_access_token(identity=username, expires_delta=expires*10)
-                refresh_token = create_refresh_token(identity=username, expires_delta=expires*4)
                 log.debug(f'hash: {hash_}')
-                response = make_response(jsonify({ 'logged_in': 'OK', 'access_token': access_token}))
+                response = make_response(jsonify({ 'logged_in': 'OK'}))
                 response.set_cookie(COURIER_SESSION_ID, hash_,  max_age=300, secure=True, httponly=True)
-                set_access_cookies(response, access_token)
-                set_refresh_cookies(response, refresh_token)
 
                 return response
             else:
@@ -139,19 +134,19 @@ def login():
         
     else:
         if active_session():
-            return render_template("errors/already-logged-in.html", loggedin=active_session(), user= session['username'])
+            return render_template("errors/already-logged-in.html", loggedin=active_session(), user= session['courier_name'])
         return render_template("courier/login.html", loggedin=active_session())
 
-def check_passwd(username, password):
+def check_passwd(courier_name, password):
     password = password.encode("utf-8")
     passwd_hash = hashlib.sha512(password).hexdigest()
-    return passwd_hash == db.hget("kurier-" + username, PASSWD_FIELD_ID)
+    return passwd_hash == db.hget("kurier-" + courier_name, PASSWD_FIELD_ID)
 
 @app.route("/logout", methods=[GET, POST])
 def logout():
     if active_session():
         hash_ = request.cookies.get(COURIER_SESSION_ID)
-        session.pop('username', None)
+        session.pop('courier_name', None)
         session.clear()
         response = make_response(render_template("courier/index.html", loggedin=False))
         response.set_cookie(COURIER_SESSION_ID, hash_, max_age=0, secure=True, httponly=True)
@@ -163,7 +158,7 @@ def logout():
 @app.route("/waybills-list", methods=[GET])
 def list():
     if active_session():
-        user = session['username']
+        user = session['courier_name']
         waybills = db.hvals(user + '-' + PACKNAMES)
         waybills_images = []
         for waybill in waybills:
@@ -175,7 +170,7 @@ def list():
 @app.route("/pick_up", methods=[GET])
 def pick_up():
     if active_session():
-        user = session['username']
+        user = session['courier_name']
         return render_template('courier/pick_up.html', loggedin=active_session(), user=user)
     else:
         abort(401)
@@ -183,7 +178,7 @@ def pick_up():
 @app.route("/get_packs", methods=[GET])
 def get_packs():
     if active_session():
-        user = session['username']
+        user = session['courier_name']
         return render_template('courier/get_packs.html', loggedin=active_session(), user=user)
     else:
         abort(401)
@@ -191,7 +186,7 @@ def get_packs():
 @app.route("/from_paczkomat", methods=[GET])
 def from_paczkomat():
     if active_session():
-        user = session['username']
+        user = session['courier_name']
         return render_template('courier/from_paczkomat.html', loggedin=active_session(), user=user)
     else:
         abort(401)
@@ -209,7 +204,7 @@ def check_pack_id():
 @app.route("/pick_up_pack", methods=[POST])
 def change_status():
     pack_id = request.form.get(PACK_ID_FIELD_ID)
-    user = session['username']
+    user = session['courier_name']
     if db.hexists(pack_id, 'status'):
         pack_status = db.hget(pack_id, 'status')
         log.debug('Status paczki: {}'.format(pack_status))
@@ -245,10 +240,11 @@ def check_paczkomat():
 
 @app.route("/generate_token", methods=[GET])
 def generate_token():
-    user = session['username']
-    token = uuid4()
+    user = session['courier_name']
+    #token = uuid4()
     expires = timedelta( minutes = 1)
-    access_token = create_access_token(identity=token, expires_delta=expires)
+    access_token = create_access_token(identity=user, expires_delta=expires)
+    token = get_jti(access_token)
     
     response = make_response(jsonify({'token': token}), 200,)
     response.headers["Content-Type"] = "application/json"
@@ -259,7 +255,7 @@ def active_session():
     hash_ = request.cookies.get(COURIER_SESSION_ID)
     log.debug(hash_)
     try:
-        session['username']
+        session['courier_name']
     except:
         return False
 

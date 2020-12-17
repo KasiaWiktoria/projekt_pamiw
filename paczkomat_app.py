@@ -1,10 +1,11 @@
 from flask import Flask, render_template, url_for, redirect, send_file, make_response, abort, session
 from flask import request, jsonify
+import json
 from flask import logging
 from datetime import timedelta
 from uuid import uuid4
 from const import *
-from flask_jwt_extended import JWTManager, jwt_required, create_access_token, create_refresh_token, set_refresh_cookies, set_access_cookies, create_refresh_token, unset_jwt_cookies, jwt_refresh_token_required, get_jwt_identity
+from flask_jwt_extended import JWTManager, jwt_required, get_raw_jwt, create_access_token, create_refresh_token, set_refresh_cookies, set_access_cookies, create_refresh_token, unset_jwt_cookies, jwt_refresh_token_required, get_jwt_identity
 import redis
 import os
 import hashlib
@@ -52,21 +53,25 @@ def check_paczkomat():
     else:
         return {'message': 'Nie ma takiego paczkomatu'}, 404
 
-@app.route("/paczkomat/<string:paczkomat_id>", methods=[GET])
+@app.route("/<string:paczkomat_id>/", methods=[GET])
 def paczkomat(paczkomat_id):
+    log.debug(f'nic: {paczkomat_id}')
     if db.hexists('paczkomaty', paczkomat_id):
         log.debug('paczkomat istnieje w bazie')
+        session['paczkomat'] = paczkomat_id
         return render_template("paczkomat/paczkomat.html", paczkomat=paczkomat_id)
     else:
         abort(404)
 
-@app.route("/send", methods=[GET])
-def send():
-    try:
-        paczkomat = session['paczkomat']
-    except:
-        return render_template("paczkomat/index.html")
-    return render_template("paczkomat/send.html", paczkomat=paczkomat)
+@app.route("/<string:paczkomat_id>/send", methods=[GET])
+def send(paczkomat_id):
+    log.debug(f'send: {paczkomat_id}')
+    if db.hexists('paczkomaty', paczkomat_id):
+        log.debug('paczkomat istnieje w bazie')
+        session['paczkomat'] = paczkomat_id
+        return render_template("paczkomat/send.html", paczkomat=paczkomat_id)
+    else:
+        abort(404)
     
 @app.route("/check_pack_id", methods=[POST])
 def check_pack_id():
@@ -105,16 +110,69 @@ def put_in():
 @app.route("/confirm_token", methods=[POST])
 @jwt_required
 def confirm_token():
-    token = get_jwt_identity()
+    token = get_raw_jwt()['jti']
+    session['courier'] = get_jwt_identity()
+    entered_token = request.form.get(TOKEN_FIELD_ID)
+    paczkomat = request.form.get('paczkomat')
+    log.debug(paczkomat)
+    log.debug(f'poprawny token: {token}')
+    log.debug(f'wprowadzony token: {entered_token}')
+    if token == entered_token:
+        log.debug('ok')
+        return {'message':'Poprawny token.', 'paczkomat': paczkomat, 'status':200}, 200
+    else:
+        return {'message':'Podano błędny token.', 'paczkomat': paczkomat, 'status':404}, 404
 
-@app.route("/take_out", methods=[GET])
+@app.route("/<string:paczkomat_id>/enter_token", methods=[GET])
+def enter_token(paczkomat_id):
+    if db.hexists('paczkomaty', paczkomat_id):
+        log.debug('paczkomat istnieje w bazie')
+        log.debug(f'enter_token: {paczkomat_id}')
+        session['paczkomat'] = paczkomat_id
+        return render_template("paczkomat/enter_token.html", paczkomat=paczkomat_id)
+    else:
+        abort(404)
+
+@app.route("/<string:paczkomat_id>/packs_list", methods=[GET])
+def packs_list(paczkomat_id):
+    log.debug(f'packs_list: {paczkomat_id}')
+    if db.hexists('paczkomaty', paczkomat_id):
+        session['paczkomat'] = paczkomat_id
+        packs = db.hvals(paczkomat_id)
+        packs_images = []
+        for pack in packs:
+            packs_images.append(db.hget(IMAGES_PATHS, pack))
+        log.debug(packs_images)
+        return render_template("paczkomat/packs_list.html", paczkomat=paczkomat_id, packs = zip(packs,packs_images))
+    else:
+        abort(404)
+
+@app.route("/take_out", methods=[POST])
 def take_out():
     try:
         paczkomat = session['paczkomat']
+        user = session['courier']
+        r = json.loads(request.data)
+        log.debug(r)
+        packs = r.get('packs') 
+        log.debug(f'wyjęte paczki: {packs}')
+        try:
+            for pack in packs:
+                db.hset(pack, 'status', PICKED_UP)
+                db.hdel(paczkomat, pack)
+                take_out_packs(user,pack)
+        except:
+            return {'message':'Nie udało się zmienić stanu paczek w bazie danych.', 'status':500}, 500
+        return {'message':'Paczki wyjęte z paczkomatu.', 'status':200}, 200
     except:
-        return render_template("paczkomat/index.html")
-    return render_template("paczkomat/take_out.html", paczkomat=paczkomat)
+        return {'message':'Nie udało się wyjąć paczek.', 'status':400}, 400
 
+def take_out_packs(user, pack_id):
+
+    db.hset(pack_id, 'status', HANDED_OVER)
+    db.hset(user + '-'+ PACKNAMES, pack_id, pack_id)
+
+    log.debug("Picked up pack [name: {}].".format(pack_id))
 
 @app.errorhandler(400)
 def bad_request(error):

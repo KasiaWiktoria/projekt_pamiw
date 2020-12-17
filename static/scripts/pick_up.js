@@ -3,21 +3,36 @@ import {showWarningMessage, removeWarningMessage, prepareWarningElem, appendAfte
 import {isAnyFieldBlank, isLoginAvailable, validateName, validateSurname, validateBDate, validatePesel, validateCountry, validatePostalCode, validateCity, validateStreet, validateHouseNr, validateLogin, validatePasswd, arePasswdsTheSame} from './validation_functions.js';
 import {GET, POST, courierURL, HTTP_STATUS, PACK_ID_FIELD_ID, PASSWD_FIELD_ID} from './const.js'
 
-let packForm = document.getElementById("pick-up-form");
+document.addEventListener('DOMContentLoaded', function (event) {
 
-packForm.addEventListener("submit", function (event) {
-    event.preventDefault();
+    prepareEventOnChange(PACK_ID_FIELD_ID, isBlank);
+    
+    let packForm = document.getElementById("pick-up-form");
 
-    let pack = document.getElementById(PACK_ID_FIELD_ID);
+    packForm.addEventListener("submit", function (event) {
+        event.preventDefault();
 
-    let fields = [pack];
-    if(!isAnyFieldBlank(fields)) {
-        submitPackForm(packForm, 'check_pack_id');
-    } else {
-        let id = "button-submit-form";
-        addfailureMessage(id,"Wpisz identyfikator paczki.")
-    }
+        let pack = document.getElementById(PACK_ID_FIELD_ID);
+
+        let fields = [pack];
+        if(!isAnyFieldBlank(fields)) {
+            submitPackForm(packForm, 'check_pack_id');
+        } else {
+            let id = "button-submit-form";
+            addfailureMessage(id,"Wpisz identyfikator paczki.")
+        }
+    });
 });
+
+function isBlank(){
+    let field = document.getElementById(PACK_ID_FIELD_ID);
+    let fields = [field];
+    if (!isAnyFieldBlank(fields)){
+        return ""
+    } else{
+        return  "not blank"
+    }
+}
 
 
 function submitPackForm(form, name) {

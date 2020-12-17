@@ -56,6 +56,7 @@ PACK_IMAGE_FIELD_NAME = "pack_image"
 
 PACK_ID_FIELD_ID = "pack_id"
 PACZKOMAT_FIELD_ID = "paczkomat_id"
+TOKEN_FIELD_ID = "token"
 
 #statusy
 NEW = 'new'

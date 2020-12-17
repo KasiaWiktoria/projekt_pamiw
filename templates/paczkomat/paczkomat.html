@@ -16,8 +16,8 @@
             <nav>
                 <div class="menu">
                     <ul>
-                        <li><a href="/send">Włóż paczkę</a></li>
-                        <li><a href="/take_out">Wyjmij paczki</a></li>
+                        <li><a href="/{{paczkomat}}/send">Włóż paczkę</a></li>
+                        <li><a href="/{{paczkomat}}/enter_token">Wyjmij paczki</a></li>
                 </div>
             </nav>
         </header>
@@ -29,11 +29,11 @@
                 <h2>Witamy w paczkomacie {{paczkomat}}</h2>
                 <p>Jeśli jesteś klientem: </p>
                 <div class="btn-block">
-                    <a class="btn" href="/send">Włóż paczkę do paczkomatu</a>           
+                    <a class="btn" href="/{{paczkomat}}/send">Włóż paczkę do paczkomatu</a>           
                 </div>
                 <p>Jeśli jesteś kurierem: </p>
                 <div class="btn-block">
-                    <a class="btn" href="/take_out">Wyjmij paczki z paczkomatu</a>           
+                    <a class="btn" href="/{{paczkomat}}/enter_token">Wyjmij paczki z paczkomatu</a>           
                 </div>
             </div>
         </section>
