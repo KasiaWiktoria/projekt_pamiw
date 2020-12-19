@@ -1,0 +1,54 @@
+</html>
+<!DOCTYPE html>
+<html lang="pl">
+    <head>
+        <title>PAX</title>
+        <meta charset="utf-8">
+        <link href="/styles/error.css" rel="stylesheet" type="text/css">
+        <link href="/styles/main_style.css" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="/images/favicon.ico"/>
+    </head>
+    <body>
+        <header>
+            <a href="/paczkomat/" class="logo">
+                <img src="/images/logo.svg" alt="logo">
+                <p><span>PAX</span> System obsługi paczek</p>
+            </a> 
+            <nav>
+                <div class="menu">
+                    <ul>
+                        <li><a href="/paczkomat/">Strona główna</a></li>
+                        {% if not loggedin %}
+                        <li><a href="/paczkomat/registration">Rejestracja</a></li>
+                        {% endif %}
+                        {% if loggedin %}
+                        <li><a href="/paczkomat/send">Nadaj paczkę</a></li>
+                        <li><a href="/paczkomat/waybills-list">Lista wysłanych paczek</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </nav>
+            {% if not loggedin %}
+            <a href="/paczkomat/login">
+                <img src="/images/konto.svg" alt="moje konto"> 
+            </a>
+            {% endif %}
+            {% if loggedin %}
+            <a href="/paczkomat/waybills-list">
+                <img src="/images/konto.svg" alt="moje konto"> 
+            </a>
+            {% endif %}
+        </header>
+        
+        <section>
+            <h1 class="smaller">Jesteś już zalogowany ;).</h1>
+            <a href="https://localhost:8083/paczkomat"> Wróć na stronę główną. </a> 
+            
+        </section>
+
+        <footer>
+            <p class="footer-inline left">&copy; 2020 Katarzyna Stankiewicz</p>
+            <p class="footer-inline right">Projekt realizowany w ramach laboratorium Programowanie Aplikacji Mobilnych i Webowych</p>
+        </footer>
+    </body>
+</html>

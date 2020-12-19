@@ -4,7 +4,7 @@ from datetime import timedelta
 from uuid import uuid4
 from errors import UnauthorizedUserError 
 from const import *
-from flask_restplus import Api, Resource, fields#, abort
+from flask_restplus import Api, Resource, fields
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, create_refresh_token, set_refresh_cookies, set_access_cookies, create_refresh_token, unset_jwt_cookies, jwt_refresh_token_required, get_jwt_identity
 import redis
 import os
@@ -96,8 +96,10 @@ class SendFormPage(Resource):
                 log.debug("Username of actually logged in user: " + username)
                 return make_response(render_template('send.html', loggedin=active_session(), user= session['username']))
             except:
+                log.debug('nie udało się wczytać nazwy użytkownika')
                 raise UnauthorizedUserError
         else:
+            log.debug('niezalogowany')
             raise UnauthorizedUserError
             #abort(401)
             #client_app_namespace.abort(401, status = "Unauthorized user.", statusCode = "401")
@@ -302,6 +304,7 @@ def page_unauthorized(error):
 '''
 @app.errorhandler(UnauthorizedUserError)
 def page_unauthorized(error):
+    log.debug('błąd')
     return make_response(render_template("errors/401.html", error=error, loggedin=active_session()))
 
 @app.errorhandler(403)

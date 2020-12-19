@@ -54,7 +54,7 @@ function submitTokenForm(form, name) {
     };
 
     fetch(url, params).then(response => {
-        console.log("odpowiedź: " + response)
+        console.log(response)
         return getJsonResponse(response)
         }).then(response => getResponseData(response))
             .catch(err => {
@@ -65,16 +65,19 @@ function submitTokenForm(form, name) {
 }
 
 function getResponseData(response) {
-    console.log("odpowiedź json: " + response.message)
+    console.log("odpowiedź json: " + response.msg)
     console.log("status: " + response.status)
     let id = "button-submit-form";
     if (response.status == HTTP_STATUS.OK){
         console.log(response)
-        addCorrectMessage(id,response.message)
+        addCorrectMessage(id,response.msg)
         console.log(response.paczkomat)
-        window.location.href = 'paczkomat/' + response.paczkomat + '/packs_list'
+        window.location.href = '/paczkomat/' + response.paczkomat + '/packs_list'
+    } else if (response.status == HTTP_STATUS.UNAUTHORIZED){
+        console.log(response.msg)
+        addfailureMessage(id, 'Token stracił ważność.')
     }else {
-        addfailureMessage(id,response.message)
+        addfailureMessage(id,response.msg)
     }
 }
 

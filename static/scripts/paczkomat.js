@@ -42,7 +42,7 @@ function submitPaczkomatForm(form, name) {
     let url = paczkomatURL + name;
     console.log(url);
     let successMessage = "Poprawny kod paczkomatu.";
-    let failureMessage = "Paczkomat o podanym kodzie nie istnieje.";
+    let failureMessage = "Nie udało się wysłąć zapytania.";
 
     let params = {
         method: POST,
@@ -67,7 +67,8 @@ function getResponseData(response, successMessage, failureMessage) {
     if (response.status == HTTP_STATUS.OK){
         console.log(response.message)
         addCorrectMessage(id,response.message)
-        window.location.href = 'paczkomat/' + response.kod
+        console.log(response.kod)
+        window.location.href = response.kod
     }else {
         addfailureMessage(id,response.message)
     }

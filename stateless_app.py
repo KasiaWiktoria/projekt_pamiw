@@ -165,11 +165,11 @@ class WaybillCreator(Resource):
         waybill = self.to_waybill(request)
         try:
             self.save_waybill(user, waybill)
-            response = make_response({'message': 'Waybill was created.', 'status':200}, 200)
+            response = make_response({'message': 'Pomyślnie wygenerowano list przewozowy.', 'status':200}, 200)
             return response
         except:
             log.debug('coś poszło nie tak przy zapisywaniu')
-            response = make_response({'message': "Create waybill failed.", 'status':400}, 400)
+            response = make_response({'message': "Nie udało się zapisać listu przewozowego w bazie.", 'status':400}, 400)
             return response
 
     def to_waybill(self, request):
