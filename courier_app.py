@@ -229,12 +229,15 @@ class WaybillsList(Resource):
     @api_app.doc(responses = {200: 'OK', 401: 'Unauthorized'})
     def get(self):
         if active_session():
-            user = session['courier_name']
-            waybills = db.hvals(user + '-' + PACKNAMES)
-            waybills_images = []
-            for waybill in waybills:
-                waybills_images.append(db.hget(IMAGES_PATHS, waybill))
-            return make_response(render_template('courier/waybills-list.html', my_waybills = zip(waybills,waybills_images), loggedin=active_session(), user=user))
+            try:
+                user = session['courier_name']
+                waybills = db.hvals(user + '-' + PACKNAMES)
+                waybills_images = []
+                for waybill in waybills:
+                    waybills_images.append(db.hget(IMAGES_PATHS, waybill))
+                return make_response(render_template('courier/waybills-list.html', my_waybills = zip(waybills,waybills_images), loggedin=active_session(), user=user))
+            except:
+                raise UnauthorizedUserError
         else:
             raise UnauthorizedUserError
 
@@ -244,10 +247,13 @@ class PickUpService(Resource):
     @api_app.doc(responses = {200: 'OK', 401: 'Unauthorized'})
     def get(self):
         if active_session():
-            user = session['courier_name']
-            return make_response(render_template('courier/pick_up.html', loggedin=active_session(), user=user)) 
+            try:
+                user = session['courier_name']
+                return make_response(render_template('courier/pick_up.html', loggedin=active_session(), user=user)) 
+            except:
+                raise UnauthorizedUserError
         else:
-            abort(401)
+            raise UnauthorizedUserError
 
 @courier_app_namespace.route("/get_packs")
 class GetPacksService(Resource):
@@ -255,10 +261,13 @@ class GetPacksService(Resource):
     @api_app.doc(responses = {200: 'OK', 401: 'Unauthorized'})
     def get(self):
         if active_session():
-            user = session['courier_name']
-            return make_response(render_template('courier/get_packs.html', loggedin=active_session(), user=user)) 
+            try:
+                user = session['courier_name']
+                return make_response(render_template('courier/get_packs.html', loggedin=active_session(), user=user)) 
+            except:
+                raise UnauthorizedUserError
         else:
-            abort(401)
+            raise UnauthorizedUserError
 
 @courier_app_namespace.route("/from_paczkomat")
 class PaczkomatService(Resource):
@@ -266,10 +275,13 @@ class PaczkomatService(Resource):
     @api_app.doc(responses = {200: 'OK', 401: 'Unauthorized'})
     def get(self):
         if active_session():
-            user = session['courier_name']
-            return make_response(render_template('courier/from_paczkomat.html', loggedin=active_session(), user=user)) 
+            try:
+                user = session['courier_name']
+                return make_response(render_template('courier/from_paczkomat.html', loggedin=active_session(), user=user)) 
+            except:
+                raise UnauthorizedUserError
         else:
-            abort(401)
+            raise UnauthorizedUserError
 '''
 @courier_app_namespace.route("/check_pack_id")
 class CheckPack(Resource):
@@ -299,17 +311,20 @@ class StatusChange(Resource):
     @api_app.expect(pack_model)
     def post(self):
         pack_id = request.form.get(PACK_ID_FIELD_ID)
-        user = session['courier_name']
-        if db.hexists(pack_id, 'status'):
-            pack_status = db.hget(pack_id, 'status')
-            log.debug('Status paczki: {}'.format(pack_status))
-            if pack_status == NEW:
-                self.save_pack(user, pack_id)
-                return {'message': 'odebrano poprawnie'}, 200
+        try:
+            user = session['courier_name']
+            if db.hexists(pack_id, 'status'):
+                pack_status = db.hget(pack_id, 'status')
+                log.debug('Status paczki: {}'.format(pack_status))
+                if pack_status == NEW:
+                    self.save_pack(user, pack_id)
+                    return {'message': 'odebrano poprawnie'}, 200
+                else:
+                    return {'message':'Status paczki został już zmieniony.'}, 400
             else:
-                return {'message':'Status paczki został już zmieniony.'}, 400
-        else:
-            return {'message':'Niepoprawny identyfikator paczki.'}, 404
+                return {'message':'Niepoprawny identyfikator paczki.'}, 404
+        except:
+            return {'message':'Nie udało się pobrać nazwy użytkownika.'}, 404
 
 
     def save_pack(self, user, pack_id):

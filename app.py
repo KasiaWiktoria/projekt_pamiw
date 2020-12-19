@@ -91,9 +91,12 @@ class SendFormPage(Resource):
     @cross_origin(origins=["https://localhost:8081"])
     def get(self):
         if active_session():
-            username = session['username']
-            log.debug("Username of actually logged in user: " + username)
-            return make_response(render_template('send.html', loggedin=active_session(), user= session['username']))
+            try:
+                username = session['username']
+                log.debug("Username of actually logged in user: " + username)
+                return make_response(render_template('send.html', loggedin=active_session(), user= session['username']))
+            except:
+                raise UnauthorizedUserError
         else:
             raise UnauthorizedUserError
             #abort(401)
@@ -258,12 +261,15 @@ class WaybillsList(Resource):
     @api_app.doc(responses = {200: 'OK', 401: 'Unauthorized'})
     def get(self):
         if active_session():
-            user = session['username']
-            waybills = db.hvals(user + '-' + PACKNAMES)
-            waybills_images = []
-            for waybill in waybills:
-                waybills_images.append(db.hget(IMAGES_PATHS, waybill))
-            return make_response(render_template('waybills-list.html', my_waybills = zip(waybills,waybills_images), loggedin=active_session(), user=user))
+            try:
+                user = session['username']
+                waybills = db.hvals(user + '-' + PACKNAMES)
+                waybills_images = []
+                for waybill in waybills:
+                    waybills_images.append(db.hget(IMAGES_PATHS, waybill))
+                return make_response(render_template('waybills-list.html', my_waybills = zip(waybills,waybills_images), loggedin=active_session(), user=user))
+            except:
+                raise UnauthorizedUserError
         else:
             raise UnauthorizedUserError
             #abort(401)
