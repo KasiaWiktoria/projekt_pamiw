@@ -1,10 +1,10 @@
 
 export const GET = "GET";
 export const POST = "POST";
-export const courierURL = "https://localhost:8082/";
-export const paczkomatURL = "https://localhost:8083/";
-export const URL = "https://localhost:8080/";
-export const waybillURL = "https://localhost:8081/";
+export const courierURL = "https://localhost:8082/courier/";
+export const paczkomatURL = "https://localhost:8083/paczkomat/";
+export const URL = "https://localhost:8080/app/";
+export const waybillURL = "https://localhost:8081/waybill/";
 
 export const POLSKIE_ZNAKI = "a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ";
 export const POLSKIE_ZNAKI_MALE = "a-ząćęłńóśźż";

@@ -1,6 +1,7 @@
 from flask import Flask, render_template, url_for, redirect, send_file, make_response, abort, session
 from flask import request, jsonify
 import json
+from flask_restplus import Api, Resource, fields
 from flask import logging
 from datetime import timedelta
 from uuid import uuid4
@@ -14,7 +15,11 @@ from flask_cors import CORS, cross_origin
 app = Flask(__name__, static_url_path="")
 log = logging.create_logger(app)
 db = redis.Redis(host="redis-db", port=6379, decode_responses=True)
-cors = CORS(app)
+cors = CORS(app, supports_credentials=True)
+
+api_app = Api(app = app, version = "0.1", title = "PAX app API", description = "REST-full API for PAXapp")
+
+paczkomat_app_namespace = api_app.namespace("paczkomat", description = "Main API")
 
 app.config["JWT_COOKIE_CSRF_PROTECT"] = False
 app.config['SESSION_TYPE'] = 'filesystem'

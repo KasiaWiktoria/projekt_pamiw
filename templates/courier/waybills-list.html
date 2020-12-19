@@ -10,31 +10,31 @@
     </head>
     <body>
         <header>
-            <a href="/" class="logo">
+            <a href="/courier/" class="logo">
                 <img src="/images/logo.svg" alt="logo">
                 <p><span>PAX-Kurier</span> System obsługi paczek</p>
             </a> 
             <nav>
                 <div class="menu">
                     <ul>
-                        <li><a href="/">Strona główna</a></li>
+                        <li><a href="/courier/">Strona główna</a></li>
                         {% if not loggedin %}
-                        <li><a href="/registration">Rejestracja</a></li>
+                        <li><a href="/courier/registration">Rejestracja</a></li>
                         {% endif %}
                         {% if loggedin %}
-                        <li><a href="/get_packs">Odbierz paczki</a></li>
-                        <li><a href="/waybills-list">Lista paczek</a></li>
+                        <li><a href="/courier/get_packs">Odbierz paczki</a></li>
+                        <li><a href="/courier/waybills-list">Lista paczek</a></li>
                         {% endif %}
                     </ul>
                 </div>
             </nav>
             {% if not loggedin %}
-            <a href="/login">
+            <a href="/courier/login">
                 <img src="/images/konto-kurier.svg" alt="moje konto"> 
             </a>
             {% endif %}
             {% if loggedin %}
-            <a href="/waybills-list">
+            <a href="/courier/waybills-list">
                 <img src="/images/konto-kurier.svg" alt="moje konto"> 
             </a>
             {% endif %}

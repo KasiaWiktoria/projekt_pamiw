@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
         let fields = [pack];
         if(!isAnyFieldBlank(fields)) {
-            submitPackForm(packForm, 'check_pack_id');
+            submitPackForm(packForm, 'pick_up_pack');
         } else {
             let id = "button-submit-form";
             addfailureMessage(id,"Wpisz identyfikator paczki.")
@@ -49,7 +49,7 @@ function submitPackForm(form, name) {
         redirect: "follow"
     };
 
-    fetch(packUrl, params).then(response => putPackIn(form, response, successMessage, failureMessage))
+    fetch(packUrl, params).then(response => getResponse(response, successMessage, failureMessage))
             .catch(err => {
                 console.log("Caught error: " + err);
                 console.log(form)
@@ -79,6 +79,7 @@ function putPackIn(form, response, successMessage, failureMessage) {
                 addfailureMessage(id,failureMessage);
             });
     }else {
+        let id = "button-submit-form";
         addfailureMessage(id,failureMessage)
     }
 }

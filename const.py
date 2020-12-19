@@ -12,6 +12,10 @@ PATH_AND_FILENAME = "path_and_filename"
 PACKNAMES = "packnames"
 IMAGES_PATHS = "images_paths"
 
+
+START = "start"
+LIMIT = "limit"
+
 NAME_FIELD_ID = "name"
 SURNAME_FIELD_ID = "surname"
 BDATE_FIELD_ID = "bdate"

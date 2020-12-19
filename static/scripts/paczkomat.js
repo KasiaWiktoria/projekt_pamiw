@@ -67,7 +67,7 @@ function getResponseData(response, successMessage, failureMessage) {
     if (response.status == HTTP_STATUS.OK){
         console.log(response.message)
         addCorrectMessage(id,response.message)
-        window.location.href = '/' + response.kod
+        window.location.href = 'paczkomat/' + response.kod
     }else {
         addfailureMessage(id,response.message)
     }

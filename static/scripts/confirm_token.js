@@ -72,7 +72,7 @@ function getResponseData(response) {
         console.log(response)
         addCorrectMessage(id,response.message)
         console.log(response.paczkomat)
-        window.location.href = '/' + response.paczkomat + '/packs_list'
+        window.location.href = 'paczkomat/' + response.paczkomat + '/packs_list'
     }else {
         addfailureMessage(id,response.message)
     }

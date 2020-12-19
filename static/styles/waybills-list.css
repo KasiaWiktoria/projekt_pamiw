@@ -41,6 +41,11 @@ section h1 {
     font-size: 40px;
     color: var(--main-color);;
 }
+
+form {
+    width: 80%;
+}
+
 table {
     width: 80%;
 }

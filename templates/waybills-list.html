@@ -5,36 +5,37 @@
         <meta charset="utf-8">
         <link href="/styles/waybills-list.css" rel="stylesheet" type="text/css">
         <link href="/styles/main_style.css" rel="stylesheet" type="text/css">
+        <link href="/styles/form_style.css" rel="stylesheet" type="text/css">
         <link rel="shortcut icon" href="/images/favicon.ico"/>
-        <script type="module" src="/scripts/waybills-list.js"></script>
+        <script src="/scripts/waybills-list.js"></script>
     </head>
     <body>
         <header>
-            <a href="/" class="logo">
+            <a href="/app/" class="logo">
                 <img src="/images/logo.svg" alt="logo">
                 <p><span>PAX</span> System obsługi paczek</p>
             </a> 
             <nav>
                 <div class="menu">
                     <ul>
-                        <li><a href="/">Strona główna</a></li>
+                        <li><a href="/app/">Strona główna</a></li>
                         {% if not loggedin %}
-                        <li><a href="/registration">Rejestracja</a></li>
+                        <li><a href="/app/registration">Rejestracja</a></li>
                         {% endif %}
                         {% if loggedin %}
-                        <li><a href="/send">Nadaj paczkę</a></li>
-                        <li><a href="/waybills-list">Lista wysłanych paczek</a></li>
+                        <li><a href="/app/send">Nadaj paczkę</a></li>
+                        <li><a href="/app/waybills-list">Lista wysłanych paczek</a></li>
                         {% endif %}
                     </ul>
                 </div>
             </nav>
             {% if not loggedin %}
-            <a href="/login">
+            <a href="/app/login">
                 <img src="/images/konto.svg" alt="moje konto"> 
             </a>
             {% endif %}
             {% if loggedin %}
-            <a href="/waybills-list">
+            <a href="/app/waybills-list">
                 <img src="/images/konto.svg" alt="moje konto"> 
             </a>
             {% endif %}
@@ -45,7 +46,7 @@
         </div>
 
         <section>
-            <h1>Lista twoich paczek</h1>
+            <h1 id="title">Lista twoich paczek</h1>
             <table><tbody>
                     <tr>
                         <th>zdjęcie paczki</th>
@@ -62,7 +63,7 @@
                                 <img src="/images/download.svg" alt="pobierz"><p>Pobierz</p>
                             </a>
                         </td>
-                        <td><a id="delete_button" onClick='delete_pack(" + {{waybill}} + ")' href="https://localhost:8081/delete/{{ waybill}}">usuń</a></td>
+                        <td><a id="delete_button" onClick='delete_pack("{{waybill}}")'>usuń</a></td>
                     </tr>
                     {% endfor %}
                 </tbody>

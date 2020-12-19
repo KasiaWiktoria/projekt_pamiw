@@ -1,10 +1,10 @@
 import {addCorrectMessage, addfailureMessage, prepareEventOnChange} from './form_functions.js';
 import {showWarningMessage, removeWarningMessage, prepareWarningElem, appendAfterElem} from './warning_functions.js';
 import {isAnyFieldBlank, noSpecialCharacters, validateName, validateSurname, validateCountry, validatePostalCode, validateCity, validateStreet, validateHouseNr, validatePhone, validateFile} from './validation_functions.js';
-import {GET, POST, URL, HTTP_STATUS, PRODUCT_NAME_FIELD_ID, SENDER_NAME_FIELD_ID, SENDER_SURNAME_FIELD_ID, SENDER_PHONE_FIELD_ID, SENDER_COUNTRY_FIELD_ID, SENDER_POSTAL_CODE_FIELD_ID, SENDER_CITY_FIELD_ID, SENDER_STREET_FIELD_ID, SENDER_HOUSE_NR_FIELD_ID, RECIPIENT_NAME_FIELD_ID, RECIPIENT_SURNAME_FIELD_ID, RECIPIENT_PHONE_FIELD_ID, RECIPIENT_COUNTRY_FIELD_ID, RECIPIENT_POSTAL_CODE_FIELD_ID, RECIPIENT_CITY_FIELD_ID, RECIPIENT_STREET_FIELD_ID, RECIPIENT_HOUSE_NR_FIELD_ID, PACK_IMAGE_FIELD_ID} from './const.js'
+import {GET, POST, URL, HTTP_STATUS, PRODUCT_NAME_FIELD_ID, SENDER_NAME_FIELD_ID, SENDER_SURNAME_FIELD_ID, SENDER_PHONE_FIELD_ID, SENDER_COUNTRY_FIELD_ID, SENDER_POSTAL_CODE_FIELD_ID, SENDER_CITY_FIELD_ID, SENDER_STREET_FIELD_ID, SENDER_HOUSE_NR_FIELD_ID, RECIPIENT_NAME_FIELD_ID, RECIPIENT_SURNAME_FIELD_ID, RECIPIENT_PHONE_FIELD_ID, RECIPIENT_COUNTRY_FIELD_ID, RECIPIENT_POSTAL_CODE_FIELD_ID, RECIPIENT_CITY_FIELD_ID, RECIPIENT_STREET_FIELD_ID, RECIPIENT_HOUSE_NR_FIELD_ID, PACK_IMAGE_FIELD_ID, waybillURL} from './const.js'
 
 document.addEventListener('DOMContentLoaded', function (event) {
-    getAccessToken();
+    //getAccessToken();
 
     prepareEventOnChange(PRODUCT_NAME_FIELD_ID, noSpecialCharacters);
 
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     }
 
     function sendPackage(form){
-        let url = "https://localhost:8081/waybill";
+        let url = waybillURL + 'waybill';
         console.log(url);
 
         let successMessage = "Pomyślnie wygenerowano list przewozowy.";
@@ -132,7 +132,10 @@ document.addEventListener('DOMContentLoaded', function (event) {
             //redirect: "follow"
         };
 
-        fetch(url, sendParams)
+        fetch(url, sendParams).then(response => {
+            console.log("odpowiedź: " + response)
+            return getJsonResponse(response)
+            })
             .then(response => getResponseData(response, successMessage, failureMessage))
             .catch(err => {
                 console.log("Caught error: " + err);
@@ -141,17 +144,23 @@ document.addEventListener('DOMContentLoaded', function (event) {
             });
     }
 
+
+    function getJsonResponse(response){
+        return response.json();
+    }
+    
+
     function getResponseData(response, successMessage, failureMessage) {
         let status = response.status;
     
         if (response.status == HTTP_STATUS.CREATED || response.status == HTTP_STATUS.OK) {
             console.log("Status =" + status);
             let id = "button-submit-form";
-            addCorrectMessage(id,successMessage)
+            addCorrectMessage(id,response.message)
         } else {
             console.error("Response status code: " + response.status);
             let id = "button-submit-form";
-            addfailureMessage(id,failureMessage)
+            addfailureMessage(id,response.message)
             throw "Unexpected response status: " + response.status;
         }
     }
