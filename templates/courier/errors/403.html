@@ -1,9 +1,10 @@
+</html>
 <!DOCTYPE html>
 <html lang="pl">
     <head>
-        <title>PAX-Kurier</title>
+        <title>PAX</title>
         <meta charset="utf-8">
-        <link href="/styles/index.css" rel="stylesheet" type="text/css">
+        <link href="/styles/error.css" rel="stylesheet" type="text/css">
         <link href="/styles/main_style.css" rel="stylesheet" type="text/css">
         <link href="/styles/courier.css" rel="stylesheet" type="text/css">
         <link rel="shortcut icon" href="/images/favicon.ico"/>
@@ -12,7 +13,7 @@
         <header>
             <a href="/courier/" class="logo">
                 <img src="/images/logo.svg" alt="logo">
-                <p><span>PAX-Kurier</span> System obsługi paczek</p>
+                <p><span>PAX</span> System obsługi paczek</p>
             </a> 
             <nav>
                 <div class="menu">
@@ -22,34 +23,33 @@
                         <li><a href="/courier/registration">Rejestracja</a></li>
                         {% endif %}
                         {% if loggedin %}
-                        <li><a href="/courier/get_packs">Odbierz paczki</a></li>
-                        <li><a href="/courier/waybills-list">Lista paczek</a></li>
+                        <li><a href="/courier/send">Nadaj paczkę</a></li>
+                        <li><a href="/courier/waybills-list">Lista wysłanych paczek</a></li>
                         {% endif %}
                     </ul>
                 </div>
             </nav>
             {% if not loggedin %}
             <a href="/courier/login">
-                <img src="/images/konto-kurier.svg" alt="moje konto"> 
+                <img src="/images/konto.svg" alt="moje konto"> 
             </a>
             {% endif %}
             {% if loggedin %}
             <a href="/courier/waybills-list">
-                <img src="/images/konto-kurier.svg" alt="moje konto"> 
+                <img src="/images/konto.svg" alt="moje konto"> 
             </a>
             {% endif %}
         </header>
-
-        <section class="image"></section>
-
-        <section class="text">
-            <div class="container">
-                <h1>PAX-Kurier</h1>
-                <p>Witamy w naszym zespole. Zaloguj się, aby mieć dostęp do swoich paczek.</p>
-                <div class="btn-block">
-                    <a class="btn" href="/courier/login">Zaloguj się</a>           
-                </div>
-            </div>
+        <section>
+            <h1>403!</h1>
+            <p>
+                Nie masz dostępu do żądanego zasobu. 
+            </p>
+            <p class="small">
+                <strong>Szczegóły błędu:</strong>
+                {{error}}
+            </p>
+            <a href="https://localhost:8082/courier"> Wróć na stronę główną. </a> 
             
         </section>
 

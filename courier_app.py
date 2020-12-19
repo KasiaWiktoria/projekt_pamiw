@@ -91,7 +91,7 @@ class Registration(Resource):
 
     @api_app.doc(responses = {200: 'OK'})
     def get(self):
-        return make_response(render_template("registration.html", loggedin=active_session())) 
+        return make_response(render_template("courier/registration.html", loggedin=active_session())) 
 
 
     register_model = api_app.model('register model',
@@ -161,7 +161,7 @@ class Login(Resource):
 
     @api_app.doc(responses = {200: 'OK'})
     def get(self):
-        return make_response(render_template("login.html", loggedin=active_session()))
+        return make_response(render_template("courier/login.html", loggedin=active_session()))
 
     login_model = api_app.model('login model',
             {
@@ -215,12 +215,12 @@ class Logout(Resource):
             hash_ = request.cookies.get(COURIER_SESSION_ID)
             session.pop('courier_name', None)
             session.clear()
-            response = make_response(render_template("index.html", loggedin=False))
+            response = make_response(render_template("courier/index.html", loggedin=False))
             response.set_cookie(COURIER_SESSION_ID, hash_, max_age=0, secure=True, httponly=True)
             unset_jwt_cookies(response)
             return response
         else:
-            return make_response(render_template("index.html", loggedin=active_session()))
+            return make_response(render_template("courier/index.html", loggedin=active_session()))
 
 
 @courier_app_namespace.route("/waybills-list", methods=[GET])
@@ -234,7 +234,7 @@ class WaybillsList(Resource):
             waybills_images = []
             for waybill in waybills:
                 waybills_images.append(db.hget(IMAGES_PATHS, waybill))
-            return make_response(render_template('waybills-list.html', my_waybills = zip(waybills,waybills_images), loggedin=active_session(), user=user))
+            return make_response(render_template('courier/waybills-list.html', my_waybills = zip(waybills,waybills_images), loggedin=active_session(), user=user))
         else:
             raise UnauthorizedUserError
 
@@ -366,27 +366,27 @@ class Token(Resource):
 
 @app.errorhandler(400)
 def bad_request(error):
-    return make_response(render_template("errors/400.html", error=error, loggedin=active_session()))
+    return make_response(render_template("courier/errors/400.html", error=error, loggedin=active_session()))
 '''
 @app.errorhandler(401)
 def page_unauthorized(error):
-    return make_response(render_template("errors/401.html", error=error, loggedin=active_session()))
+    return make_response(render_template("courier/errors/401.html", error=error, loggedin=active_session()))
 '''
 @app.errorhandler(UnauthorizedUserError)
 def page_unauthorized(error):
-    return make_response(render_template("errors/401.html", error=error, loggedin=active_session()))
+    return make_response(render_template("courier/errors/401.html", error=error, loggedin=active_session()))
 
 @app.errorhandler(403)
 def forbidden(error):
-    return make_response(render_template("errors/403.html", error=error, loggedin=active_session()))
+    return make_response(render_template("courier/errors/403.html", error=error, loggedin=active_session()))
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return make_response(render_template("errors/404.html", error=error, loggedin=active_session()))
+    return make_response(render_template("courier/errors/404.html", error=error, loggedin=active_session()))
     
 @app.errorhandler(500)
 def internal_server_error(error):
-    return make_response(render_template("errors/500.html", error=error, loggedin=active_session()))
+    return make_response(render_template("courier/errors/500.html", error=error, loggedin=active_session()))
 
 
 
