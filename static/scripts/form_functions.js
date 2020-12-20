@@ -68,6 +68,8 @@ export function prepareEventOnChange(FIELD_ID, validationFunction) {
 
 export function updateCorrectnessMessage(FIELD_ID, validationFunction) {
     let warningElemId = FIELD_ID + "Warning";
+    removeWarningMessage("uncorrect");
+    removeWarningMessage("correct");
 
     if(document.getElementById(FIELD_ID).value == ""){
         removeWarningMessage(warningElemId);

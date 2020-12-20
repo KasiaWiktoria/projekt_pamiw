@@ -61,6 +61,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     function updateLoginAvailabilityMessage() {
         let warningElemId = "loginWarning";
+        removeWarningMessage("uncorrect");
+        removeWarningMessage("correct");
     
         let warningMessage = validateLogin();
         if (warningMessage == "") {
@@ -117,6 +119,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
     function updatePasswdCorrectnessMessage() {
         let warningElemId = "passwdWarning";
         let warningMessage = validatePasswd();
+        removeWarningMessage("uncorrect");
+        removeWarningMessage("correct");
     
         removeWarningMessage(warningElemId);
         if (warningMessage == "") {
@@ -136,6 +140,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
     function updateRepeatPasswdCorrectnessMessage() {
         let warningElemId = "repeatPasswdWarning";
         let warningMessage = "Podany ciąg znaków nie zgadza się z hasłem podanym wyżej.";
+        removeWarningMessage("uncorrect");
+        removeWarningMessage("correct");
     
         if (arePasswdsTheSame()) {
             console.log("Correct repeat password!");

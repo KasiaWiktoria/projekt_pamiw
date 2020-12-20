@@ -352,6 +352,7 @@ class StatusChange(Resource):
     def save_pack(self, user, pack_id):
 
         db.hset(pack_id, 'status', HANDED_OVER)
+        db.hset(pack_id, 'tmp_owner', session['courier_name'])
         db.hset(user + '-'+ PACKNAMES, pack_id, pack_id)
 
         log.debug("Picked up pack [name: {}].".format(pack_id))

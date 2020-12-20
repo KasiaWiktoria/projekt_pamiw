@@ -130,6 +130,7 @@ class PutPackService(Resource):
             try:
                 if db.hget(pack_id, 'status') == NEW:
                     db.hset(pack_id, 'status', WAITING)
+                    db.hset(pack_id, 'tmp_owner', paczkomat)
                     db.hset(paczkomat, pack_id, pack_id)
                     return {'message': 'Udało się włożyć paczkę.', 'status': 200}, 200
                 else:
@@ -175,20 +176,40 @@ class EnterToken(Resource):
             abort(404)
 
 
-@paczkomat_app_namespace.route("/<string:paczkomat_id>/packs_list")
+@paczkomat_app_namespace.route("/<string:paczkomat_id>/packs_list/<int:start>")
 class PacksList(Resource):
 
     @api_app.doc(responses = {200: 'OK', 404: 'Paczkomat not found'})
-    def get(self, paczkomat_id):
+    def get(self, paczkomat_id, start):
         log.debug(f'packs_list: {paczkomat_id}')
         if db.hexists('paczkomaty', paczkomat_id):
             session['paczkomat'] = paczkomat_id
             packs = db.hvals(paczkomat_id)
-            packs_images = []
-            for pack in packs:
-                packs_images.append(db.hget(IMAGES_PATHS, pack))
-            log.debug(packs_images)
-            return make_response(render_template("paczkomat/packs_list.html", paczkomat=paczkomat_id, packs = zip(packs,packs_images))) 
+            log.debug('wyświetlenie listy')
+
+            n_of_packs = len(packs)
+            if start >= 0:
+                limit = start + WAYBILLS_PER_PAGE
+                next_start = limit
+                previous_start = start - WAYBILLS_PER_PAGE
+                log.debug(f'wszystkich paczek: {n_of_packs}')
+                if limit >= n_of_packs:
+                    limit = n_of_packs
+                    next_start = None
+                if previous_start < 0:
+                    previous_start = None
+                log.debug(f'start: {start}, limit: {limit}')
+                log.debug(f'previous: {previous_start}, next: {next_start}')
+                packs_to_send = packs[start:limit] 
+                packs_images = []
+                for pack in packs:
+                    packs_images.append(db.hget(IMAGES_PATHS, pack))
+                return make_response(render_template('paczkomat/packs_list.html', 
+                                    paczkomat=paczkomat_id, packs = zip(packs_to_send,packs_images), 
+                                    previous_start=previous_start, next_start=next_start))
+            else:
+                log.debug('Numer strony nie może być liczbą ujemną.')
+                abort(404)
         else:
             abort(404)
 

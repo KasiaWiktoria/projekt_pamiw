@@ -50,6 +50,14 @@ table {
     width: 80%;
 }
 
+section .max-width-elem {
+    justify-content: left;
+}
+
+section .max-width-elem p{
+    margin-left: 100px;
+}
+
 .max-width-elem.page-nav {
     padding: 30px 0;
     width: 50%;
