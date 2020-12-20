@@ -38,7 +38,7 @@ async function getResponse(response) {
         console.log('Poprawnie usunięto paczkę!')
         addCorrectMessage(id,response.msg)
         await sleep(2000)
-        window.location.href = 'waybills-list'
+        window.location.href = '/app/waybills-list/0'
     }else {
         addfailureMessage(id,response.msg)
     }

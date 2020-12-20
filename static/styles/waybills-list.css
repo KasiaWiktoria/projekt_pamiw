@@ -41,11 +41,6 @@ td a:hover {
     filter: drop-shadow( 3px 3px 2px #00000080);
 }
 
-section h1 {
-    width: 80%;
-    font-size: 40px;
-    color: var(--main-color);;
-}
 
 form {
     width: 80%;

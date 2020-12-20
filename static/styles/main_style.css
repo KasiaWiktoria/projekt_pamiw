@@ -33,6 +33,13 @@ body article{
 body h1, body h2, body h3, body h4{
     font-weight: 700;
 }
+
+section h1 {
+    width: 80%;
+    font-size: 40px;
+    color: var(--main-color);;
+}
+
 body section h1.smaller{
     font-size: 60px;
     margin-bottom: 100px;
@@ -83,6 +90,7 @@ header p{
     width: 150px;
     margin: 0;
     text-align: left;
+    color: #000;
 }
 
 header p span{
