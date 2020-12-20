@@ -48,6 +48,18 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                <div class="max-width-elem page-nav">
+                    <div class="nav-btn-block">
+                        {% if previous_start != None %}
+                            <a class="btn" href="/app/waybills-list/{{previous_start}}"><<</a>
+                        {% endif %}
+                    </div>
+                    <div class="nav-btn-block">
+                        {% if next_start != None %}
+                            <a class="btn" href="/app/waybills-list/{{next_start}}">>></a> 
+                        {% endif %}
+                    </div>
+                </div>
                 <div class="btn-block">
                     <input class="btn" id="button-submit-form" type="submit" value="Odbierz paczki"/>               
                 </div> 

@@ -23,7 +23,7 @@
                         {% endif %}
                         {% if loggedin %}
                         <li><a href="/courier/get_packs">Odbierz paczki</a></li>
-                        <li><a href="/courier/waybills-list">Lista paczek</a></li>
+                        <li><a href="/courier/waybills-list/0">Lista paczek</a></li>
                         {% endif %}
                     </ul>
                 </div>
@@ -34,7 +34,7 @@
             </a>
             {% endif %}
             {% if loggedin %}
-            <a href="/courier/waybills-list">
+            <a href="/courier/waybills-list/0">
                 <img src="/images/konto-kurier.svg" alt="moje konto"> 
             </a>
             {% endif %}
@@ -65,6 +65,18 @@
                     {% endfor %}
                 </tbody>
             </table>
+            <div class="max-width-elem page-nav">
+                <div class="nav-btn-block">
+                    {% if previous_start != None %}
+                        <a class="btn" href="/courier/waybills-list/{{previous_start}}"><<</a>
+                    {% endif %}
+                </div>
+                <div class="nav-btn-block">
+                    {% if next_start != None %}
+                        <a class="btn" href="/courier/waybills-list/{{next_start}}">>></a> 
+                    {% endif %}
+                </div>
+            </div>
         </section>
 
 

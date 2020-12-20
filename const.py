@@ -11,7 +11,7 @@ CUSTOM_IMG_PATH = "static/images/packs_images/"
 PATH_AND_FILENAME = "path_and_filename"
 PACKNAMES = "packnames"
 IMAGES_PATHS = "images_paths"
-
+WAYBILLS_PER_PAGE = 5
 
 START = "start"
 LIMIT = "limit"

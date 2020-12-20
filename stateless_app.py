@@ -127,7 +127,7 @@ class WaybillCreator(Resource):
     def __init__(self, args):
         super().__init__(args)
 
-    new_waybill_model = api_app.model('register model',
+    new_waybill_model = api_app.model('waybill model',
         {
             'product_name': fields.String(required = True, description = "product name", help = "product name cannot be null"),
 

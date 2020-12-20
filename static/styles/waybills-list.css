@@ -20,6 +20,11 @@ td img {
     height: 80px;
 }
 
+td.img{
+    justify-content: center;
+    display: flex;
+}
+
 td a img{
     width: 30px;
 }
@@ -50,8 +55,12 @@ table {
     width: 80%;
 }
 
-.max-width-elem{
-    justify-content: flex-start;
-    padding-left: 50px;
-    margin-left: 50px;
+.max-width-elem.page-nav {
+    padding: 30px 0;
+    width: 50%;
+    justify-content: space-between;
+}
+
+.max-width-elem.page-nav a:hover {
+    filter: drop-shadow( 3px 3px 2px #00000080);
 }

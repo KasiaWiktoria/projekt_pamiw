@@ -7,16 +7,29 @@
 }
 
 .nav-block a{
-    margin-top: 40px;
-    margin-left: 150px;
+    margin: 40px 10px 10px 130px;
     font-size: 30px;
     color: #20031e2c;
-    margin-bottom: 10px;
+    width: 250px;
+}
+
+@media (max-width: 765px) {
+    .nav-block{
+        justify-content: center;
+        align-items: center;
+    }
+
+    .nav-block a{
+        margin: 10px;
+    }
+
+    .nav-block a.selected {
+        font-size: 30px;
+    }
 }
 
 .nav-block a.selected{
-    margin-top: 40px;
-    margin-left: 150px;
+    width: 300px;
     font-size: 40px;
     color: var(--main-color);
     text-shadow: 2px 1px #20031e0c;

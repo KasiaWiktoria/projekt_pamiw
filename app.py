@@ -255,7 +255,7 @@ class Logout(Resource):
         else:
             return make_response(render_template("index.html", loggedin=active_session()))
 
-
+'''
 @client_app_namespace.route("/waybills-list", methods=[GET])
 class WaybillsList(Resource):
 
@@ -273,6 +273,49 @@ class WaybillsList(Resource):
             except:
                 raise UnauthorizedUserError
         else:
+            raise UnauthorizedUserError
+'''
+
+@client_app_namespace.route("/waybills-list/<int:start>", methods=[GET])
+class WaybillsList(Resource):
+
+    @cross_origin(origins=["https://localhost:8081"])
+    @api_app.doc(responses = {200: 'OK', 401: 'Unauthorized'})
+    def get(self, start):
+        if active_session():
+            log.debug('Zalogowany użytkownik --> wyświetlenie listy')
+            try:
+                log.debug('wyświetlenie listy')
+                user = session['username']
+                waybills = db.hvals(user + '-' + PACKNAMES)
+                n_of_waybills = len(waybills)
+                if start >= 0:
+                    limit = start + WAYBILLS_PER_PAGE
+                    next_start = limit
+                    previous_start = start - WAYBILLS_PER_PAGE
+                    log.debug(f'wszystkich paczek: {n_of_waybills}')
+                    if limit >= n_of_waybills:
+                        limit = n_of_waybills
+                        next_start = None
+                    if previous_start < 0:
+                        previous_start = None
+                    log.debug(f'start: {start}, limit: {limit}')
+                    log.debug(f'previous: {previous_start}, next: {next_start}')
+                    waybills_to_send = waybills[start:limit] 
+                    waybills_images = []
+                    for waybill in waybills_to_send:
+                        waybills_images.append(db.hget(IMAGES_PATHS, waybill))
+                    return make_response(render_template('waybills-list.html', 
+                                        my_waybills = zip(waybills,waybills_images), 
+                                        previous_start=previous_start, next_start=next_start,
+                                        loggedin=active_session(), user=user))
+                else:
+                    log.debug('Numer strony nie może być liczbą ujemną.')
+                    abort(404)
+            except:
+                raise UnauthorizedUserError
+        else:
+            log.debug('błędne logowanie')
             raise UnauthorizedUserError
             #abort(401)
             #client_app_namespace.abort(401, status = "Unauthorized user.", statusCode = "401")

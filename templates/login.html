@@ -24,7 +24,7 @@
                         {% endif %}
                         {% if loggedin %}
                         <li><a href="/app/send">Nadaj paczkę</a></li>
-                        <li><a href="/app/waybills-list">Lista wysłanych paczek</a></li>
+                        <li><a href="/app/waybills-list/0">Lista wysłanych paczek</a></li>
                         {% endif %}
                     </ul>
                 </div>
@@ -35,14 +35,14 @@
             </a>
             {% endif %}
             {% if loggedin %}
-            <a href="/app/waybills-list">
+            <a href="/app/waybills-list/0">
                 <img src="/images/konto.svg" alt="moje konto"> 
             </a>
             {% endif %}
         </header>
 
         <section class="nav-block">
-                <a class="selected" href="/login">Zaloguj się</a>
+                <a class="selected" href="/app/login">Zaloguj się</a>
                 <a href="/app/registration">Zarejestruj się</a>
         </section>
 
