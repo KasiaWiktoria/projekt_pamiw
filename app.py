@@ -2,7 +2,7 @@ from flask import Flask, render_template, abort, url_for, redirect, send_file, m
 from flask import request, jsonify, logging
 from datetime import timedelta
 from uuid import uuid4
-from errors import UnauthorizedUserError 
+from errors import NotFoundError, NotAuthorizedError 
 from const import *
 from flask_restplus import Api, Resource, fields
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, create_refresh_token, set_refresh_cookies, set_access_cookies, create_refresh_token, unset_jwt_cookies, jwt_refresh_token_required, get_jwt_identity
@@ -97,10 +97,11 @@ class SendFormPage(Resource):
                 return make_response(render_template('send.html', loggedin=active_session(), user= session['username']))
             except:
                 log.debug('nie udało się wczytać nazwy użytkownika')
-                raise UnauthorizedUserError
+                return page_unauthorized(NotAuthorizedError)
+                #raise NotAuthorizedError
         else:
             log.debug('niezalogowany')
-            raise UnauthorizedUserError
+            return page_unauthorized(NotAuthorizedError)
             #abort(401)
             #client_app_namespace.abort(401, status = "Unauthorized user.", statusCode = "401")
 
@@ -271,9 +272,9 @@ class WaybillsList(Resource):
                     waybills_images.append(db.hget(IMAGES_PATHS, waybill))
                 return make_response(render_template('waybills-list.html', my_waybills = zip(waybills,waybills_images), loggedin=active_session(), user=user))
             except:
-                raise UnauthorizedUserError
+                raise NotAuthorizedError
         else:
-            raise UnauthorizedUserError
+            raise NotAuthorizedError
 '''
 
 @client_app_namespace.route("/waybills-list/<int:start>", methods=[GET])
@@ -311,12 +312,13 @@ class WaybillsList(Resource):
                                         loggedin=active_session(), user=user))
                 else:
                     log.debug('Numer strony nie może być liczbą ujemną.')
-                    abort(404)
+                    raise NotFoundError
             except:
-                raise UnauthorizedUserError
+                raise NotAuthorizedError
         else:
-            log.debug('błędne logowanie')
-            raise UnauthorizedUserError
+            log.debug('niezalogowany użytkownik')
+            return page_unauthorized(401)
+            #raise NotAuthorizedError
             #abort(401)
             #client_app_namespace.abort(401, status = "Unauthorized user.", statusCode = "401")
 
@@ -340,19 +342,23 @@ def refresh():
 @app.errorhandler(400)
 def bad_request(error):
     return make_response(render_template("errors/400.html", error=error, loggedin=active_session()))
-'''
+
 @app.errorhandler(401)
 def page_unauthorized(error):
     return make_response(render_template("errors/401.html", error=error, loggedin=active_session()))
 '''
-@app.errorhandler(UnauthorizedUserError)
+@app.errorhandler(NotAuthorizedError)
 def page_unauthorized(error):
     log.debug('błąd')
     return make_response(render_template("errors/401.html", error=error, loggedin=active_session()))
-
+'''
 @app.errorhandler(403)
 def forbidden(error):
     return make_response(render_template("errors/403.html", error=error, loggedin=active_session()))
+
+@app.errorhandler(NotFoundError)
+def not_found(error):
+    return make_response(render_template("errors/404.html", error=error, loggedin=active_session()))
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -361,6 +367,10 @@ def page_not_found(error):
 @app.errorhandler(500)
 def internal_server_error(error):
     return make_response(render_template("errors/500.html", error=error, loggedin=active_session()))
+
+@api_app.errorhandler
+def default_error_handler(error):
+    return make_response(render_template("errors/default.html", error=error, loggedin=active_session()))
 
 
 if __name__ == "__main__":

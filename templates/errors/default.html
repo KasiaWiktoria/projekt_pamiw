@@ -1,4 +1,3 @@
-</html>
 <!DOCTYPE html>
 <html lang="pl">
     <head>
@@ -18,38 +17,38 @@
             <nav>
                 <div class="menu">
                     <ul>
-                        <li><a href="/">Strona główna</a></li>
+                        <li><a href="/app/">Strona główna</a></li>
                         {% if not loggedin %}
-                        <li><a href="/registration">Rejestracja</a></li>
+                        <li><a href="/app/registration">Rejestracja</a></li>
                         {% endif %}
                         {% if loggedin %}
-                        <li><a href="/send">Nadaj paczkę</a></li>
-                        <li><a href="/waybills-list">Lista wysłanych paczek</a></li>
+                        <li><a href="/app/send">Nadaj paczkę</a></li>
+                        <li><a href="/app/waybills-list">Lista wysłanych paczek</a></li>
                         {% endif %}
                     </ul>
                 </div>
             </nav>
             {% if not loggedin %}
-            <a href="/login">
+            <a href="/app/login">
                 <img src="/images/konto.svg" alt="moje konto"> 
             </a>
             {% endif %}
             {% if loggedin %}
-            <a href="/waybills-list">
+            <a href="/app/waybills-list">
                 <img src="/images/konto.svg" alt="moje konto"> 
             </a>
             {% endif %}
         </header>
+
         <section>
-            <h1>Jesteś offline</h1>
+            <h1>Błąd!</h1>
             <p>
-                Jeśli przywrócisz połączenie naciśnij F5.
+                Błąd serwera.
             </p>
             <p class="small">
                 <strong>Szczegóły błędu:</strong>
                 {{error}}
             </p>
-            
             <a href="https://localhost:8080/app"> Wróć na stronę główną. </a> 
             
         </section>

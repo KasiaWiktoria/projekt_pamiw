@@ -2,6 +2,8 @@ const CACHE_NAME = "PAX_cache";
 const OFFLINE_URL = "offline.html";
 const ERROR_URL = "error.html";
 
+console.log('w pliku service-worker')
+
 self.addEventListener("install", (event) => {
   event.waitUntil((async () => {
     let cache = await caches.open(CACHE_NAME);
