@@ -1,32 +1,35 @@
+
 import {addCorrectMessage, addfailureMessage} from './form_functions.js';
-import {GET, POST, URL, HTTP_STATUS, waybillURL} from './const.js'
+import {GET, POST, URL, HTTP_STATUS, paczkomatURL} from './const.js'
 
 
 document.addEventListener('DOMContentLoaded', function (event) {
-    loadWaybills(0);
-
+    let path = window.location.pathname
+    let paczkomat = path.split('/')[2]
+    console.log('paczkomat:' + paczkomat)
+    loadPacks(paczkomat, 0);
 })
 
-function loadWaybills(start){
+function loadPacks(paczkomat, start){
     clearTable()
 
-    fetchPacks(start).then(response => {
+    fetchPacks(paczkomat, start).then(response => {
             return response.json()
         }).then(response => {
             let h1 = document.getElementById('title')
 
-            let n_of_waybills = response.waybills.length
-            if (n_of_waybills > 0){
-                let waybills = response.waybills
-                let images = response.waybills_images
+            let n_of_packs = response.packs.length
+            if (n_of_packs > 0){
+                let packs = response.packs
+                let images = response.packs_images
                 let prev = response.previous_start
                 let next = response.next_start
-    
+
                 let table = document.createElement('table')
-                table.id = 'waybills-table'
+                table.id = 'packs-table'
                 let tbody = document.createElement('tbody')
-                tbody.id = 'waybills-tbody'
-    
+                tbody.id = 'packs-tbody'
+
                 let row = tbody.insertRow()
                 let th = document.createElement('th')
                 th.innerHTML = "zdjęcie paczki"
@@ -35,18 +38,15 @@ function loadWaybills(start){
                 th.innerHTML = "identyfikator paczki"
                 row.appendChild(th)
                 th = document.createElement('th')
-                th.innerHTML = "pobieranie"
+                th.innerHTML = "wybierz"
                 row.appendChild(th)
-                th = document.createElement('th')
-                th.innerHTML = "usuń"
-                row.appendChild(th)
-    
-                waybills.forEach((waybill, idx) =>
-                    addWaybillToList(tbody, waybill, images[idx])
+
+                packs.forEach((pack, idx) =>
+                    addPackToList(tbody, pack, images[idx])
                 )
                 table.appendChild(tbody)
                 h1.insertAdjacentElement('afterend', table)
-    
+
                 updateNavButtons(prev,next)
                 addNavListeners()
             } else {
@@ -63,7 +63,7 @@ function loadWaybills(start){
         });
 }
 
-function addWaybillToList(tbody, waybill, image){
+function addPackToList(tbody, pack, image){
     let row = tbody.insertRow()
     let cell = row.insertCell()
     cell.className ='img'
@@ -73,29 +73,15 @@ function addWaybillToList(tbody, waybill, image){
     cell.appendChild(img)
 
     cell = row.insertCell()
-    let waybill_id = document.createTextNode(waybill)
-    cell.appendChild(waybill_id)
+    let pack_id = document.createTextNode(pack)
+    cell.appendChild(pack_id)
 
     cell = row.insertCell()
-    let a = document.createElement('a')
-    a.setAttribute('href', 'https://localhost:8081/waybill/' + waybill);
-    img = document.createElement('img')
-    img.src = '/images/download.svg';
-    let p = document.createElement('p')
-    let text = document.createTextNode('Pobierz')
-    p.appendChild(text)
-    a.appendChild(img)
-    a.appendChild(p)
-    cell.appendChild(a)
-
-    cell = row.insertCell()
-    a = document.createElement('a')
-    a.setAttribute('onClick', 'delete_pack("waybill")');
-    p = document.createElement('p')
-    text = document.createTextNode('usuń')
-    p.appendChild(text)
-    a.appendChild(p)
-    cell.appendChild(a)
+    let chbox = document.createElement('input')
+    chbox.className = "pack_checkbox"
+    chbox.setAttribute('type', 'checkbox');
+    chbox.setAttribute('value', pack);
+    cell.appendChild(chbox)
 }
 
 function updateNavButtons(prev,next){
@@ -140,8 +126,8 @@ function updateNavButtons(prev,next){
     }
 }
 
-function fetchPacks(start){
-    let url = URL + 'waybills_list/' + start;
+function fetchPacks(paczkomat, start){
+    let url = paczkomatURL + paczkomat + '/packs_list/' + start;
 
     let sendParams = {
         credentials: 'include',
@@ -158,20 +144,20 @@ function addNavListeners(){
     if (prev_button != null){
         prev_button.addEventListener('click', function (event) {
             let start = prev_button.getAttribute('start')
-            loadWaybills(start);
+            loadPacks(paczkomat, start);
         })
     }
 
     if (next_button != null){
     next_button.addEventListener('click', function (event) {
         let start = next_button.getAttribute('start')
-        loadWaybills(start);
+        loadPacks(paczkomat, start);
     })
     }
 }
 
 function clearTable(){
-    let table = document.getElementById('waybills-table')
+    let table = document.getElementById('packs-table')
     if (table != null){
         table.parentNode.removeChild(table);
     }

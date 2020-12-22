@@ -277,7 +277,7 @@ class WaybillsList(Resource):
             raise NotAuthorizedError
 '''
 
-@client_app_namespace.route("/waybills-list")
+@client_app_namespace.route("/waybills_list")
 class PageWaybillsList(Resource):
 
     @cross_origin(origins=["https://localhost:8081"])
@@ -292,7 +292,7 @@ class PageWaybillsList(Resource):
         else:
             return page_unauthorized(NotAuthorizedError)
 
-@client_app_namespace.route("/waybills-list/<int:start>")
+@client_app_namespace.route("/waybills_list/<int:start>")
 class PaginatedWaybillsList(Resource):
 
     @api_app.param(START, "The data will be returned from this position.")
@@ -332,7 +332,7 @@ class PaginatedWaybillsList(Resource):
         else:
             log.debug('niezalogowany użytkownik')
             return page_unauthorized(401)
-            
+
 '''
 @app.route('/refresh', methods=['POST'])
 @jwt_refresh_token_required

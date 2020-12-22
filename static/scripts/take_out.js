@@ -3,26 +3,32 @@ import {showWarningMessage, removeWarningMessage, prepareWarningElem, appendAfte
 import {isAnyFieldBlank, isLoginAvailable, validateName, validateSurname, validateBDate, validatePesel, validateCountry, validatePostalCode, validateCity, validateStreet, validateHouseNr, validateLogin, validatePasswd, arePasswdsTheSame} from './validation_functions.js';
 import {GET, POST, paczkomatURL, HTTP_STATUS, CHECKBOX_FIELD_ID, PACZKOMAT_FIELD_ID, PASSWD_FIELD_ID, courierURL} from './const.js'
 
-let checkboxes=document.getElementsByClassName("pack_checkbox");
-let packs = []
-console.log(checkboxes.length)
-for(let i=0;i<checkboxes.length;i++){
-    console.log('ok')
-    checkboxes[i].addEventListener("click", function (event){
-        let pack = checkboxes[i].value
-        if (checkboxes[i].checked) {
-            console.log('id paczki: ' + pack)
-            if (!packs.includes()){
-                packs.push(pack)
+var script=document.createElement('script');
+script.onload = function() { console.log('xx ile checkboxów: ' + checkboxes.length); }
+
+document.addEventListener('readystatechange', function (event) {
+    let checkboxes=document.getElementsByClassName("pack_checkbox");
+    let packs = []
+    console.log('ile checkboxów: ' + checkboxes.length)
+    for(let i=0;i<checkboxes.length;i++){
+        console.log('ok')
+        checkboxes[i].addEventListener("click", function (event){
+            let pack = checkboxes[i].value
+            if (checkboxes[i].checked) {
+                console.log('id paczki: ' + pack)
+                if (!packs.includes()){
+                    packs.push(pack)
+                }
+                console.log('lista: ' + packs)
+            } else {
+                packs = arrayRemove(packs, pack)
+                console.log('Paczka ' + pack + ' została usunięta z listy.')
+                console.log('lista: ' + packs)
             }
-            console.log('lista: ' + packs)
-        } else {
-            packs = arrayRemove(packs, pack)
-            console.log('Paczka ' + pack + ' została usunięta z listy.')
-            console.log('lista: ' + packs)
-        }
-    });
-}
+        });
+    }
+})
+
 
 function arrayRemove(arr, value) { 
     return arr.filter(function(ele){ 

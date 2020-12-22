@@ -8,6 +8,7 @@
         <link href="/styles/main_style.css" rel="stylesheet" type="text/css">
         <link href="/styles/form_style.css" rel="stylesheet" type="text/css">
         <link rel="shortcut icon" href="/images/favicon.ico"/>
+        <script type="module" src="/scripts/packs-list-loader.js"></script>
         <script type="module" src="/scripts/take_out.js"></script>
     </head>
     <body>
@@ -25,40 +26,17 @@
             </nav>
         </header>
         <section>
-            <h1>Lista paczek w paczkomacie {{paczkomat}}</h1>
-            <div class="max-width-elem">
-                <p>Zaznacz paczki które chcesz odebrać z paczkomatu.</p>
-            </div>
-            
             <form id="packs-form">
-                <table>
-                    <tbody>
-                        <tr>
-                            <th>zdjęcie paczki</th>
-                            <th>identyfikator paczki</th>
-                            <th>wybierz</th>
-                        </tr>
-                        {% for pack, img_path in packs %}
-                        <tr>
-                            <td><img src="/images/packs_images/{{ img_path }}" alt="zdjęcie paczki"></td>
-                            <td>{{ pack }}</td>
-                            <td>
-                                <input type="checkbox" class="pack_checkbox" name="checkbox" value="{{pack}}" id="checkbox">
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <h1>Lista paczek w paczkomacie {{paczkomat}}</h1>
+                <div class="max-width-elem" id="title">
+                    <p>Zaznacz paczki które chcesz odebrać z paczkomatu.</p>
+                </div>
                 <div class="max-width-elem page-nav">
-                    <div class="nav-btn-block">
-                        {% if previous_start != None %}
-                            <a class="btn" href="/app/waybills-list/{{previous_start}}"><<</a>
-                        {% endif %}
+                    <div class="nav-btn-block" id="prev_nav_btn">
+                        
                     </div>
-                    <div class="nav-btn-block">
-                        {% if next_start != None %}
-                            <a class="btn" href="/app/waybills-list/{{next_start}}">>></a> 
-                        {% endif %}
+                    <div class="nav-btn-block" id="next_nav_btn">
+                        
                     </div>
                 </div>
                 <div class="btn-block">

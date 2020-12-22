@@ -64,6 +64,12 @@ section .max-width-elem p{
     justify-content: space-between;
 }
 
+.max-width-elem.empty {
+    padding: 50px 0;
+    text-align: center;
+    justify-content: center;
+}
+
 .max-width-elem.page-nav a:hover {
     filter: drop-shadow( 3px 3px 2px #00000080);
 }

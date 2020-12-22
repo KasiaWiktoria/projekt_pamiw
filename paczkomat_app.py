@@ -175,9 +175,20 @@ class EnterToken(Resource):
         else:
             abort(404)
 
+@paczkomat_app_namespace.route("/<string:paczkomat_id>/packs_list")
+class PacksList(Resource):
+
+    @api_app.doc(responses = {200: 'OK', 404: 'Paczkomat not found'})
+    def get(self, paczkomat_id):
+        log.debug(f'packs_list: {paczkomat_id}')
+        if db.hexists('paczkomaty', paczkomat_id):
+            session['paczkomat'] = paczkomat_id
+            return make_response(render_template('paczkomat/packs_list.html', paczkomat=paczkomat_id))
+        else:
+            abort(404)
 
 @paczkomat_app_namespace.route("/<string:paczkomat_id>/packs_list/<int:start>")
-class PacksList(Resource):
+class PaginatedPacksList(Resource):
 
     @api_app.doc(responses = {200: 'OK', 404: 'Paczkomat not found'})
     def get(self, paczkomat_id, start):
@@ -204,9 +215,7 @@ class PacksList(Resource):
                 packs_images = []
                 for pack in packs:
                     packs_images.append(db.hget(IMAGES_PATHS, pack))
-                return make_response(render_template('paczkomat/packs_list.html', 
-                                    paczkomat=paczkomat_id, packs = zip(packs_to_send,packs_images), 
-                                    previous_start=previous_start, next_start=next_start))
+                return make_response(jsonify({'packs': packs_to_send, 'packs_images': packs_images,'previous_start': previous_start, 'next_start': next_start }), 200)
             else:
                 log.debug('Numer strony nie może być liczbą ujemną.')
                 abort(404)
