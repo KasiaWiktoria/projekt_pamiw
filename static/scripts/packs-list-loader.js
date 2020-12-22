@@ -23,7 +23,7 @@ function updatePackages(paczkomat,start){
                 let pack = checkboxes[i].value
                 if (checkboxes[i].checked) {
                     console.log('id paczki: ' + pack)
-                    if (!packs.includes()){
+                    if (!packs.includes(pack)){
                         packs.push(pack)
                     }
                     console.log('lista: ' + packs)
@@ -167,6 +167,9 @@ function addPackToList(tbody, pack, image){
     chbox.className = "pack_checkbox"
     chbox.setAttribute('type', 'checkbox');
     chbox.setAttribute('value', pack);
+    if (packs.includes(pack)){
+        chbox.setAttribute('checked', true)
+    }
     cell.appendChild(chbox)
 }
 
@@ -248,6 +251,3 @@ function clearTable(){
         table.parentNode.removeChild(table);
     }
 }
-
-
-//---------- obsługa checkboxów ----------------
