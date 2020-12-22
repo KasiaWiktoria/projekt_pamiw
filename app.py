@@ -277,9 +277,25 @@ class WaybillsList(Resource):
             raise NotAuthorizedError
 '''
 
-@client_app_namespace.route("/waybills-list/<int:start>", methods=[GET])
-class WaybillsList(Resource):
+@client_app_namespace.route("/waybills-list")
+class PageWaybillsList(Resource):
 
+    @cross_origin(origins=["https://localhost:8081"])
+    @api_app.doc(responses = {200: 'OK', 401: 'Unauthorized'})
+    def get(self):
+        if active_session():
+            try:
+                user = session['username']
+                return make_response(render_template('waybills-list.html', loggedin=active_session(), user=user))
+            except:
+                return page_unauthorized(NotAuthorizedError)
+        else:
+            return page_unauthorized(NotAuthorizedError)
+
+@client_app_namespace.route("/waybills-list/<int:start>")
+class PaginatedWaybillsList(Resource):
+
+    @api_app.param(START, "The data will be returned from this position.")
     @cross_origin(origins=["https://localhost:8081"])
     @api_app.doc(responses = {200: 'OK', 401: 'Unauthorized'})
     def get(self, start):
@@ -306,10 +322,8 @@ class WaybillsList(Resource):
                     waybills_images = []
                     for waybill in waybills_to_send:
                         waybills_images.append(db.hget(IMAGES_PATHS, waybill))
-                    return make_response(render_template('waybills-list.html', 
-                                        my_waybills = zip(waybills,waybills_images), 
-                                        previous_start=previous_start, next_start=next_start,
-                                        loggedin=active_session(), user=user))
+                    
+                    return make_response(jsonify({'waybills': waybills_to_send, 'waybills_images': waybills_images,'previous_start': previous_start, 'next_start': next_start }), 200)
                 else:
                     log.debug('Numer strony nie może być liczbą ujemną.')
                     raise NotFoundError
@@ -318,10 +332,7 @@ class WaybillsList(Resource):
         else:
             log.debug('niezalogowany użytkownik')
             return page_unauthorized(401)
-            #raise NotAuthorizedError
-            #abort(401)
-            #client_app_namespace.abort(401, status = "Unauthorized user.", statusCode = "401")
-
+            
 '''
 @app.route('/refresh', methods=['POST'])
 @jwt_refresh_token_required

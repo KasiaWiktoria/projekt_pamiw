@@ -9,6 +9,7 @@
         <link href="/styles/form_style.css" rel="stylesheet" type="text/css">
         <link rel="shortcut icon" href="/images/favicon.ico"/>
         <script src="/scripts/waybills-list.js"></script>
+        <script type="module" src="/scripts/waybills-list-loader.js"></script>
     </head>
     <body>
         <header>
@@ -48,37 +49,14 @@
 
         <section>
             <h1 id="title">Lista twoich paczek</h1>
-            <table><tbody>
-                    <tr>
-                        <th>zdjęcie paczki</th>
-                        <th>identyfikator paczki</th>
-                        <th>pobieranie</th>
-                        <th>usuń</th>
-                    </tr>
-                    {% for waybill, img_path in my_waybills %}
-                    <tr>
-                        <td class="img"><img src="/images/packs_images/{{ img_path }}" alt="zdjęcie paczki"></td>
-                        <td>{{ waybill }}</td>
-                        <td>
-                            <a href="https://localhost:8081/waybill/{{ waybill}}">
-                                <img src="/images/download.svg" alt="pobierz"><p>Pobierz</p>
-                            </a>
-                        </td>
-                        <td><a id="delete_button" onClick='delete_pack("{{waybill}}")'>usuń</a></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            
+            <div class="max-width-elem" id="empty-list-warning">Nie masz żadnych paczek na swojej liście</div>
             <div class="max-width-elem page-nav">
-                <div class="nav-btn-block">
-                    {% if previous_start != None %}
-                        <a class="btn" href="/app/waybills-list/{{previous_start}}"><<</a>
-                    {% endif %}
+                <div class="nav-btn-block" id="prev_nav_btn">
+                    
                 </div>
-                <div class="nav-btn-block">
-                    {% if next_start != None %}
-                        <a class="btn" href="/app/waybills-list/{{next_start}}">>></a> 
-                    {% endif %}
+                <div class="nav-btn-block" id="next_nav_btn">
+                    
                 </div>
             </div>
         </section>
