@@ -3,15 +3,19 @@ import {showWarningMessage, removeWarningMessage, prepareWarningElem, appendAfte
 import {isAnyFieldBlank, isLoginAvailable, validateName, validateSurname, validateBDate, validatePesel, validateCountry, validatePostalCode, validateCity, validateStreet, validateHouseNr, validateLogin, validatePasswd, arePasswdsTheSame} from './validation_functions.js';
 import {GET, POST, paczkomatURL, HTTP_STATUS, CHECKBOX_FIELD_ID, PACZKOMAT_FIELD_ID, PASSWD_FIELD_ID, courierURL} from './const.js'
 
+let packs = []
 
 document.addEventListener('DOMContentLoaded', function (event) {
     let path = window.location.pathname
     let paczkomat = path.split('/')[2]
     console.log('paczkomat:' + paczkomat)
-    loadPacks(paczkomat, 0).then(r => {
+    updatePackages(paczkomat,0)
+})
+
+function updatePackages(paczkomat,start){
+    loadPacks(paczkomat, start).then(r => {
 
         let checkboxes=document.getElementsByClassName("pack_checkbox");
-        let packs = []
         console.log('ile checkboxów: ' + checkboxes.length)
         for(let i=0;i<checkboxes.length;i++){
             console.log('ok')
@@ -93,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
         }
         
     })
-})
+}
 
 async function sendFetch(paczkomat, start){
     clearTable()
@@ -135,7 +139,7 @@ async function loadPacks(paczkomat, start){
         h1.insertAdjacentElement('afterend', table)
 
         updateNavButtons(prev,next)
-        addNavListeners()
+        addNavListeners(paczkomat)
     } else {
         let empty_warning = document.createElement('div')
         empty_warning.className = "max-width-elem empty"
@@ -219,21 +223,21 @@ function fetchPacks(paczkomat, start){
     return fetch(url, sendParams)
 }
 
-function addNavListeners(){
+function addNavListeners(paczkomat){
     let prev_button = document.getElementById('prev_btn')
     let next_button = document.getElementById('next_btn')
 
     if (prev_button != null){
         prev_button.addEventListener('click', function (event) {
             let start = prev_button.getAttribute('start')
-            loadPacks(paczkomat, start);
+            updatePackages(paczkomat, start);
         })
     }
 
     if (next_button != null){
     next_button.addEventListener('click', function (event) {
         let start = next_button.getAttribute('start')
-        loadPacks(paczkomat, start);
+        updatePackages(paczkomat, start);
     })
     }
 }
