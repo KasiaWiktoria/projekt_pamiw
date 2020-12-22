@@ -7,6 +7,7 @@
         <link href="/styles/waybills-list.css" rel="stylesheet" type="text/css">
         <link href="/styles/main_style.css" rel="stylesheet" type="text/css">
         <link href="/styles/courier.css" rel="stylesheet" type="text/css">
+        <script type="module" src="/scripts/courier-list-loader.js"></script>
         <link rel="shortcut icon" href="/images/favicon.ico"/>
     </head>
     <body>
@@ -24,7 +25,7 @@
                         {% endif %}
                         {% if loggedin %}
                         <li><a href="/courier/get_packs">Odbierz paczki</a></li>
-                        <li><a href="/courier/waybills-list/0">Lista paczek</a></li>
+                        <li><a href="/courier/waybills_list">Lista paczek</a></li>
                         {% endif %}
                     </ul>
                 </div>
@@ -35,7 +36,7 @@
             </a>
             {% endif %}
             {% if loggedin %}
-            <a href="/courier/waybills-list/0">
+            <a href="/courier/waybills_list">
                 <img src="/images/konto-kurier.svg" alt="moje konto"> 
             </a>
             {% endif %}
@@ -46,36 +47,13 @@
         </div>
 
         <section>
-            <h1>Lista twoich paczek</h1>
-            <table><tbody>
-                    <tr>
-                        <th>zdjęcie paczki</th>
-                        <th>List przewozowy</th>
-                        <th>pobieranie</th>
-                    </tr>
-                    {% for waybill, img_path in my_waybills %}
-                    <tr>
-                        <td><img src="/images/packs_images/{{ img_path }}" alt="zdjęcie paczki"></td>
-                        <td>{{ waybill }}</td>
-                        <td>
-                            <a href="https://localhost:8081/waybill/{{ waybill}}">
-                                <img src="/images/download.svg" alt="pobierz"><p>Pobierz</p>
-                            </a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <h1 id="title">Lista twoich paczek</h1>
             <div class="max-width-elem page-nav">
-                <div class="nav-btn-block">
-                    {% if previous_start != None %}
-                        <a class="btn" href="/courier/waybills-list/{{previous_start}}"><<</a>
-                    {% endif %}
+                <div class="nav-btn-block" id="prev_nav_btn">
+                    
                 </div>
-                <div class="nav-btn-block">
-                    {% if next_start != None %}
-                        <a class="btn" href="/courier/waybills-list/{{next_start}}">>></a> 
-                    {% endif %}
+                <div class="nav-btn-block" id="next_nav_btn">
+                    
                 </div>
             </div>
         </section>

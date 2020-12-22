@@ -1,66 +1,148 @@
-
-import {addCorrectMessage, addfailureMessage} from './form_functions.js';
-import {GET, POST, URL, HTTP_STATUS, paczkomatURL} from './const.js'
+import {addCorrectMessage, addfailureMessage, submitForm, updateCorrectnessMessage, prepareOtherEventOnChange, prepareEventOnChange} from './form_functions.js';
+import {showWarningMessage, removeWarningMessage, prepareWarningElem, appendAfterElem} from './warning_functions.js';
+import {isAnyFieldBlank, isLoginAvailable, validateName, validateSurname, validateBDate, validatePesel, validateCountry, validatePostalCode, validateCity, validateStreet, validateHouseNr, validateLogin, validatePasswd, arePasswdsTheSame} from './validation_functions.js';
+import {GET, POST, paczkomatURL, HTTP_STATUS, CHECKBOX_FIELD_ID, PACZKOMAT_FIELD_ID, PASSWD_FIELD_ID, courierURL} from './const.js'
 
 
 document.addEventListener('DOMContentLoaded', function (event) {
     let path = window.location.pathname
     let paczkomat = path.split('/')[2]
     console.log('paczkomat:' + paczkomat)
-    loadPacks(paczkomat, 0);
+    loadPacks(paczkomat, 0).then(r => {
+
+        let checkboxes=document.getElementsByClassName("pack_checkbox");
+        let packs = []
+        console.log('ile checkboxów: ' + checkboxes.length)
+        for(let i=0;i<checkboxes.length;i++){
+            console.log('ok')
+            checkboxes[i].addEventListener("click", function (event){
+                let pack = checkboxes[i].value
+                if (checkboxes[i].checked) {
+                    console.log('id paczki: ' + pack)
+                    if (!packs.includes()){
+                        packs.push(pack)
+                    }
+                    console.log('lista: ' + packs)
+                } else {
+                    packs = arrayRemove(packs, pack)
+                    console.log('Paczka ' + pack + ' została usunięta z listy.')
+                    console.log('lista: ' + packs)
+                }
+            });
+        }
+        
+        
+        function arrayRemove(arr, value) { 
+            return arr.filter(function(ele){ 
+                return ele != value; 
+            });
+        }
+        
+        
+        let packsForm = document.getElementById("packs-form");
+        
+        packsForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+        
+            if(packs.length > 0) {
+                submitPacksForm('take_out');
+            } else {
+                let id = "button-submit-form";
+                addfailureMessage(id,"Nie wybrano żadnej paczki.")
+            }
+        });
+        
+        function submitPacksForm(name) {
+            let url = paczkomatURL + name;
+            console.log(url);
+            let failureMessage = "Nie udało się wysłać zapytania.";
+            let params = {
+                method: POST,
+                mode: 'cors',
+                body: JSON.stringify({
+                    packs: packs
+                }),
+                redirect: "follow"
+            };
+        
+            fetch(url, params).then(response => {
+                console.log("odpowiedź: " + response)
+                return getJsonResponse(response)
+                }).then(response => getResponseData(response))
+                    .catch(err => {
+                        console.log("Caught error: " + err);
+                        let id = "button-submit-form";
+                        addfailureMessage(id,failureMessage);
+                    });
+        }
+        
+        function getResponseData(response) {
+            console.log("odpowiedź json: " + response.message)
+            console.log("status: " + response.status)
+            let id = "button-submit-form";
+            if (response.status == HTTP_STATUS.OK){
+                console.log(response)
+                addCorrectMessage(id,response.message)
+            }else {
+                addfailureMessage(id,response.message)
+            }
+        }
+        
+        function getJsonResponse(response){
+            return response.json();
+        }
+        
+    })
 })
 
-function loadPacks(paczkomat, start){
+async function sendFetch(paczkomat, start){
     clearTable()
+    let response = await fetchPacks(paczkomat, start)
+    return response.json()
+}
 
-    fetchPacks(paczkomat, start).then(response => {
-            return response.json()
-        }).then(response => {
-            let h1 = document.getElementById('title')
+async function loadPacks(paczkomat, start){
+    let response = await sendFetch(paczkomat, start)
+    let h1 = document.getElementById('title')
 
-            let n_of_packs = response.packs.length
-            if (n_of_packs > 0){
-                let packs = response.packs
-                let images = response.packs_images
-                let prev = response.previous_start
-                let next = response.next_start
+    let n_of_packs = response.packs.length
+    if (n_of_packs > 0){
+        let packs = response.packs
+        let images = response.packs_images
+        let prev = response.previous_start
+        let next = response.next_start
 
-                let table = document.createElement('table')
-                table.id = 'packs-table'
-                let tbody = document.createElement('tbody')
-                tbody.id = 'packs-tbody'
+        let table = document.createElement('table')
+        table.id = 'packs-table'
+        let tbody = document.createElement('tbody')
+        tbody.id = 'packs-tbody'
 
-                let row = tbody.insertRow()
-                let th = document.createElement('th')
-                th.innerHTML = "zdjęcie paczki"
-                row.appendChild(th)
-                th = document.createElement('th')
-                th.innerHTML = "identyfikator paczki"
-                row.appendChild(th)
-                th = document.createElement('th')
-                th.innerHTML = "wybierz"
-                row.appendChild(th)
+        let row = tbody.insertRow()
+        let th = document.createElement('th')
+        th.innerHTML = "zdjęcie paczki"
+        row.appendChild(th)
+        th = document.createElement('th')
+        th.innerHTML = "identyfikator paczki"
+        row.appendChild(th)
+        th = document.createElement('th')
+        th.innerHTML = "wybierz"
+        row.appendChild(th)
 
-                packs.forEach((pack, idx) =>
-                    addPackToList(tbody, pack, images[idx])
-                )
-                table.appendChild(tbody)
-                h1.insertAdjacentElement('afterend', table)
+        packs.forEach((pack, idx) =>
+            addPackToList(tbody, pack, images[idx])
+        )
+        table.appendChild(tbody)
+        h1.insertAdjacentElement('afterend', table)
 
-                updateNavButtons(prev,next)
-                addNavListeners()
-            } else {
-                let empty_warning = document.createElement('div')
-                empty_warning.className = "max-width-elem empty"
-                empty_warning.id = 'empty-list-warning'
-                empty_warning.innerText = 'Nie masz żadnych paczek na swojej liście'
-                h1.insertAdjacentElement('afterend', empty_warning)
-            }
-        }).catch(err => {
-            console.log("Caught error: " + err);
-            let id = "title";
-            addfailureMessage(id,"Pobieranie paczek nie powiodło się. ")
-        });
+        updateNavButtons(prev,next)
+        addNavListeners()
+    } else {
+        let empty_warning = document.createElement('div')
+        empty_warning.className = "max-width-elem empty"
+        empty_warning.id = 'empty-list-warning'
+        empty_warning.innerText = 'Nie masz żadnych paczek na swojej liście'
+        h1.insertAdjacentElement('afterend', empty_warning)
+    }
 }
 
 function addPackToList(tbody, pack, image){
@@ -162,3 +244,6 @@ function clearTable(){
         table.parentNode.removeChild(table);
     }
 }
+
+
+//---------- obsługa checkboxów ----------------

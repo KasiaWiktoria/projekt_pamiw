@@ -222,15 +222,27 @@ class Logout(Resource):
         else:
             return make_response(render_template("courier/index.html", loggedin=active_session()))
 
-
-@courier_app_namespace.route("/waybills-list/<int:start>", methods=[GET])
+@courier_app_namespace.route("/waybills_list")
 class WaybillsList(Resource):
+
+    @api_app.doc(responses = {200: 'OK', 401: 'Unauthorized'})
+    def get(self):
+        if active_session():
+            try:
+                user = session['courier_name']
+                return make_response(render_template('courier/waybills-list.html', loggedin=active_session(), user=user))
+            except:
+                raise UnauthorizedUserError
+        else:
+            raise UnauthorizedUserError
+
+@courier_app_namespace.route("/waybills_list/<int:start>")
+class PaginatedWaybillsList(Resource):
 
     @api_app.doc(responses = {200: 'OK', 401: 'Unauthorized'})
     def get(self,start):
         if active_session():
             try:
-                log.debug('wyświetlenie listy')
                 user = session['courier_name']
                 waybills = db.hvals(user + '-' + PACKNAMES)
                 n_of_waybills = len(waybills)
@@ -250,15 +262,11 @@ class WaybillsList(Resource):
                     waybills_images = []
                     for waybill in waybills_to_send:
                         waybills_images.append(db.hget(IMAGES_PATHS, waybill))
-                    return make_response(render_template('courier/waybills-list.html', 
-                                        my_waybills = zip(waybills,waybills_images), 
-                                        previous_start=previous_start, next_start=next_start,
-                                        loggedin=active_session(), user=user))
+                    return make_response(jsonify({'waybills': waybills_to_send, 'waybills_images': waybills_images,'previous_start': previous_start, 'next_start': next_start }), 200)
                 else:
                     log.debug('Numer strony nie może być liczbą ujemną.')
                     abort(404)
             except:
-                log.debug('chyba nie jest przekazywany user')
                 raise UnauthorizedUserError
         else:
             raise UnauthorizedUserError

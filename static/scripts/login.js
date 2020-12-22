@@ -78,7 +78,7 @@ function getResponseData(response, successMessage, failureMessage) {
         console.log("Logged in successfully.");
 
         addCorrectMessage(id,successMessage)
-        window.location.href = 'waybills-list/0'
+        window.location.href = 'waybills_list'
     } else if (status == HTTP_STATUS.BAD_REQUEST) {
         console.log("Incorrect authorization data.")
         addfailureMessage(id,failureMessage)
