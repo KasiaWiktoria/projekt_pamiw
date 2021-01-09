@@ -1,4 +1,4 @@
-Flask
+flask
 flask-restplus
 gunicorn
 redis
@@ -7,3 +7,7 @@ flask-jwt-extended
 flask-cors
 fpdf
 Werkzeug==0.16.1
+requests
+authlib
+flask-socketio
+eventlet

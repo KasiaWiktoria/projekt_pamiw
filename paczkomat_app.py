@@ -28,12 +28,11 @@ app.config['SECRET_KEY'] = SECRET_KEY
 app.config["JWT_SECRET_KEY"] = os.environ.get(SECRET_KEY)
 app.config["JWT_SESSION_COOKIE"] = False
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
-app.config["JWT_REFRESH_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS * 4
+app.config["JWT_REFRESH_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
 app.config["JWT_TOKEN_LOCATION"] = JWT_TOKEN_LOCATION
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=5)
 app.config["SESSION_REFRESH_EACH_REQUEST"] = True
 app.config['CORS_SUPPORTS_CREDENTIALS'] = True
-
 
 jwt = JWTManager(app)
 
@@ -202,20 +201,22 @@ class PaginatedPacksList(Resource):
             if start >= 0:
                 limit = start + WAYBILLS_PER_PAGE
                 next_start = limit
+                next_url = f'https://localhost:8083/paczkomat/{paczkomat_id}/packs_list/{next_start}'
                 previous_start = start - WAYBILLS_PER_PAGE
+                prev_url = f'https://localhost:8083/paczkomat/{paczkomat_id}/packs_list/{previous_start}'
                 log.debug(f'wszystkich paczek: {n_of_packs}')
                 if limit >= n_of_packs:
                     limit = n_of_packs
-                    next_start = None
+                    next_url = None
                 if previous_start < 0:
-                    previous_start = None
+                    prev_url = None
                 log.debug(f'start: {start}, limit: {limit}')
                 log.debug(f'previous: {previous_start}, next: {next_start}')
                 packs_to_send = packs[start:limit] 
                 packs_images = []
                 for pack in packs:
                     packs_images.append(db.hget(IMAGES_PATHS, pack))
-                return make_response(jsonify({'packs': packs_to_send, 'packs_images': packs_images,'previous_start': previous_start, 'next_start': next_start }), 200)
+                return make_response(jsonify({'packs': packs_to_send, 'packs_images': packs_images,'previous_page_url': prev_url, 'next_page_url': next_url }), 200)
             else:
                 log.debug('Numer strony nie może być liczbą ujemną.')
                 abort(404)
@@ -229,8 +230,11 @@ class TakeOut(Resource):
     @cross_origin(origins=["https://localhost:8082"])
     def post(self):
         try:
-            paczkomat = session['paczkomat']
             user = session['courier']
+        except:
+            return {'message':'Nie udało nam się zweryfikować twojej tożsamości.', 'status':403}, 403
+        try:
+            paczkomat = session['paczkomat']
             r = json.loads(request.data)
             log.debug(r)
             packs = r.get('packs') 

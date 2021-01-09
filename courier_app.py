@@ -11,14 +11,14 @@ import redis
 import os
 import hashlib
 from flask_cors import CORS, cross_origin
+from flask_socketio import SocketIO, join_room, leave_room, emit, send
 
 app = Flask(__name__, static_url_path="")
 log = logging.create_logger(app)
 db = redis.Redis(host="redis-db", port=6379, decode_responses=True)
 cors = CORS(app, supports_credentials=True)
-
+socket_io = SocketIO(app, cors_allowed_origins='https://localhost:8082/')
 api_app = Api(app = app, version = "0.1", title = "PAX app API", description = "REST-full API for PAXapp")
-
 courier_app_namespace = api_app.namespace("courier", description = "Main API")
 
 app.config["JWT_COOKIE_CSRF_PROTECT"] = False
@@ -27,7 +27,7 @@ app.config['SECRET_KEY'] = SECRET_KEY
 app.config["JWT_SECRET_KEY"] = os.environ.get(SECRET_KEY)
 app.config["JWT_SESSION_COOKIE"] = False
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = PACZKOMAT_TOKEN_EXPIRES_IN_SECONDS
-app.config["JWT_REFRESH_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS * 4
+app.config["JWT_REFRESH_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
 app.config["JWT_TOKEN_LOCATION"] = JWT_TOKEN_LOCATION
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=5)
 app.config["SESSION_REFRESH_EACH_REQUEST"] = True
@@ -35,6 +35,22 @@ app.config['CORS_SUPPORTS_CREDENTIALS'] = True
 
 
 jwt = JWTManager(app)
+
+
+'''
+@socket_io.on("change_pack_status")
+def change_pack_status(data):
+    app.logger.debug(f"Received data: {data}.")
+'''
+
+@app.after_request
+def after_request(response):
+    #refresh()
+    #response.headers.add('Access-Control-Allow-Credentials', 'true')
+    response.headers.add('Access-Control-Allow-Origin', 'https://localhost:8082')
+    response.headers.add('Access-Control-Allow-Methods', 'GET, POST, DELETE')
+    return response
+
 
 @courier_app_namespace.route("/")
 class MainPage(Resource):
@@ -185,8 +201,8 @@ class Login(Resource):
                 session['courier_name'] = courier_name
                 
                 expires = timedelta( minutes = 5)
-                access_token = create_access_token(identity=courier_name, expires_delta=expires*10)
-                refresh_token = create_refresh_token(identity=courier_name, expires_delta=expires*4)
+                access_token = create_access_token(identity=courier_name, expires_delta=expires)
+                refresh_token = create_refresh_token(identity=courier_name, expires_delta=expires)
 
                 response = make_response(jsonify({ 'logged_in': 'OK', 'access_token': access_token}))
                 response.set_cookie(COURIER_SESSION_ID, hash_,  max_age=300, secure=True, httponly=True)
@@ -249,20 +265,28 @@ class PaginatedWaybillsList(Resource):
                 if start >= 0:
                     limit = start + WAYBILLS_PER_PAGE
                     next_start = limit
+                    next_url = f'https://localhost:8082/courier/waybills_list/{next_start}'
                     previous_start = start - WAYBILLS_PER_PAGE
+                    prev_url = f'https://localhost:8082/courier/waybills_list/{previous_start}'
                     log.debug(f'wszystkich paczek: {n_of_waybills}')
+                    log.debug('pomiędzy')
                     if limit >= n_of_waybills:
                         limit = n_of_waybills
-                        next_start = None
+                        next_url = None
                     if previous_start < 0:
-                        previous_start = None
+                        prev_url = None
                     log.debug(f'start: {start}, limit: {limit}')
                     log.debug(f'previous: {previous_start}, next: {next_start}')
                     waybills_to_send = waybills[start:limit] 
                     waybills_images = []
                     for waybill in waybills_to_send:
                         waybills_images.append(db.hget(IMAGES_PATHS, waybill))
-                    return make_response(jsonify({'waybills': waybills_to_send, 'waybills_images': waybills_images,'previous_start': previous_start, 'next_start': next_start }), 200)
+                    pack_states = []
+                    for waybill in waybills_to_send:
+                        pack_states.append(db.hget(waybill, 'status'))
+                        log.debug(f'paczki: {waybills_to_send}')
+                    log.debug(f'pack_states: {pack_states}')
+                    return make_response(jsonify({'waybills': waybills_to_send, 'waybills_images': waybills_images, 'pack_states': pack_states, 'previous_page_url': prev_url, 'next_page_url': next_url }), 200)
                 else:
                     log.debug('Numer strony nie może być liczbą ujemną.')
                     abort(404)
@@ -341,20 +365,30 @@ class StatusChange(Resource):
     @api_app.expect(pack_model)
     def post(self):
         pack_id = request.form.get(PACK_ID_FIELD_ID)
+        user = session['courier_name']
+        log.debug(user)
         try:
             user = session['courier_name']
+            log.debug(user)
             if db.hexists(pack_id, 'status'):
                 pack_status = db.hget(pack_id, 'status')
                 log.debug('Status paczki: {}'.format(pack_status))
                 if pack_status == NEW:
                     self.save_pack(user, pack_id)
-                    return {'message': 'odebrano poprawnie'}, 200
+                    try:
+                        socket_io.emit("change_pack_status", pack_id)
+                    except Exception as e:
+                        log.debug(e)
+                    log.debug('Odebrano poprawnie')
+                    return {'message': 'odebrano poprawnie', 'status':200}, 200
                 else:
-                    return {'message':'Status paczki został już zmieniony.'}, 400
+                    return {'message':'Status paczki został już zmieniony.', 'status':400}, 400
             else:
-                return {'message':'Niepoprawny identyfikator paczki.'}, 404
-        except:
-            return {'message':'Nie udało się pobrać nazwy użytkownika.'}, 404
+                log.debug('Niepoprawny identyfikator paczki')
+                return {'message':'Niepoprawny identyfikator paczki.', 'status':404}, 404
+        except Exception as e:
+            log.debug(e)
+            return {'message':'Nie udało się pobrać nazwy użytkownika.', 'status':401}, 401
 
 
     def save_pack(self, user, pack_id):

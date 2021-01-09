@@ -1,26 +1,29 @@
 import {addCorrectMessage, addfailureMessage} from './form_functions.js';
 import {GET, POST, URL, HTTP_STATUS, waybillURL} from './const.js'
 
-
+let page_url = 'https://localhost:8080/app/waybills_list/0'
 document.addEventListener('DOMContentLoaded', function (event) {
-    loadWaybills(0);
+    console.log('załadowanie strony po raz pierwszy')
+    loadWaybills(page_url);
 
 })
 
-function loadWaybills(start){
+function loadWaybills(page_url){
     clearTable()
 
-    fetchPacks(start).then(response => {
+    fetchPacks(page_url).then(response => {
             return response.json()
         }).then(response => {
+
             let h1 = document.getElementById('title')
 
             let n_of_waybills = response.waybills.length
             if (n_of_waybills > 0){
                 let waybills = response.waybills
                 let images = response.waybills_images
-                let prev = response.previous_start
-                let next = response.next_start
+                let pack_states = response.pack_states
+                let prev = response.previous_page_url
+                let next = response.next_page_url
     
                 let table = document.createElement('table')
                 table.id = 'waybills-table'
@@ -29,6 +32,9 @@ function loadWaybills(start){
     
                 let row = tbody.insertRow()
                 let th = document.createElement('th')
+                th.innerHTML = "status paczki"
+                row.appendChild(th)
+                th = document.createElement('th')
                 th.innerHTML = "zdjęcie paczki"
                 row.appendChild(th)
                 th = document.createElement('th')
@@ -42,9 +48,12 @@ function loadWaybills(start){
                 row.appendChild(th)
     
                 waybills.forEach((waybill, idx) =>
-                    addWaybillToList(tbody, waybill, images[idx])
+                    addWaybillToList(tbody, waybill, images[idx], pack_states[idx])
                 )
                 table.appendChild(tbody)
+                console.log('stworzenie tabeli')
+                console.log(table)
+                clearTable()
                 h1.insertAdjacentElement('afterend', table)
     
                 updateNavButtons(prev,next)
@@ -63,9 +72,14 @@ function loadWaybills(start){
         });
 }
 
-function addWaybillToList(tbody, waybill, image){
+function addWaybillToList(tbody, waybill, image, state){
     let row = tbody.insertRow()
+    
     let cell = row.insertCell()
+    let pack_state = document.createTextNode(state)
+    cell.appendChild(pack_state)
+    
+    cell = row.insertCell()
     cell.className ='img'
     let img = document.createElement('img')
     img.setAttribute('alt', 'zdjęcie paczki');
@@ -90,7 +104,7 @@ function addWaybillToList(tbody, waybill, image){
 
     cell = row.insertCell()
     a = document.createElement('a')
-    a.setAttribute('onClick', 'delete_pack("waybill")');
+    a.setAttribute('onClick', 'delete_pack("' + waybill + '")');
     p = document.createElement('p')
     text = document.createTextNode('usuń')
     p.appendChild(text)
@@ -108,7 +122,7 @@ function updateNavButtons(prev,next){
     let prev_btn = document.getElementById('prev_btn')
     if (prev_btn != null){
         if (prev != null) {
-            prev_btn.setAttribute('start', prev);
+            prev_btn.setAttribute('page_url', prev);
         } else {
             prev_btn.remove()
         }
@@ -117,7 +131,7 @@ function updateNavButtons(prev,next){
             text.nodeValue = '<<'
         a.appendChild(text)
         a.id = 'prev_btn'
-        a.setAttribute('start', prev);
+        a.setAttribute('page_url', prev);
             prev_nav_btn.appendChild(a)
         }
     }
@@ -125,7 +139,7 @@ function updateNavButtons(prev,next){
     let next_btn = document.getElementById('next_btn')
     if (next_btn != null){
         if (next != null) {
-            next_btn.setAttribute('start', next);
+            next_btn.setAttribute('page_url', next);
         } else {
             next_btn.remove()
         }
@@ -134,14 +148,15 @@ function updateNavButtons(prev,next){
             text.nodeValue = '>>'
             a.appendChild(text)
             a.id = 'next_btn'
-            a.setAttribute('start', next);
+            a.setAttribute('page_url', next);
             next_nav_btn.appendChild(a)
         }
     }
 }
 
-function fetchPacks(start){
-    let url = URL + 'waybills_list/' + start;
+function fetchPacks(page_url){
+    console.log('wysłanie zapyatnia')
+    let url = page_url;
 
     let sendParams = {
         credentials: 'include',
@@ -157,16 +172,18 @@ function addNavListeners(){
 
     if (prev_button != null){
         prev_button.addEventListener('click', function (event) {
-            let start = prev_button.getAttribute('start')
-            loadWaybills(start);
+            let page_url = prev_button.getAttribute('page_url')
+            console.log('kliknięto przycisk wstecz')
+            loadWaybills(page_url);
         })
     }
 
     if (next_button != null){
-    next_button.addEventListener('click', function (event) {
-        let start = next_button.getAttribute('start')
-        loadWaybills(start);
-    })
+        next_button.addEventListener('click', function (event) {
+            let page_url = next_button.getAttribute('page_url')
+            console.log('kliknięto przycisk dalej')
+            loadWaybills(page_url);
+        });
     }
 }
 

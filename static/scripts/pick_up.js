@@ -5,6 +5,7 @@ import {GET, POST, courierURL, HTTP_STATUS, PACK_ID_FIELD_ID, PASSWD_FIELD_ID} f
 
 document.addEventListener('DOMContentLoaded', function (event) {
 
+
     prepareEventOnChange(PACK_ID_FIELD_ID, isBlank);
     
     let packForm = document.getElementById("pick-up-form");
@@ -49,7 +50,10 @@ function submitPackForm(form, name) {
         redirect: "follow"
     };
 
-    fetch(packUrl, params).then(response => getResponse(response, successMessage, failureMessage))
+    fetch(packUrl, params).then(response => {
+        console.log("odpowiedź: " + response)
+        return getJsonResponse(response)
+        }).then(response => getResponse(response))
             .catch(err => {
                 console.log("Caught error: " + err);
                 console.log(form)
@@ -58,41 +62,20 @@ function submitPackForm(form, name) {
             });
 }
 
-function putPackIn(form, response, successMessage, failureMessage) {
-    if (response.status == HTTP_STATUS.OK){
-        let packUrl = courierURL + 'pick_up_pack';
-        console.log(packUrl);
-        let successMessage = "Poprawnie odebrano paczkę.";
-        let failureMessage = "Nie udało się odebrać paczki.";
-
-        let params = {
-            method: POST,
-            mode: 'cors',
-            body: new FormData(form),
-            redirect: "follow"
-        };
-
-        fetch(packUrl, params).then(response => getResponse(response, successMessage, failureMessage))
-            .catch(err => {
-                console.log("Caught error: " + err);
-                let id = "button-submit-form";
-                addfailureMessage(id,failureMessage);
-            });
-    }else {
-        let id = "button-submit-form";
-        addfailureMessage(id,failureMessage)
-    }
+function getJsonResponse(response){
+    return response.json();
 }
 
 
-function getResponse(response, successMessage, failureMessage) {
+function getResponse(response) {
     let id = "button-submit-form";
     if (response.status == HTTP_STATUS.OK){
         console.log('Udało się!')
-        addCorrectMessage(id,successMessage)
+        addCorrectMessage(id,response.message)
     }else if (response.status == HTTP_STATUS.BAD_REQUEST){
         addfailureMessage(id,' Status tej paczki został już zmieniony.')
     }else {
-        addfailureMessage(id,failureMessage)
+        console.log(response.message)
+        addfailureMessage(id,response.message)
     }
 }

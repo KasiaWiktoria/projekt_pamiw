@@ -10,15 +10,29 @@ import redis
 import os
 import hashlib
 from flask_cors import CORS, cross_origin
+from authlib.integrations.flask_client import OAuth
+from functools import wraps
+from flask_socketio import SocketIO, join_room, leave_room, emit, send
 
 app = Flask(__name__, static_url_path="")
 log = logging.create_logger(app)
 db = redis.Redis(host="redis-db", port=6379, decode_responses=True)
 cors = CORS(app, supports_credentials=True)
+oauth = OAuth(app)
+socket_io = SocketIO(app)
 
 api_app = Api(app = app, version = "0.1", title = "PAX app API", description = "REST-full API for PAXapp")
-
 client_app_namespace = api_app.namespace("app", description = "Main API")
+
+
+auth0 = oauth.register(
+    "pax-app-auth0-2020",
+    api_base_url=OAUTH_BASE_URL,
+    client_id=OAUTH_CLIENT_ID,
+    client_secret=OAUTH_CLIENT_SECRET,
+    access_token_url=OAUTH_ACCESS_TOKEN_URL,
+    authorize_url=OAUTH_AUTHORIZE_URL,
+    client_kwargs={"scope": OAUTH_SCOPE})
 
 
 app.config["JWT_COOKIE_CSRF_PROTECT"] = False
@@ -27,7 +41,7 @@ app.config['SECRET_KEY'] = SECRET_KEY
 app.config["JWT_SECRET_KEY"] = os.environ.get(SECRET_KEY)
 app.config["JWT_SESSION_COOKIE"] = False
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
-app.config["JWT_REFRESH_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS * 4
+app.config["JWT_REFRESH_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
 app.config["JWT_TOKEN_LOCATION"] = JWT_TOKEN_LOCATION
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=5)
 app.config["SESSION_REFRESH_EACH_REQUEST"] = True
@@ -36,6 +50,18 @@ app.config["PROPAGATE_EXCEPTIONS"] = False
 
 
 jwt = JWTManager(app)
+
+
+@socket_io.on("connect")
+def handle_on_connect():
+    log.debug("Connected -> OK")
+    emit("connection response", {"data": "Correctly connected"})
+
+
+@socket_io.on("disconnect")
+def handle_on_disconnect():
+    log.debug("Disconnected -> Bye")
+
 
 @client_app_namespace.route("/")
 class MainPage(Resource):
@@ -219,8 +245,8 @@ class Login(Resource):
                 session['username'] = username
                 
                 expires = timedelta( minutes = 5)
-                access_token = create_access_token(identity=username, expires_delta=expires*10)
-                refresh_token = create_refresh_token(identity=username, expires_delta=expires*4)
+                access_token = create_access_token(identity=username, expires_delta=expires)
+                refresh_token = create_refresh_token(identity=username, expires_delta=expires)
 
                 response = make_response(jsonify({ 'logged_in': 'OK', 'access_token': access_token}))
                 response.set_cookie(SESSION_ID, hash_,  max_age=300, secure=True, httponly=True)
@@ -309,21 +335,29 @@ class PaginatedWaybillsList(Resource):
                 if start >= 0:
                     limit = start + WAYBILLS_PER_PAGE
                     next_start = limit
+                    next_url = f'https://localhost:8080/app/waybills_list/{next_start}'
                     previous_start = start - WAYBILLS_PER_PAGE
+                    prev_url = f'https://localhost:8080/app/waybills_list/{previous_start}'
                     log.debug(f'wszystkich paczek: {n_of_waybills}')
                     if limit >= n_of_waybills:
                         limit = n_of_waybills
-                        next_start = None
+                        next_url = None
                     if previous_start < 0:
-                        previous_start = None
+                        prev_url = None
                     log.debug(f'start: {start}, limit: {limit}')
                     log.debug(f'previous: {previous_start}, next: {next_start}')
                     waybills_to_send = waybills[start:limit] 
+
                     waybills_images = []
                     for waybill in waybills_to_send:
                         waybills_images.append(db.hget(IMAGES_PATHS, waybill))
-                    
-                    return make_response(jsonify({'waybills': waybills_to_send, 'waybills_images': waybills_images,'previous_start': previous_start, 'next_start': next_start }), 200)
+
+                    pack_states = []
+                    for waybill in waybills_to_send:
+                        pack_states.append(db.hget(waybill, 'status'))
+                        log.debug(f'paczki: {waybills_to_send}')
+                    log.debug(f'pack_states: {pack_states}')
+                    return make_response(jsonify({'waybills': waybills_to_send, 'waybills_images': waybills_images, 'pack_states': pack_states,'previous_page_url': prev_url, 'next_page_url': next_url }), 200)
                 else:
                     log.debug('Numer strony nie może być liczbą ujemną.')
                     raise NotFoundError
@@ -332,6 +366,50 @@ class PaginatedWaybillsList(Resource):
         else:
             log.debug('niezalogowany użytkownik')
             return page_unauthorized(401)
+
+
+
+def authorization_required(fun):
+    @wraps(fun)
+    def authorization_decorator(*args, **kwds):
+        if NICKNAME not in session:
+            return redirect("/login")
+
+        return fun(*args, **kwds)
+
+    return authorization_decorator
+
+
+@app.route("/auth0_login")
+def login():
+    return auth0.authorize_redirect(
+        redirect_uri=OAUTH_CALLBACK_URL,
+        audience="")
+
+@app.route("/callback")
+def oauth_callback():
+    log.debug('callback ok')
+    rs = request.args.get('state')
+    ss = session.get('_google_authlib_state_')
+
+    log.debug(f'reqest state: {rs}')
+    log.debug(f'session state: {ss}')
+
+    try:
+        auth_access_token = auth0.authorize_access_token()
+        log.debug(f'auth access token: {auth_access_token}')
+
+    except Exception as e:
+        log.debug(e)
+    resp = auth0.get("userinfo")
+    log.debug(f'response: {resp}')
+    nickname = resp.json()["nickname"]
+    log.debug(f'nickname = {nickname}')
+
+    session[NICKNAME] = nickname
+
+    return redirect("https://localhost:8080/app/")
+
 
 '''
 @app.route('/refresh', methods=['POST'])
@@ -374,11 +452,11 @@ def not_found(error):
 @app.errorhandler(404)
 def page_not_found(error):
     return make_response(render_template("errors/404.html", error=error, loggedin=active_session()))
-    
+'''
 @app.errorhandler(500)
 def internal_server_error(error):
     return make_response(render_template("errors/500.html", error=error, loggedin=active_session()))
-
+'''
 @api_app.errorhandler
 def default_error_handler(error):
     return make_response(render_template("errors/default.html", error=error, loggedin=active_session()))

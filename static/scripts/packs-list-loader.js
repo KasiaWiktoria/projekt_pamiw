@@ -1,6 +1,4 @@
 import {addCorrectMessage, addfailureMessage, submitForm, updateCorrectnessMessage, prepareOtherEventOnChange, prepareEventOnChange} from './form_functions.js';
-import {showWarningMessage, removeWarningMessage, prepareWarningElem, appendAfterElem} from './warning_functions.js';
-import {isAnyFieldBlank, isLoginAvailable, validateName, validateSurname, validateBDate, validatePesel, validateCountry, validatePostalCode, validateCity, validateStreet, validateHouseNr, validateLogin, validatePasswd, arePasswdsTheSame} from './validation_functions.js';
 import {GET, POST, paczkomatURL, HTTP_STATUS, CHECKBOX_FIELD_ID, PACZKOMAT_FIELD_ID, PASSWD_FIELD_ID, courierURL} from './const.js'
 
 let packs = []
@@ -9,16 +7,16 @@ document.addEventListener('DOMContentLoaded', function (event) {
     let path = window.location.pathname
     let paczkomat = path.split('/')[2]
     console.log('paczkomat:' + paczkomat)
-    updatePackages(paczkomat,0)
+    let page_url = 'https://localhost:8083/paczkomat/' + paczkomat + '/packs_list/0'
+    updatePackages(paczkomat,page_url)
 })
 
-function updatePackages(paczkomat,start){
-    loadPacks(paczkomat, start).then(r => {
+function updatePackages(paczkomat,page_url){
+    loadPacks(paczkomat, page_url).then(r => {
 
         let checkboxes=document.getElementsByClassName("pack_checkbox");
         console.log('ile checkboxów: ' + checkboxes.length)
         for(let i=0;i<checkboxes.length;i++){
-            console.log('ok')
             checkboxes[i].addEventListener("click", function (event){
                 let pack = checkboxes[i].value
                 if (checkboxes[i].checked) {
@@ -58,7 +56,6 @@ function updatePackages(paczkomat,start){
         
         function submitPacksForm(name) {
             let url = paczkomatURL + name;
-            console.log(url);
             let failureMessage = "Nie udało się wysłać zapytania.";
             let params = {
                 method: POST,
@@ -70,7 +67,6 @@ function updatePackages(paczkomat,start){
             };
         
             fetch(url, params).then(response => {
-                console.log("odpowiedź: " + response)
                 return getJsonResponse(response)
                 }).then(response => getResponseData(response))
                     .catch(err => {
@@ -81,11 +77,9 @@ function updatePackages(paczkomat,start){
         }
         
         function getResponseData(response) {
-            console.log("odpowiedź json: " + response.message)
             console.log("status: " + response.status)
             let id = "button-submit-form";
             if (response.status == HTTP_STATUS.OK){
-                console.log(response)
                 addCorrectMessage(id,response.message)
             }else {
                 addfailureMessage(id,response.message)
@@ -99,22 +93,24 @@ function updatePackages(paczkomat,start){
     })
 }
 
-async function sendFetch(paczkomat, start){
+async function sendFetch(paczkomat, page_url){
     clearTable()
-    let response = await fetchPacks(paczkomat, start)
+    let response = await fetchPacks(paczkomat, page_url)
+    console.log(response)
     return response.json()
 }
 
-async function loadPacks(paczkomat, start){
-    let response = await sendFetch(paczkomat, start)
+async function loadPacks(paczkomat, page_url){
+    let response = await sendFetch(paczkomat, page_url)
+    console.log(response)
     let h1 = document.getElementById('title')
 
     let n_of_packs = response.packs.length
     if (n_of_packs > 0){
         let packs = response.packs
         let images = response.packs_images
-        let prev = response.previous_start
-        let next = response.next_start
+        let prev = response.previous_page_url
+        let next = response.next_page_url
 
         let table = document.createElement('table')
         table.id = 'packs-table'
@@ -183,7 +179,7 @@ function updateNavButtons(prev,next){
     let prev_btn = document.getElementById('prev_btn')
     if (prev_btn != null){
         if (prev != null) {
-            prev_btn.setAttribute('start', prev);
+            prev_btn.setAttribute('page_url', prev);
         } else {
             prev_btn.remove()
         }
@@ -192,7 +188,7 @@ function updateNavButtons(prev,next){
             text.nodeValue = '<<'
         a.appendChild(text)
         a.id = 'prev_btn'
-        a.setAttribute('start', prev);
+        a.setAttribute('page_url', prev);
             prev_nav_btn.appendChild(a)
         }
     }
@@ -200,7 +196,7 @@ function updateNavButtons(prev,next){
     let next_btn = document.getElementById('next_btn')
     if (next_btn != null){
         if (next != null) {
-            next_btn.setAttribute('start', next);
+            next_btn.setAttribute('page_url', next);
         } else {
             next_btn.remove()
         }
@@ -209,14 +205,14 @@ function updateNavButtons(prev,next){
             text.nodeValue = '>>'
             a.appendChild(text)
             a.id = 'next_btn'
-            a.setAttribute('start', next);
+            a.setAttribute('page_url', next);
             next_nav_btn.appendChild(a)
         }
     }
 }
 
-function fetchPacks(paczkomat, start){
-    let url = paczkomatURL + paczkomat + '/packs_list/' + start;
+function fetchPacks(paczkomat, page_url){
+    let url = page_url;
 
     let sendParams = {
         credentials: 'include',
@@ -232,15 +228,15 @@ function addNavListeners(paczkomat){
 
     if (prev_button != null){
         prev_button.addEventListener('click', function (event) {
-            let start = prev_button.getAttribute('start')
-            updatePackages(paczkomat, start);
+            let page_url = prev_button.getAttribute('page_url')
+            updatePackages(paczkomat, page_url);
         })
     }
 
     if (next_button != null){
     next_button.addEventListener('click', function (event) {
-        let start = next_button.getAttribute('start')
-        updatePackages(paczkomat, start);
+        let page_url = next_button.getAttribute('page_url')
+        updatePackages(paczkomat, page_url);
     })
     }
 }
