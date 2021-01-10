@@ -100,10 +100,10 @@ class User(Resource):
 
     @api_app.doc(responses = {200: "Logged in.", 401: "Not logged in."})
     def get(self):
-        try:
-            user  = db.hget(SESSION_ID, 'username')
+        if db.exists(ACTIVE_USER_SESSION):
+            user = db.get(ACTIVE_USER_SESSION)
             return { 'user': user }, 200
-        except:
+        else:
             return {'message': 'Prawdopodobnie nie jesteś zalogowany'}, 401
 
 '''
@@ -112,7 +112,7 @@ class Token(Resource):
 
     @api_app.doc(responses = {200: "OK"})
     def get(self):
-        user  = db.hget(SESSION_ID, 'username')
+        user = db.get(ACTIVE_USER_SESSION)
         access_token = create_access_token(identity=user)
         return { 'access_token': access_token}
 '''
@@ -125,7 +125,7 @@ class SendFormPage(Resource):
     def get(self):
         if active_session():
             try:
-                username  = db.hget(SESSION_ID, 'username')
+                username  = db.get(ACTIVE_USER_SESSION)
                 log.debug("Username of actually logged in user: " + username)
                 return make_response(render_template('send.html', loggedin=active_session(), user = db.hget(SESSION_ID, 'username')))
             except:
@@ -135,9 +135,6 @@ class SendFormPage(Resource):
         else:
             log.debug('niezalogowany')
             return page_unauthorized(NotAuthorizedError)
-            #abort(401)
-            #client_app_namespace.abort(401, status = "Unauthorized user.", statusCode = "401")
-
 
 @client_app_namespace.route("/user/<string:username>")
 class CheckingUser(Resource):
@@ -248,7 +245,6 @@ class Login(Resource):
                 log.debug("Hasło jest poprawne.")
                 hash_ = uuid4().hex 
                 db.hset(username, SESSION_ID, hash_)
-                db.hset(SESSION_ID, 'username', username)
                 db.setex(ACTIVE_USER_SESSION,  timedelta(minutes=5), value=username)
                 
                 expires = timedelta( minutes = 5)
@@ -296,27 +292,6 @@ class Logout(Resource):
         else:
             return make_response(render_template("index.html", loggedin=active_session()))
 
-'''
-@client_app_namespace.route("/waybills-list", methods=[GET])
-class WaybillsList(Resource):
-
-    @cross_origin(origins=["https://localhost:8081"])
-    @api_app.doc(responses = {200: 'OK', 401: 'Unauthorized'})
-    def get(self):
-        if active_session():
-            try:
-                user  = db.hget(SESSION_ID, 'username')
-                waybills = db.hvals(user + '-' + PACKNAMES)
-                waybills_images = []
-                for waybill in waybills:
-                    waybills_images.append(db.hget(IMAGES_PATHS, waybill))
-                return make_response(render_template('waybills-list.html', my_waybills = zip(waybills,waybills_images), loggedin=active_session(), user=user))
-            except:
-                raise NotAuthorizedError
-        else:
-            raise NotAuthorizedError
-'''
-
 @client_app_namespace.route("/waybills_list")
 class PageWaybillsList(Resource):
 
@@ -325,7 +300,7 @@ class PageWaybillsList(Resource):
     def get(self):
         if active_session():
             try:
-                user  = db.hget(SESSION_ID, 'username')
+                user  = db.get(ACTIVE_USER_SESSION)
                 return make_response(render_template('waybills-list.html', loggedin=active_session(), user=user))
             except:
                 return page_unauthorized(NotAuthorizedError)
@@ -343,7 +318,7 @@ class PaginatedWaybillsList(Resource):
             log.debug('Zalogowany użytkownik --> wyświetlenie listy')
             try:
                 log.debug('wyświetlenie listy')
-                user = db.hget(SESSION_ID, 'username')
+                user = db.get(ACTIVE_USER_SESSION)
                 waybills = db.hvals(user + '-' + PACKNAMES)
                 n_of_waybills = len(waybills)
                 if start >= 0:
