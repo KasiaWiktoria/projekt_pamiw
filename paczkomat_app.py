@@ -248,7 +248,7 @@ class TakeOut(Resource):
     def take_out_packs(self, user, pack_id):
 
         db.hset(pack_id, 'status', PICKED_UP)
-        db.hset(user + '-'+ PACKNAMES, pack_id, pack_id)
+        db.hset(user + '-'+ COURIER_PACKNAMES, pack_id, pack_id)
         
         log.debug("Picked up pack [name: {}].".format(pack_id))
 
