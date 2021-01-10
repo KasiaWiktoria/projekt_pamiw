@@ -9,6 +9,7 @@
         <link href="/styles/form_style.css" rel="stylesheet" type="text/css">
         <link href="/styles/courier.css" rel="stylesheet" type="text/css">
         <link rel="shortcut icon" href="/images/favicon.ico"/>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.min.js"></script>
         <script type="module" src="/scripts/pick_up.js"></script>    
     </head>
     <body>
@@ -48,7 +49,7 @@
         <section class="text">
             <h1>Odbierz paczkę</h1>
             
-            <form method="POST" id="pick-up-form">
+            <form id="pick-up-form">
                 <p>Podaj identyfikator paczki: </p>
                 <div class="max-width-elem">
                     <div class="form-row">

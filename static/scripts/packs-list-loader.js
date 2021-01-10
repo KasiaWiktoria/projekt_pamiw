@@ -1,15 +1,79 @@
 import {addCorrectMessage, addfailureMessage, submitForm, updateCorrectnessMessage, prepareOtherEventOnChange, prepareEventOnChange} from './form_functions.js';
-import {GET, POST, paczkomatURL, HTTP_STATUS, CHECKBOX_FIELD_ID, PACZKOMAT_FIELD_ID, PASSWD_FIELD_ID, courierURL} from './const.js'
+import {GET, POST, paczkomatURL, HTTP_STATUS, websocketURL} from './const.js'
 
 let packs = []
+
+const SEND_PACK_ROOM = "send_pack_room"
+const PICK_UP_ROOM = "pick_up_room"
 
 document.addEventListener('DOMContentLoaded', function (event) {
     let path = window.location.pathname
     let paczkomat = path.split('/')[2]
     console.log('paczkomat:' + paczkomat)
-    let page_url = 'https://localhost:8083/paczkomat/' + paczkomat + '/packs_list/0'
+    let base_url = 'https://localhost:8083/paczkomat/' + paczkomat + '/packs_list/'
+    let page_url = base_url + '0'
     updatePackages(paczkomat,page_url)
-})
+
+    let ws_uri = websocketURL;
+    let socket = io.connect(ws_uri);
+
+    joinIntoRoom(SEND_PACK_ROOM)
+    joinIntoRoom(PICK_UP_ROOM)
+
+
+    socket.on("change_pack_status", function (pack_id) {
+        reloadActualPage()
+        console.log("(courier) zmieniono status paczki ", pack_id);
+    });
+
+    socket.on("connect", function(){
+        console.log('Correctly connected.')
+    })
+
+    socket.on("joined_room", function (message) {
+        console.log("Joined to the room ", message);
+    });
+
+    socket.on("chat_message", function (data) {
+        reloadActualPage(paczkomat)
+        console.log("Receiven new chat message: ", data);
+    });
+
+    function joinIntoRoom(room_id) {
+        let useragent = navigator.userAgent;
+        socket.emit("join", { useragent: useragent, room_id: room_id });
+    }
+    
+    function sendMessage(room_id, text) {
+        let data = { room_id: room_id, message: text };
+        socket.emit("new_message", data);
+    }
+
+});
+
+
+function reloadActualPage(paczkomat){
+    let prev_btn = document.getElementById('prev_btn')
+    let next_btn = document.getElementById('next_btn')
+    let actual_start
+    
+    if (prev_btn != null){
+        let url = prev_btn.getAttribute('page_url')
+        let p_start = url.split('/')[5]
+        actual_start = p_start + 5
+        console.log(actual_start)
+    } else if (next_btn != null){
+        let url = next_btn.getAttribute('page_url')
+        let p_start = url.split('/')[5]
+        actual_start = p_start - 5
+        console.log(actual_start)
+    } else {
+        actual_start = 0
+    }
+    console.log(base_url + String(actual_start))
+    updatePackages(paczkomat, base_url + String(actual_start))
+    console.log('Załadowano ponownie tabelę z paczkami.')
+}
 
 function updatePackages(paczkomat,page_url){
     loadPacks(paczkomat, page_url).then(r => {

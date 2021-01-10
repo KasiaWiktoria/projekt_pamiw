@@ -33,6 +33,9 @@ document.addEventListener('DOMContentLoaded', function (event) {
     sendForm.addEventListener("submit", function (event) {
         event.preventDefault();
 
+        removeWarningMessage("uncorrect");
+        removeWarningMessage("correct");
+        
         var senderDataCorrect = (validateName(SENDER_NAME_FIELD_ID) == "" && validateSurname(SENDER_SURNAME_FIELD_ID) == "" && validatePhone(SENDER_PHONE_FIELD_ID) == "" && validateCountry(SENDER_COUNTRY_FIELD_ID) == "" && validateCity(SENDER_CITY_FIELD_ID) == "" && validateStreet(SENDER_STREET_FIELD_ID) == "" && validateHouseNr(SENDER_HOUSE_NR_FIELD_ID) == "" );
         var recipientDataCorrect = (validateName(RECIPIENT_NAME_FIELD_ID) == "" && validateSurname(RECIPIENT_SURNAME_FIELD_ID) == "" && validatePhone(RECIPIENT_PHONE_FIELD_ID) == "" && validateCountry(RECIPIENT_COUNTRY_FIELD_ID) == "" && validateCity(RECIPIENT_CITY_FIELD_ID) == "" && validateStreet(RECIPIENT_STREET_FIELD_ID) == "" && validateHouseNr(RECIPIENT_HOUSE_NR_FIELD_ID) == "" );
         var productNameAndImgCorrect = (noSpecialCharacters(PRODUCT_NAME_FIELD_ID) == "" && validateFile(PACK_IMAGE_FIELD_ID) == "");

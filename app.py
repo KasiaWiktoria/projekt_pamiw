@@ -12,14 +12,12 @@ import hashlib
 from flask_cors import CORS, cross_origin
 from authlib.integrations.flask_client import OAuth
 from functools import wraps
-from flask_socketio import SocketIO, join_room, leave_room, emit, send
 
 app = Flask(__name__, static_url_path="")
 log = logging.create_logger(app)
 db = redis.Redis(host="redis-db", port=6379, decode_responses=True)
 cors = CORS(app, supports_credentials=True)
 oauth = OAuth(app)
-socket_io = SocketIO(app)
 
 api_app = Api(app = app, version = "0.1", title = "PAX app API", description = "REST-full API for PAXapp")
 client_app_namespace = api_app.namespace("app", description = "Main API")
@@ -50,18 +48,6 @@ app.config["PROPAGATE_EXCEPTIONS"] = False
 
 
 jwt = JWTManager(app)
-
-'''
-@socket_io.on("connect")
-def handle_on_connect():
-    log.debug("Connected -> OK")
-    emit("connection response", {"data": "Correctly connected"})
-
-
-@socket_io.on("disconnect")
-def handle_on_disconnect():
-    log.debug("Disconnected -> Bye")
-'''
 
 @client_app_namespace.route("/")
 class MainPage(Resource):
@@ -96,7 +82,7 @@ class User(Resource):
     @api_app.doc(responses = {200: "Logged in.", 401: "Not logged in."})
     def get(self):
         try:
-            user = session['username']
+            user  = db.hget(SESSION_ID, 'username')
             return { 'user': user }, 200
         except:
             return {'message': 'Prawdopodobnie nie jesteś zalogowany'}, 401
@@ -107,7 +93,7 @@ class Token(Resource):
 
     @api_app.doc(responses = {200: "OK"})
     def get(self):
-        user = session['username']
+        user  = db.hget(SESSION_ID, 'username')
         access_token = create_access_token(identity=user)
         return { 'access_token': access_token}
 '''
@@ -120,9 +106,9 @@ class SendFormPage(Resource):
     def get(self):
         if active_session():
             try:
-                username = session['username']
+                username  = db.hget(SESSION_ID, 'username')
                 log.debug("Username of actually logged in user: " + username)
-                return make_response(render_template('send.html', loggedin=active_session(), user= session['username']))
+                return make_response(render_template('send.html', loggedin=active_session(), user = db.hget(SESSION_ID, 'username')))
             except:
                 log.debug('nie udało się wczytać nazwy użytkownika')
                 return page_unauthorized(NotAuthorizedError)
@@ -243,6 +229,7 @@ class Login(Resource):
                 log.debug("Hasło jest poprawne.")
                 hash_ = uuid4().hex 
                 db.hset(username, SESSION_ID, hash_)
+                db.hset(SESSION_ID, 'username', username)
                 session.permanent = True
                 session['username'] = username
                 
@@ -275,6 +262,7 @@ class Logout(Resource):
     def get(self):
         if active_session():
             hash_ = request.cookies.get(SESSION_ID)
+            db.hdel(SESSION_ID, 'username')
             session.pop('username', None)
             session.clear()
             response = make_response(render_template("index.html", loggedin=False))
@@ -293,7 +281,7 @@ class WaybillsList(Resource):
     def get(self):
         if active_session():
             try:
-                user = session['username']
+                user  = db.hget(SESSION_ID, 'username')
                 waybills = db.hvals(user + '-' + PACKNAMES)
                 waybills_images = []
                 for waybill in waybills:
@@ -313,7 +301,7 @@ class PageWaybillsList(Resource):
     def get(self):
         if active_session():
             try:
-                user = session['username']
+                user  = db.hget(SESSION_ID, 'username')
                 return make_response(render_template('waybills-list.html', loggedin=active_session(), user=user))
             except:
                 return page_unauthorized(NotAuthorizedError)
@@ -331,7 +319,7 @@ class PaginatedWaybillsList(Resource):
             log.debug('Zalogowany użytkownik --> wyświetlenie listy')
             try:
                 log.debug('wyświetlenie listy')
-                user = session['username']
+                user = db.hget(SESSION_ID, 'username')
                 waybills = db.hvals(user + '-' + PACKNAMES)
                 n_of_waybills = len(waybills)
                 if start >= 0:

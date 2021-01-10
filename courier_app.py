@@ -11,13 +11,11 @@ import redis
 import os
 import hashlib
 from flask_cors import CORS, cross_origin
-from flask_socketio import SocketIO, join_room, leave_room, emit, send
 
 app = Flask(__name__, static_url_path="")
 log = logging.create_logger(app)
 db = redis.Redis(host="redis-db", port=6379, decode_responses=True)
 cors = CORS(app, supports_credentials=True)
-socket_io = SocketIO(app, cors_allowed_origins='https://localhost:8082/')
 api_app = Api(app = app, version = "0.1", title = "PAX app API", description = "REST-full API for PAXapp")
 courier_app_namespace = api_app.namespace("courier", description = "Main API")
 
@@ -35,32 +33,6 @@ app.config['CORS_SUPPORTS_CREDENTIALS'] = True
 
 
 jwt = JWTManager(app)
-
-
-'''
-@socket_io.on("change_pack_status")
-def change_pack_status(data):
-    app.logger.debug(f"Received data: {data}.")
-'''
-
-
-@socket_io.on("connect")
-def handle_on_connect():
-    log.debug("Connected -> OK")
-    emit("connection response", {"data": "Correctly connected"})
-
-
-@socket_io.on("disconnect")
-def handle_on_disconnect():
-    log.debug("Disconnected -> Bye")
-
-@app.after_request
-def after_request(response):
-    #refresh()
-    #response.headers.add('Access-Control-Allow-Credentials', 'true')
-    response.headers.add('Access-Control-Allow-Origin', 'https://localhost:8082')
-    response.headers.add('Access-Control-Allow-Methods', 'GET, POST, DELETE')
-    return response
 
 
 @courier_app_namespace.route("/")
@@ -320,6 +292,7 @@ class PickUpService(Resource):
         else:
             raise UnauthorizedUserError
 
+
 @courier_app_namespace.route("/get_packs")
 class GetPacksService(Resource):
 
@@ -376,8 +349,10 @@ class StatusChange(Resource):
     @api_app.doc(responses = {200: 'OK', 400: 'Status changed before.', 404: 'Pack not found'})
     @api_app.expect(pack_model)
     def post(self):
+        log.debug('odbieranie paczki')
         pack_id = request.form.get(PACK_ID_FIELD_ID)
         try:
+            log.debug('try ok')
             user = session['courier_name']
             log.debug(user)
             if db.hexists(pack_id, 'status'):
@@ -385,10 +360,6 @@ class StatusChange(Resource):
                 log.debug('Status paczki: {}'.format(pack_status))
                 if pack_status == NEW:
                     self.save_pack(user, pack_id)
-                    try:
-                        socket_io.emit("change_pack_status", pack_id)
-                    except Exception as e:
-                        log.debug(e)
                     log.debug('Odebrano poprawnie')
                     return {'message': 'odebrano poprawnie', 'status':200}, 200
                 else:
