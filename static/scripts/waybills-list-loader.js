@@ -3,7 +3,7 @@ import {GET, POST, URL, HTTP_STATUS, waybillURL, websocketURL} from './const.js'
 import { joinIntoRoom } from './websocket_functions.js'
 
 const HAND_OVER_ROOM = "hand_over_room"
-const SEND_PACK_ROOM = "send_pack_room"
+const PUT_PACK_IN_ROOM = "put_pack_in_room"
 const PICK_UP_ROOM = "pick_up_room"
 let base_url = 'https://localhost:8080/app/waybills_list/'
 let page_url = base_url + '0'
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     let socket = io.connect(ws_uri);
 
     joinIntoRoom(HAND_OVER_ROOM)
-    joinIntoRoom(SEND_PACK_ROOM)
+    joinIntoRoom(PUT_PACK_IN_ROOM)
     joinIntoRoom(PICK_UP_ROOM)
 
 

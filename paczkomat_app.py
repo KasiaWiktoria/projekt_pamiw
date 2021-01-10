@@ -119,13 +119,9 @@ class PutPackService(Resource):
     @api_app.doc(responses = {200: 'OK', 404: 'Pack not found.'})
     def post(self):
         pack_id = request.form.get(PACK_ID_FIELD_ID)
+        paczkomat = request.form.get('paczkomat')
         log.debug(pack_id)
         if db.hexists(pack_id, 'status'):
-            try:
-                paczkomat = session['paczkomat']
-            except:
-                log.debug('nie przekazano paczkomatu')
-                return {'message': 'Wróć do wyboru paczkomatu.', 'status': 404}, 404
             try:
                 if db.hget(pack_id, 'status') == NEW:
                     db.hset(pack_id, 'status', WAITING)
@@ -232,7 +228,7 @@ class TakeOut(Resource):
         try:
             user = session['courier']
         except:
-            return {'message':'Nie udało nam się zweryfikować twojej tożsamości.', 'status':403}, 403
+            return {'message':'Nie udało nam się zweryfikować twojej tożsamości. Upewnij się, że skorzystałeś z prawidłowego tokenu.', 'status':403}, 403
         try:
             paczkomat = session['paczkomat']
             r = json.loads(request.data)
