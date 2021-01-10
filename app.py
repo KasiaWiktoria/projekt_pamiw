@@ -37,7 +37,7 @@ auth0 = oauth.register(
 
 app.config["JWT_COOKIE_CSRF_PROTECT"] = False
 app.config['SESSION_TYPE'] = 'filesystem'
-app.config['SECRET_KEY'] = SECRET_KEY
+app.config['SECRET_KEY'] = os.environ.get(SECRET_KEY)
 app.config["JWT_SECRET_KEY"] = os.environ.get(SECRET_KEY)
 app.config["JWT_SESSION_COOKIE"] = False
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = TOKEN_EXPIRES_IN_SECONDS
@@ -51,7 +51,7 @@ app.config["PROPAGATE_EXCEPTIONS"] = False
 
 jwt = JWTManager(app)
 
-
+'''
 @socket_io.on("connect")
 def handle_on_connect():
     log.debug("Connected -> OK")
@@ -61,7 +61,7 @@ def handle_on_connect():
 @socket_io.on("disconnect")
 def handle_on_disconnect():
     log.debug("Disconnected -> Bye")
-
+'''
 
 @client_app_namespace.route("/")
 class MainPage(Resource):
@@ -100,6 +100,7 @@ class User(Resource):
             return { 'user': user }, 200
         except:
             return {'message': 'Prawdopodobnie nie jesteś zalogowany'}, 401
+
 '''
 @client_app_namespace.route('/get_access_token')
 class Token(Resource):
@@ -110,6 +111,7 @@ class Token(Resource):
         access_token = create_access_token(identity=user)
         return { 'access_token': access_token}
 '''
+
 @client_app_namespace.route("/send")
 class SendFormPage(Resource):
     
@@ -388,13 +390,6 @@ def login():
 
 @app.route("/callback")
 def oauth_callback():
-    log.debug('callback ok')
-    rs = request.args.get('state')
-    ss = session.get('_google_authlib_state_')
-
-    log.debug(f'reqest state: {rs}')
-    log.debug(f'session state: {ss}')
-
     try:
         auth_access_token = auth0.authorize_access_token()
         log.debug(f'auth access token: {auth_access_token}')
@@ -402,13 +397,12 @@ def oauth_callback():
     except Exception as e:
         log.debug(e)
     resp = auth0.get("userinfo")
-    log.debug(f'response: {resp}')
     nickname = resp.json()["nickname"]
-    log.debug(f'nickname = {nickname}')
 
-    session[NICKNAME] = nickname
+    session['username'] = nickname
+    log.debug(f'nickname: {nickname}')
 
-    return redirect("https://localhost:8080/app/")
+    return redirect("https://localhost:8080/")
 
 
 '''

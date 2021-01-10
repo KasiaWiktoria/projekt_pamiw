@@ -56,7 +56,6 @@ function submitPackForm(form, name) {
         }).then(response => getResponse(response))
             .catch(err => {
                 console.log("Caught error: " + err);
-                console.log(form)
                 let id = "button-submit-form";
                 addfailureMessage(id,failureMessage);
             });

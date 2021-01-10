@@ -43,6 +43,17 @@ def change_pack_status(data):
     app.logger.debug(f"Received data: {data}.")
 '''
 
+
+@socket_io.on("connect")
+def handle_on_connect():
+    log.debug("Connected -> OK")
+    emit("connection response", {"data": "Correctly connected"})
+
+
+@socket_io.on("disconnect")
+def handle_on_disconnect():
+    log.debug("Disconnected -> Bye")
+
 @app.after_request
 def after_request(response):
     #refresh()
@@ -331,6 +342,7 @@ class PaczkomatService(Resource):
         if active_session():
             try:
                 user = session['courier_name']
+                log.debug(f'Aktualnie zalogowany kurier: {user}')
                 return make_response(render_template('courier/from_paczkomat.html', loggedin=active_session(), user=user)) 
             except:
                 raise UnauthorizedUserError
@@ -365,8 +377,6 @@ class StatusChange(Resource):
     @api_app.expect(pack_model)
     def post(self):
         pack_id = request.form.get(PACK_ID_FIELD_ID)
-        user = session['courier_name']
-        log.debug(user)
         try:
             user = session['courier_name']
             log.debug(user)

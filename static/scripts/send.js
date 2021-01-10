@@ -146,7 +146,13 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
 
     function getJsonResponse(response){
-        return response.json();
+        if(response.status == HTTP_STATUS.UNAUTHORIZED){
+            console.log('Prawdopodobnie wygasła ważność tokenu jwt.')
+            addfailureMessage(id,'Prawdopodobnie wygasła ważność tokenu jwt.')
+        } else {
+            return response.json();
+        }
+        
     }
     
 
