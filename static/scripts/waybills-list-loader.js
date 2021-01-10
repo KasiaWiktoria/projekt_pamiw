@@ -55,21 +55,20 @@ function reloadActualPage(){
     let next_btn = document.getElementById('next_btn')
     let actual_start
     
-    if (prev_btn != null){
-        let url = prev_btn.getAttribute('page_url')
+    if (prev_button != null){
+        let url = prev_button.getAttribute('page_url')
         let p_start = url.split('/')[5]
-        actual_start = p_start + 5
-        console.log(actual_start)
-    } else if (next_btn != null){
-        let url = next_btn.getAttribute('page_url')
+        actual_start = parseInt(p_start) + 5
+    } else if (next_button != null){
+        let url = next_button.getAttribute('page_url')
         let p_start = url.split('/')[5]
-        actual_start = p_start - 5
-        console.log(actual_start)
+        actual_start = parseInt(p_start) - 5
     } else {
         actual_start = 0
     }
-    console.log(base_url + String(actual_start))
-    loadWaybills(base_url + String(actual_start))
+    let reload_url = base_url + actual_start
+    console.log('reload_url: ', reload_url)
+    loadWaybills(reload_url)
     console.log('Załadowano ponownie tabelę z paczkami.')
 }
 
@@ -77,7 +76,6 @@ function loadWaybills(page_url){
     clearTable()
 
     fetchPacks(page_url).then(response => {
-        console.log('odpowiedź json')
             return response.json()
         }).then(response => {
             console.log('tworzenie tabeli')
@@ -85,7 +83,6 @@ function loadWaybills(page_url){
 
             let n_of_waybills = response.waybills.length
             if (n_of_waybills > 0){
-                console.log('coś jest na liście')
                 let waybills = response.waybills
                 let images = response.waybills_images
                 let pack_states = response.pack_states
@@ -119,7 +116,6 @@ function loadWaybills(page_url){
                 )
                 table.appendChild(tbody)
                 console.log('stworzenie tabeli')
-                console.log(table)
                 clearTable()
                 h1.insertAdjacentElement('afterend', table)
     
@@ -222,25 +218,24 @@ function updateNavButtons(prev,next){
 }
 
 function fetchPacks(page_url){
-    console.log('wysłanie zapyatnia')
-    let url = page_url;
+    console.log('wysłanie zapyatnia na adres: ', page_url)
 
     let sendParams = {
         credentials: 'include',
         method: GET,
         mode: 'cors'
     };
-    return fetch(url, sendParams)
+    return fetch(page_url, sendParams)
 }
 
 function addNavListeners(){
     let prev_button = document.getElementById('prev_btn')
     let next_button = document.getElementById('next_btn')
 
+
     if (prev_button != null){
         prev_button.addEventListener('click', function (event) {
             let page_url = prev_button.getAttribute('page_url')
-            console.log('kliknięto przycisk wstecz')
             loadWaybills(page_url);
         })
     }
@@ -248,7 +243,6 @@ function addNavListeners(){
     if (next_button != null){
         next_button.addEventListener('click', function (event) {
             let page_url = next_button.getAttribute('page_url')
-            console.log('kliknięto przycisk dalej')
             loadWaybills(page_url);
         });
     }

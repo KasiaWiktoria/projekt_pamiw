@@ -365,32 +365,28 @@ class StatusChange(Resource):
     def post(self):
         log.debug('odbieranie paczki')
         pack_id = request.form.get(PACK_ID_FIELD_ID)
-        try:
-            log.debug('try ok')
-            user = db.get(ACTIVE_COURIER_SESSION)
-            log.debug(user)
-            if db.hexists(pack_id, 'status'):
-                pack_status = db.hget(pack_id, 'status')
-                log.debug('Status paczki: {}'.format(pack_status))
-                if pack_status == NEW:
-                    self.save_pack(user, pack_id)
-                    log.debug('Odebrano poprawnie')
-                    return {'message': 'odebrano poprawnie', 'status':200}, 200
-                else:
-                    return {'message':'Status paczki został już zmieniony.', 'status':400}, 400
+        log.debug('try ok')
+        user = db.get(ACTIVE_COURIER_SESSION)
+        log.debug(user)
+        if db.hexists(pack_id, 'status'):
+            pack_status = db.hget(pack_id, 'status')
+            log.debug('Status paczki: {}'.format(pack_status))
+            if pack_status == NEW:
+                self.save_pack(user, pack_id)
+                log.debug('Odebrano poprawnie')
+                return {'message': 'odebrano poprawnie', 'status':200}, 200
             else:
-                log.debug('Niepoprawny identyfikator paczki')
-                return {'message':'Niepoprawny identyfikator paczki.', 'status':404}, 404
-        except Exception as e:
-            log.debug(e)
-            return {'message':'Nie udało się pobrać nazwy użytkownika.', 'status':401}, 401
+                return {'message':'Status paczki został już zmieniony.', 'status':400}, 400
+        else:
+            log.debug('Niepoprawny identyfikator paczki')
+            return {'message':'Niepoprawny identyfikator paczki.', 'status':404}, 404
 
 
     def save_pack(self, user, pack_id):
 
-        db.hset(pack_id, 'status', HANDED_OVER)
-        db.hset(pack_id, 'tmp_owner', session['courier_name'])
+        db.hset(pack_id, 'tmp_owner', db.get(ACTIVE_COURIER_SESSION))
         db.hset(user + '-'+ PACKNAMES, pack_id, pack_id)
+        db.hset(pack_id, 'status', HANDED_OVER)
 
         log.debug("Picked up pack [name: {}].".format(pack_id))
 

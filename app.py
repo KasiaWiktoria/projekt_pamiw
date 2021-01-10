@@ -279,12 +279,19 @@ class Logout(Resource):
     @api_app.doc(responses = {200: 'OK'})
     def get(self):
         if active_session():
+            log.debug('rozpoczęto wylogowywanie')
             db.expire(ACTIVE_USER_SESSION, timedelta(seconds=0))
+            log.debug('wygasniecie active user session')
             hash_ = request.cookies.get(SESSION_ID)
+            log.debug('hash')
             db.hdel(SESSION_ID, 'username')
+            log.debug('usuniecie session id z bazy')
             response = make_response(render_template("index.html", loggedin=False))
+            try:
+                unset_jwt_cookies(response)
+            except:
+                log.debug('prawdopodobnie nie ma jwt do usunięcia')
             response.set_cookie(SESSION_ID, hash_, max_age=0, secure=True, httponly=True)
-            unset_jwt_cookies(response)
             return response
         else:
             return make_response(render_template("index.html", loggedin=active_session()))

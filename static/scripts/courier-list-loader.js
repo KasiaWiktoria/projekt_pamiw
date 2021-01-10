@@ -55,18 +55,18 @@ function reloadActualPage(){
     if (prev_btn != null){
         let url = prev_btn.getAttribute('page_url')
         let p_start = url.split('/')[5]
-        actual_start = p_start + 5
+        actual_start = parseInt(p_start) + 5
         console.log(actual_start)
     } else if (next_btn != null){
         let url = next_btn.getAttribute('page_url')
         let p_start = url.split('/')[5]
-        actual_start = p_start - 5
+        actual_start = parseInt(p_start) - 5
         console.log(actual_start)
     } else {
         actual_start = 0
     }
-    console.log(base_url + String(actual_start))
-    loadWaybills(base_url + String(actual_start))
+    console.log(base_url + actual_start)
+    loadWaybills(base_url + actual_start)
     console.log('Załadowano ponownie tabelę z paczkami.')
 }
 
