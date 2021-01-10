@@ -34,3 +34,7 @@
     color: var(--main-color);
     text-shadow: 2px 1px #20031e0c;
 }
+
+.btn.auth0{
+    background-color: red;
+}

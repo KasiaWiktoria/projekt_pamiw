@@ -44,19 +44,34 @@ class MainPage(Resource):
 
 @app.before_request
 def refresh_session():
-    session.modified = True
+    if active_session():
+        refresh()
+
+@app.route('/refresh', methods=['POST'])
+def refresh():
+    if db.exists(ACTIVE_COURIER_SESSION):
+        db.expire(ACTIVE_COURIER_SESSION, timedelta(minutes=5))
+        current_user = db.get(ACTIVE_COURIER_SESSION)
+        log.debug(f'aktualnie zalogowany kurier: {current_user}')
+        expires = timedelta( minutes = 5)
+        access_token = create_access_token(identity=current_user, expires_delta=expires)
+
+        resp = jsonify({'refresh': True})
+        set_access_cookies(resp, access_token)
+        log.debug(f'refreshed access token: {access_token}')
+        return resp, 200
+    else:
+        return jsonify({'refresh': False})
 
 def active_session():
-    hash_ = request.cookies.get(COURIER_SESSION_ID)
-    log.debug(hash_)
-    try:
-        session['courier_name']
-    except:
-        return False
-
-    if hash_ is not None:
+    log.debug(request.cookies.get(SESSION_ID))
+    hash_ = request.cookies.get(SESSION_ID)
+    log.debug('sprawdzenie czy sesja jest aktywna.')
+    if db.exists(ACTIVE_COURIER_SESSION):
+        log.debug('active')
         return True
     else:
+        log.debug('not active')
         return False
 
 @courier_app_namespace.route("/logged_in_user")
@@ -64,10 +79,10 @@ class User(Resource):
 
     @api_app.doc(responses = {200: "Logged in.", 401: "Not logged in."})
     def get(self):
-        try:
-            user = session['courier_name']
+        if db.exists(ACTIVE_COURIER_SESSION):
+            user = db.get(ACTIVE_COURIER_SESSION)
             return { 'user': user }, 200
-        except:
+        else:
             return {'message': 'Prawdopodobnie nie jesteś zalogowany'}, 401
 
 
@@ -180,8 +195,7 @@ class Login(Resource):
                 log.debug("Hasło jest poprawne.")
                 hash_ = uuid4().hex 
                 db.hset("kurier-" + courier_name, COURIER_SESSION_ID, hash_)
-                session.permanent = True
-                session['courier_name'] = courier_name
+                db.setex(ACTIVE_COURIER_SESSION,  timedelta(minutes=5), value=courier_name)
                 
                 expires = timedelta( minutes = 5)
                 access_token = create_access_token(identity=courier_name, expires_delta=expires)
@@ -211,9 +225,9 @@ class Logout(Resource):
     @api_app.doc(responses = {200: 'OK'})
     def get(self):
         if active_session():
+            db.expire(ACTIVE_COURIER_SESSION, timedelta(seconds=0))
             hash_ = request.cookies.get(COURIER_SESSION_ID)
-            session.pop('courier_name', None)
-            session.clear()
+
             response = make_response(render_template("courier/index.html", loggedin=False))
             response.set_cookie(COURIER_SESSION_ID, hash_, max_age=0, secure=True, httponly=True)
             unset_jwt_cookies(response)
@@ -228,7 +242,7 @@ class WaybillsList(Resource):
     def get(self):
         if active_session():
             try:
-                user = session['courier_name']
+                user = db.get(ACTIVE_COURIER_SESSION)
                 return make_response(render_template('courier/waybills-list.html', loggedin=active_session(), user=user))
             except:
                 raise UnauthorizedUserError
@@ -242,7 +256,7 @@ class PaginatedWaybillsList(Resource):
     def get(self,start):
         if active_session():
             try:
-                user = session['courier_name']
+                user = db.get(ACTIVE_COURIER_SESSION)
                 waybills = db.hvals(user + '-' + PACKNAMES)
                 n_of_waybills = len(waybills)
                 if start >= 0:
@@ -285,7 +299,7 @@ class PickUpService(Resource):
     def get(self):
         if active_session():
             try:
-                user = session['courier_name']
+                user = db.get(ACTIVE_COURIER_SESSION)
                 return make_response(render_template('courier/pick_up.html', loggedin=active_session(), user=user)) 
             except:
                 raise UnauthorizedUserError
@@ -300,7 +314,7 @@ class GetPacksService(Resource):
     def get(self):
         if active_session():
             try:
-                user = session['courier_name']
+                user = db.get(ACTIVE_COURIER_SESSION)
                 return make_response(render_template('courier/get_packs.html', loggedin=active_session(), user=user)) 
             except:
                 raise UnauthorizedUserError
@@ -314,7 +328,7 @@ class PaczkomatService(Resource):
     def get(self):
         if active_session():
             try:
-                user = session['courier_name']
+                user = db.get(ACTIVE_COURIER_SESSION)
                 log.debug(f'Aktualnie zalogowany kurier: {user}')
                 return make_response(render_template('courier/from_paczkomat.html', loggedin=active_session(), user=user)) 
             except:
@@ -353,7 +367,7 @@ class StatusChange(Resource):
         pack_id = request.form.get(PACK_ID_FIELD_ID)
         try:
             log.debug('try ok')
-            user = session['courier_name']
+            user = db.get(ACTIVE_COURIER_SESSION)
             log.debug(user)
             if db.hexists(pack_id, 'status'):
                 pack_status = db.hget(pack_id, 'status')
@@ -412,7 +426,7 @@ class Token(Resource):
     @api_app.doc(responses = {200: 'OK', 404: 'Courier not found'})
     def get(self):
         try:
-            user = session['courier_name']
+            user = db.get(ACTIVE_COURIER_SESSION)
             expires = timedelta( minutes = 1)
             access_token = create_access_token(identity=user, expires_delta=expires)
             token = get_jti(access_token)

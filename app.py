@@ -58,23 +58,42 @@ class MainPage(Resource):
 
 @app.before_request
 def refresh_session():
-    session.modified = True
-    '''
     if active_session():
         refresh()
-    '''
+
+@app.route('/refresh', methods=['POST'])
+def refresh():
+    if db.exists(ACTIVE_USER_SESSION):
+        db.expire(ACTIVE_USER_SESSION, timedelta(minutes=5))
+        current_user = db.get(ACTIVE_USER_SESSION)
+        log.debug(f'aktualnie zalogowany użytkownik: {current_user}')
+        expires = timedelta( minutes = 5)
+        access_token = create_access_token(identity=current_user, expires_delta=expires)
+
+        resp = jsonify({'refresh': True})
+        set_access_cookies(resp, access_token)
+        log.debug(f'refreshed access token: {access_token}')
+        return resp, 200
+    else:
+        return jsonify({'refresh': False})
+
 def active_session():
     log.debug(request.cookies.get(SESSION_ID))
     hash_ = request.cookies.get(SESSION_ID)
-    try:
-        session['username']
-    except:
+    log.debug('sprawdzenie czy sesja jest aktywna.')
+    if db.exists(ACTIVE_USER_SESSION):
+        log.debug('active')
+        return True
+    else:
+        log.debug('not active')
         return False
-
+    '''
     if hash_ is not None:
         return True
     else:
         return False
+'''
+
 
 @client_app_namespace.route("/logged_in_user")
 class User(Resource):
@@ -230,8 +249,7 @@ class Login(Resource):
                 hash_ = uuid4().hex 
                 db.hset(username, SESSION_ID, hash_)
                 db.hset(SESSION_ID, 'username', username)
-                session.permanent = True
-                session['username'] = username
+                db.setex(ACTIVE_USER_SESSION,  timedelta(minutes=5), value=username)
                 
                 expires = timedelta( minutes = 5)
                 access_token = create_access_token(identity=username, expires_delta=expires)
@@ -261,10 +279,9 @@ class Logout(Resource):
     @api_app.doc(responses = {200: 'OK'})
     def get(self):
         if active_session():
+            db.expire(ACTIVE_USER_SESSION, timedelta(seconds=0))
             hash_ = request.cookies.get(SESSION_ID)
             db.hdel(SESSION_ID, 'username')
-            session.pop('username', None)
-            session.clear()
             response = make_response(render_template("index.html", loggedin=False))
             response.set_cookie(SESSION_ID, hash_, max_age=0, secure=True, httponly=True)
             unset_jwt_cookies(response)
@@ -362,8 +379,8 @@ class PaginatedWaybillsList(Resource):
 def authorization_required(fun):
     @wraps(fun)
     def authorization_decorator(*args, **kwds):
-        if NICKNAME not in session:
-            return redirect("/login")
+        if not db.exists(ACTIVE_USER_SESSION):
+            return redirect("/app/login")
 
         return fun(*args, **kwds)
 
@@ -393,22 +410,6 @@ def oauth_callback():
     return redirect("https://localhost:8080/")
 
 
-'''
-@app.route('/refresh', methods=['POST'])
-@jwt_refresh_token_required
-def refresh():
-    current_user = get_jwt_identity()
-    if current_user != None:
-        expires = timedelta( minutes = 5)
-        access_token = create_access_token(identity=current_user, expires_delta=expires)
-
-        resp = jsonify({'refresh': True})
-        set_access_cookies(resp, access_token)
-        log.debug(access_token)
-        return resp, 200
-    else:
-        return jsonify({'refresh': False})
-'''
 
 @app.errorhandler(400)
 def bad_request(error):
