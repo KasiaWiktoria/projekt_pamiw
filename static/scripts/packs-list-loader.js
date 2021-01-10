@@ -65,8 +65,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
         updatePackages(paczkomat, base_url + actual_start)
         console.log('Załadowano ponownie tabelę z paczkami.')
     }
-});
 
+    
 function updatePackages(paczkomat,page_url){
     loadPacks(paczkomat, page_url).then(r => {
 
@@ -136,6 +136,7 @@ function updatePackages(paczkomat,page_url){
             console.log("status: " + response.status)
             let id = "button-submit-form";
             if (response.status == HTTP_STATUS.OK){
+                sendMessage(PICK_UP_ROOM, 'wyjęto paczki z paczkomatu.')
                 addCorrectMessage(id,response.message)
             }else {
                 addfailureMessage(id,response.message)
@@ -148,6 +149,7 @@ function updatePackages(paczkomat,page_url){
         
     })
 }
+});
 
 async function sendFetch(paczkomat, page_url){
     clearTable()

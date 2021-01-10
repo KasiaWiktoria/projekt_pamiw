@@ -55,12 +55,12 @@ function reloadActualPage(){
     let next_btn = document.getElementById('next_btn')
     let actual_start
     
-    if (prev_button != null){
-        let url = prev_button.getAttribute('page_url')
+    if (prev_btn != null){
+        let url = prev_btn.getAttribute('page_url')
         let p_start = url.split('/')[5]
         actual_start = parseInt(p_start) + 5
-    } else if (next_button != null){
-        let url = next_button.getAttribute('page_url')
+    } else if (next_btn != null){
+        let url = next_btn.getAttribute('page_url')
         let p_start = url.split('/')[5]
         actual_start = parseInt(p_start) - 5
     } else {

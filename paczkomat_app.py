@@ -237,7 +237,6 @@ class TakeOut(Resource):
             log.debug(f'wyjęte paczki: {packs}')
             try:
                 for pack in packs:
-                    db.hset(pack, 'status', PICKED_UP)
                     db.hdel(paczkomat, pack)
                     self.take_out_packs(user,pack)
             except:
@@ -248,11 +247,10 @@ class TakeOut(Resource):
 
     def take_out_packs(self, user, pack_id):
 
-        db.hset(pack_id, 'status', HANDED_OVER)
+        db.hset(pack_id, 'status', PICKED_UP)
         db.hset(user + '-'+ PACKNAMES, pack_id, pack_id)
-
+        
         log.debug("Picked up pack [name: {}].".format(pack_id))
-
 
 
 @app.errorhandler(400)
