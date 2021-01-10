@@ -6,7 +6,7 @@ from errors import UnauthorizedUserError
 from flask_restplus import Api, Resource, fields
 from uuid import uuid4
 from const import *
-from const_auth_courier import *
+from const_auth0 import *
 from flask_jwt_extended import JWTManager, get_jti, jwt_required, create_access_token, create_refresh_token, set_refresh_cookies, set_access_cookies, create_refresh_token, unset_jwt_cookies, jwt_refresh_token_required, get_jwt_identity
 import redis
 import os
@@ -270,7 +270,7 @@ class PaginatedWaybillsList(Resource):
         if active_session():
             try:
                 user = db.get(ACTIVE_COURIER_SESSION)
-                waybills = db.hvals(user + '-' + PACKNAMES)
+                waybills = db.hvals(user + '-' + COURIER_PACKNAMES)
                 n_of_waybills = len(waybills)
                 if start >= 0:
                     limit = start + WAYBILLS_PER_PAGE
@@ -398,7 +398,7 @@ class StatusChange(Resource):
     def save_pack(self, user, pack_id):
 
         db.hset(pack_id, 'tmp_owner', db.get(ACTIVE_COURIER_SESSION))
-        db.hset(user + '-'+ PACKNAMES, pack_id, pack_id)
+        db.hset(user + '-'+ COURIER_PACKNAMES, pack_id, pack_id)
         db.hset(pack_id, 'status', HANDED_OVER)
 
         log.debug("Picked up pack [name: {}].".format(pack_id))
@@ -453,7 +453,7 @@ class Token(Resource):
 @app.route("/auth0_login")
 def login():
     return auth0.authorize_redirect(
-        redirect_uri=OAUTH_CALLBACK_URL,
+        redirect_uri=OAUTH_CALLBACK_COURIER_URL,
         audience="")
 
 @app.route("/callback")
@@ -474,7 +474,7 @@ def oauth_callback():
     db.hset(username, SESSION_ID, hash_)
     db.setex(ACTIVE_COURIER_SESSION,  timedelta(minutes=5), value=username)
 
-    response = redirect("https://localhost:8080/app/waybills_list")
+    response = redirect("https://localhost:8082/courier/waybills_list")
     response.set_cookie(SESSION_ID, hash_,  max_age=300, secure=True, httponly=True)
     expires = timedelta( minutes = 5)
     access_token = create_access_token(identity=username, expires_delta=expires)

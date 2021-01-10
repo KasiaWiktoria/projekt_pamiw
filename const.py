@@ -12,6 +12,7 @@ FILES_PATH = "waybill_files/"
 CUSTOM_IMG_PATH = "static/images/packs_images/"
 PATH_AND_FILENAME = "path_and_filename"
 PACKNAMES = "packnames"
+COURIER_PACKNAMES = "courier_packnames"
 IMAGES_PATHS = "images_paths"
 WAYBILLS_PER_PAGE = 5
 
