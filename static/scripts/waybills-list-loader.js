@@ -1,6 +1,5 @@
 import {addCorrectMessage, addfailureMessage} from './form_functions.js';
 import {GET, POST, URL, HTTP_STATUS, waybillURL, websocketURL} from './const.js'
-import { joinIntoRoom } from './websocket_functions.js'
 
 const HAND_OVER_ROOM = "hand_over_room"
 const PUT_PACK_IN_ROOM = "put_pack_in_room"
@@ -9,6 +8,7 @@ let base_url = 'https://localhost:8080/app/waybills_list/'
 let page_url = base_url + '0'
 
 document.addEventListener('DOMContentLoaded', function (event) {
+    //sendRequestForAccessToken()
     loadWaybills(page_url);
 
     let ws_uri = websocketURL;
@@ -253,4 +253,15 @@ function clearTable(){
     if (table != null){
         table.parentNode.removeChild(table);
     }
+}
+
+
+function sendRequestForAccessToken(){
+    console.log('wysłanie zapytania o ciasteczka.')
+    let url = URL + '/set_access_token_cookie'
+    fetchPacks(url).then(response => {
+        console.log(response)
+    }).catch(err => {
+        console.log("Caught error: " + err);
+    });
 }

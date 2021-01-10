@@ -6,11 +6,14 @@ from errors import UnauthorizedUserError
 from flask_restplus import Api, Resource, fields
 from uuid import uuid4
 from const import *
+from const_auth_courier import *
 from flask_jwt_extended import JWTManager, get_jti, jwt_required, create_access_token, create_refresh_token, set_refresh_cookies, set_access_cookies, create_refresh_token, unset_jwt_cookies, jwt_refresh_token_required, get_jwt_identity
 import redis
 import os
 import hashlib
 from flask_cors import CORS, cross_origin
+from authlib.integrations.flask_client import OAuth
+from functools import wraps
 
 app = Flask(__name__, static_url_path="")
 log = logging.create_logger(app)
@@ -18,10 +21,12 @@ db = redis.Redis(host="redis-db", port=6379, decode_responses=True)
 cors = CORS(app, supports_credentials=True)
 api_app = Api(app = app, version = "0.1", title = "PAX app API", description = "REST-full API for PAXapp")
 courier_app_namespace = api_app.namespace("courier", description = "Main API")
+jwt = JWTManager(app)
+oauth = OAuth(app)
 
 app.config["JWT_COOKIE_CSRF_PROTECT"] = False
 app.config['SESSION_TYPE'] = 'filesystem'
-app.config['SECRET_KEY'] = SECRET_KEY
+app.config['SECRET_KEY'] = os.environ.get(SECRET_KEY)
 app.config["JWT_SECRET_KEY"] = os.environ.get(SECRET_KEY)
 app.config["JWT_SESSION_COOKIE"] = False
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = PACZKOMAT_TOKEN_EXPIRES_IN_SECONDS
@@ -32,7 +37,14 @@ app.config["SESSION_REFRESH_EACH_REQUEST"] = True
 app.config['CORS_SUPPORTS_CREDENTIALS'] = True
 
 
-jwt = JWTManager(app)
+auth0 = oauth.register(
+    "pax-app-auth0-2020",
+    api_base_url=OAUTH_BASE_URL,
+    client_id=OAUTH_CLIENT_ID,
+    client_secret=OAUTH_CLIENT_SECRET,
+    access_token_url=OAUTH_ACCESS_TOKEN_URL,
+    authorize_url=OAUTH_AUTHORIZE_URL,
+    client_kwargs={"scope": OAUTH_SCOPE})
 
 
 @courier_app_namespace.route("/")
@@ -40,6 +52,7 @@ class MainPage(Resource):
 
     @api_app.doc(responses = {200: "OK"})
     def get(self):
+        log.debug()
         return make_response(render_template("courier/index.html", loggedin=active_session()))
 
 @app.before_request
@@ -434,6 +447,42 @@ class Token(Resource):
         except:
             return make_response(jsonify({'msg': 'nie udało się potwierdzić tożsamości kuriera'}), 404)
 
+
+
+
+@app.route("/auth0_login")
+def login():
+    return auth0.authorize_redirect(
+        redirect_uri=OAUTH_CALLBACK_URL,
+        audience="")
+
+@app.route("/callback")
+def oauth_callback():
+    try:
+        auth_access_token = auth0.authorize_access_token()
+        log.debug(f'auth access token: {auth_access_token}')
+
+    except Exception as e:
+        log.debug(e)
+    resp = auth0.get("userinfo")
+    username = resp.json()["nickname"]
+
+    db.setex(ACTIVE_COURIER_SESSION, timedelta(minutes=5), username)
+    log.debug(f'nickname: {username}')
+
+    hash_ = uuid4().hex 
+    db.hset(username, SESSION_ID, hash_)
+    db.setex(ACTIVE_COURIER_SESSION,  timedelta(minutes=5), value=username)
+
+    response = redirect("https://localhost:8080/app/waybills_list")
+    response.set_cookie(SESSION_ID, hash_,  max_age=300, secure=True, httponly=True)
+    expires = timedelta( minutes = 5)
+    access_token = create_access_token(identity=username, expires_delta=expires)
+    refresh_token = create_refresh_token(identity=username, expires_delta=expires)
+    set_access_cookies(response, access_token)
+    set_refresh_cookies(response, refresh_token)
+
+    return response
 
 @app.errorhandler(400)
 def bad_request(error):

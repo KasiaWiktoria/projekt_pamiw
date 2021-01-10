@@ -1,6 +1,5 @@
 import {addCorrectMessage, addfailureMessage} from './form_functions.js';
 import {GET, POST, URL, HTTP_STATUS, courierURL, websocketURL} from './const.js'
-import { joinIntoRoom } from './websocket_functions.js'
 
 const HAND_OVER_ROOM = "hand_over_room"
 const PICK_UP_ROOM = "pick_up_room"

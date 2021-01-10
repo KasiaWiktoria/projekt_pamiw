@@ -4,6 +4,7 @@ from datetime import timedelta
 from uuid import uuid4
 from errors import NotFoundError, NotAuthorizedError 
 from const import *
+from const_auth_app import *
 from flask_restplus import Api, Resource, fields
 from flask_jwt_extended import JWTManager, jwt_required, create_access_token, create_refresh_token, set_refresh_cookies, set_access_cookies, create_refresh_token, unset_jwt_cookies, jwt_refresh_token_required, get_jwt_identity
 import redis
@@ -285,9 +286,9 @@ class Logout(Resource):
             response = make_response(render_template("index.html", loggedin=False))
             try:
                 unset_jwt_cookies(response)
+                response.set_cookie(SESSION_ID, hash_, max_age=0, secure=True, httponly=True)
             except:
-                log.debug('prawdopodobnie nie ma jwt do usunięcia')
-            response.set_cookie(SESSION_ID, hash_, max_age=0, secure=True, httponly=True)
+                log.debug('prawdopodobnie nie ma ciasteczek do usunięcia')
             return response
         else:
             return make_response(render_template("index.html", loggedin=active_session()))
@@ -356,6 +357,18 @@ class PaginatedWaybillsList(Resource):
             log.debug('niezalogowany użytkownik')
             return page_unauthorized(401)
 
+@app.route('/app/set_access_token_cookie')
+def set_access_token_cookies():
+    username = db.get(ACTIVE_USER_SESSION)
+    expires = timedelta( minutes = 5)
+    access_token = create_access_token(identity=username, expires_delta=expires)
+    refresh_token = create_refresh_token(identity=username, expires_delta=expires)
+
+    response = make_response(jsonify({ 'logged_in': 'OK', 'access_token': access_token}))
+    set_access_cookies(response, access_token)
+    set_refresh_cookies(response, refresh_token)
+
+    return response
 
 
 def authorization_required(fun):
@@ -384,12 +397,24 @@ def oauth_callback():
     except Exception as e:
         log.debug(e)
     resp = auth0.get("userinfo")
-    nickname = resp.json()["nickname"]
+    username = resp.json()["nickname"]
 
-    session['username'] = nickname
-    log.debug(f'nickname: {nickname}')
+    db.setex(ACTIVE_USER_SESSION, timedelta(minutes=5), username)
+    log.debug(f'nickname: {username}')
 
-    return redirect("https://localhost:8080/")
+    hash_ = uuid4().hex 
+    db.hset(username, SESSION_ID, hash_)
+    db.setex(ACTIVE_USER_SESSION,  timedelta(minutes=5), value=username)
+
+    response = redirect("https://localhost:8080/app/waybills_list")
+    response.set_cookie(SESSION_ID, hash_,  max_age=300, secure=True, httponly=True)
+    expires = timedelta( minutes = 5)
+    access_token = create_access_token(identity=username, expires_delta=expires)
+    refresh_token = create_refresh_token(identity=username, expires_delta=expires)
+    set_access_cookies(response, access_token)
+    set_refresh_cookies(response, refresh_token)
+
+    return response
 
 
 
