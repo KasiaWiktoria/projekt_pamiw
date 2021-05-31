@@ -1,0 +1,50 @@
+version: "3"
+services:
+  web-login:
+    build:
+      context: .
+      dockerfile: ./Docker/app/Dockerfile
+    ports: ["8080:8880"]
+    volumes: [./app:/app]
+    env_file:
+      -  ./.env
+    environment:
+      FLASK_ENV: development
+  web-courier:
+    build:
+      context: .
+      dockerfile: ./Docker/courier_app/Dockerfile
+    ports: ["8082:8882"]
+    volumes: [./app:/app]
+    env_file:
+      -  ./.env
+    environment:
+      FLASK_ENV: development
+  web-paczkomat:
+    build:
+      context: .
+      dockerfile: ./Docker/paczkomat_app/Dockerfile
+    ports: ["8083:8883"]
+    volumes: [./app:/app]
+    env_file:
+      -  ./.env
+    environment:
+      FLASK_ENV: development
+  web-files:
+    build:
+      context: .
+      dockerfile: ./Docker/stateless_app/Dockerfile
+    ports: ["8081:8881"]
+    volumes: [./app:/app]
+    env_file:
+      -  ./.env
+  web-socket:
+    build:
+      context: .
+      dockerfile: ./Docker/websocket_app/Dockerfile
+    ports: ["8084:8884"]
+    volumes: [./app:/app]
+    environment:
+      FLASK_ENV: development
+  redis-db:
+    image: "redis:alpine"
