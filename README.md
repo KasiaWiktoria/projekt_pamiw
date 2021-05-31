@@ -1,9 +1,17 @@
+# Projekt aplikcji do obsługi paczkomatów
 Projekt realizowany w ramach przedmiotu Programowanie Aplikacji Mobilnych i Webowych
 
-Kamień milowy 4
 
+![homepage image](/app/static/images/homepage.png)
+
+
+
+
+## Uruchomienie aplikacji
 Uruchomienie aplikacji odbywa się za pomocą jednego polecenia:
+```
 docker-compose up --build
+```
 
 Adresy stron internetowych:
 

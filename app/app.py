@@ -6,7 +6,7 @@ from errors import NotFoundError, NotAuthorizedError
 from const import *
 from const_auth0 import *
 from flask_restplus import Api, Resource, fields
-from flask_jwt_extended import JWTManager, jwt_required, create_access_token, create_refresh_token, set_refresh_cookies, set_access_cookies, create_refresh_token, unset_jwt_cookies, jwt_refresh_token_required, get_jwt_identity
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token, create_refresh_token, set_refresh_cookies, set_access_cookies, create_refresh_token, unset_jwt_cookies
 import redis
 import os
 import hashlib
